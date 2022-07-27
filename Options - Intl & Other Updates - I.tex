@@ -1,0 +1,1148 @@
+\documentclass{beamer}
+
+% For more themes, color themes and font themes, see:
+% http://deic.uab.es/~iblanes/beamer_gallery/index_by_theme.html
+%
+\mode<presentation>
+{
+  \usetheme{CambridgeUS}       % or try default, Darmstadt, Warsaw, ...
+  \usecolortheme{seagull} % or try albatross, beaver, crane, ...
+  \usefonttheme{professionalfonts}    % or try default, structurebold, ...
+  \setbeamertemplate{navigation symbols}{}
+  \setbeamertemplate{caption}[numbered]
+  \setbeamertemplate{caption}{\insertcaption}
+} 
+
+\newcommand{\ditto}[1][.4pt]{\xrfill{#1}~\textquotedbl~\xrfill{#1}}
+
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{paralist}
+\usepackage{amsmath}
+\usepackage{color}
+\usepackage{ragged2e}
+
+
+
+
+
+\AtBeginSection[]
+{
+  \begin{frame}
+    \frametitle{Table of Contents}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+
+% On Overleaf, these lines give you sharper preview images.
+% You might want to `comment them out before you export, though.
+\usepackage{pgfpages}
+
+\pgfpagesuselayout{resize to}[letterpaper, landscape] 
+
+
+% Here's where the presentation starts, with the info for the title slide
+
+\title[{\tt GaaOptions}]{{\tt GaaOptions}: International Index Options and Enhancements to the Calendar Collar}
+\author[DC $|$ BL]{Dimitri Curtil  \and Boqiu Lu}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Agenda}
+\begin{itemize}
+\item Reminder
+	\begin{itemize}
+	\item Goal of this project so far is to build a better risk-reward payoff for strategically important equity exposures
+	\item Accordingly, our bias is to avoid introducing outright model risk that produces a good (single asset price path) backtest but very likely fails in future
+	\end{itemize}
+\item International Options Overview
+	\begin{itemize}
+	\item Data: history, density, vol surface
+	\end{itemize}
+\item Calendar collars for select international options: Eurostoxx, FTSE, Nikkei
+\item Enhancements to Calendar Collars
+	\begin{itemize}
+	\item Replace 20\% OTM with ATM, at a lower notional
+	\item Collar implemented with $\Delta$'s instead of moneyness
+	\item Collars with even shorter maturity calls
+	\item Summarizing enhancements to the S\&P500 Calendar Collar
+%	\item TBD: Enhancing the roll schedule with a premium recovery threshold
+%	\item TBD: Examining Collar P/L sensitivity via fuzzy properties for options (delta, moneyness, maturity)
+	\end{itemize}
+
+\item Next Steps
+
+	\begin{itemize}
+	\item Optimizing Calendar Collar Structures for International Options
+	\item Other structures, timing etc.
+	\end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\section{International Options \& Enhancements to {\tt GaaOptions}}
+\begin{frame}{Enhancements to {\tt GaaOptions}}
+\begin{itemize}
+\item Refactored the framework to work with {\em any security} in the Ivy Options DB
+\begin{itemize} \item includes ETFs (eg IEF/TLT) or single name securities (eg AMZN) or any international indices (eg NKY, KOSPI etc) \end{itemize}
+\item Unified access layer for different databases (AS, US, EU) which are largely similar but have significant differences in schema \& content
+\item Significantly improved the performance of the back testing framework
+\begin{itemize} \item this enhancement allowed us to {\em include weekly index options} in the options surface \end{itemize}
+\item Ability to run the framework with ``fuzzy'' properties for delta, moneyness, maturity etc. 
+\item The framework is more robust now and is better equipped to deal with the imperfections and other contours of the IvyDB data
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Global Options Data}
+\scalebox{0.62}{
+\begin{tabular}{llllll}
+\toprule
+Ticker & Issuer & From & Periodicity & Primary Exchange (IvyDB data) & Contract Size\\
+\midrule
+SPX & S\&P 500 & 1996-01-04 & W, M, Q & Chicago Board Options Exchange & 100\\
+\addlinespace
+HSI & HANG SENG & 2006-01-03 & M & Hong Kong Futures Exchange & 50\\
+HSCEI & HS CHINA ENT INDEX & 2006-01-03 & M & Hong Kong Futures Exchange & 50\\
+KOSPI2 & KOSPI 200 INDEX & 2004-05-03 & M & Korea Futures Market & 250000\\
+NKY & NIKKEI 225 & 2004-05-06 & W, M & Osaka Day Session & 1000\\
+AS51 & S \& P/ASX 200 & 2004-01-02 & W, M & Australia Futures and Options & 10\\
+TWSE & TAIEX & 2004-01-02 & W, M & Taiwan Futures Exchange & 50\\
+TPX & TOPIX INDEX SEC 1 & 2006-01-04 & M & Osaka Day Session & 10000\\
+\addlinespace
+AEX & AEX INDEX & 2002-01-02 & W, M & Euronext Amsterdam Options & 100\\
+CAC & CAC 40 & 2003-04-14 & W, M & Euronext MONEP & 10\\
+DAX & DAX IND & 2002-01-02 & W, M & EUREX, Frankfurt & 5\\
+SX5E & DJ EURO STOXX50 & 2002-01-02 & W, M & EUREX, Frankfurt & 10\\
+DJGTE & DJ GL TIT 50 EUR IN & 2002-01-02 & & EUREX, Frankfurt\\
+SX5P & DJ STOXX 50 & 2002-01-02 & M & EUREX, Frankfurt & 10\\
+SXXP & DJ STOXX 600 & 2005-09-14 & M & EUREX, Frankfurt & 10\\
+BEL20 & EURONEXT BEL-20 & 2002-01-02 & & Euronext BELFOX, Brussels\\
+UKX & FTSE 100 & 2002-01-02 & W, M & Euronext Liffe, London & 10\\
+MIB & FTSE MIB & 2006-10-10 & W, M & Mercato dei Derivati, Milano & 2.5\\
+IBEX & IBEX-35 & 2006-10-11 & Mini Fut Opt & Mercado Espa{\~n}ol de Futuros & 1\\
+OMXH25 & OMXH HELSINKI 25 & 2002-01-02 & M & EUREX, Frankfurt & 10\\
+OMXS30 & OMXS30 & 2006-12-21 & W, M & Stockholmborsen Options Market & 100\\
+SMI & SMI & 2002-01-02 & W, M & EUREX, Frankfurt & 10\\
+V2TX & VSTOXX IND & 2010-03-17 & M & EUREX, Frankfurt & 100\\
+\bottomrule
+\end{tabular}
+}
+\end{frame}
+
+\begin{frame}{Several issues with Ivy DB for International Options}
+\begin{itemize}
+\item Multiple prices can exist for each index/date---depending on which exchange it is traded on
+\item IvyDB AS/EU has a `bug' in its Total Return data---basically, they are just price returns! We are currently patching it with total returns and prices from Bloomberg
+\item IvyDB AS/EU data have a reference exchange (used to compute Greeks) which may/not be the exchange the options actually trade on and these can be time varying \footnote{$\Delta$'s are modeled, and can be missing on occasion because the model couldn't compute it}
+\item Lots of `holes' - prices can go missing for extended periods (eg up to a month), or they can just disappear before expiry
+\item {\bf NO bid-offer spreads}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Initial Look at the Data - Options Liquidity (Europe), LTM}
+
+\begin{itemize}
+\item For Europe, liquidity is most available in Euro Stoxx 50 (SX5E) followed by DAX \& UKX; perhaps additional OTC volume available?
+\end{itemize}
+
+\includegraphics[scale=0.35]{liquidity_EU}
+
+\end{frame}
+
+
+\begin{frame}{Initial Look at the Data - Options Liquidity (Asia), LTM}
+
+
+\begin{itemize}
+\item For Asia, NKY offers most liquidity (TPX no volume) followed by TWSE, HSI, AS51 (KOSPI2 to be verified / to follow)
+\end{itemize}
+
+\includegraphics[scale=0.35]{liquidity_AS}
+
+\end{frame}
+
+
+\begin{frame}{Initial Look at the Data - Options Liquidity (S\&P 500)}
+
+
+\begin{itemize}
+\item S\&P 500 index options liquidity is still significantly larger than all other international index options markets combined
+\end{itemize}
+
+\includegraphics[scale=0.35]{liquidity_US}
+
+\end{frame}
+
+\begin{frame}{Initial Look at the Data - Options Availability (S\&P)}
+
+
+\begin{itemize}
+\item S\&P offers a range of listed options (weekly, monthly, quarterly) that extends far OTM and to maturities that are nearly 2.5 years out.
+\end{itemize}
+
+\includegraphics[scale=0.35]{moneyness_maturity_US}
+
+\end{frame}
+
+
+\begin{frame}{Initial Look at the Data - Options Availability (Asia)}
+
+
+\begin{itemize}
+\item For Asian indices, moneyness does not extend as wide of range, but maturities can available for out to 5 years (TPX, NKY)
+\end{itemize}
+
+\includegraphics[scale=0.35]{moneyness_maturity_AS}
+
+\end{frame}
+
+\begin{frame}{Initial Look at the Data - Options Availability (Europe)}
+
+
+\begin{itemize}
+\item For European indices, listed maturities can extend out to 10 years with strikes ranging from 80\% OTM and ITM (SX5E, UKX)
+\end{itemize}
+
+\includegraphics[scale=0.35]{moneyness_maturity_EU}
+
+\end{frame}
+
+\begin{frame}{Initial Look at the Data - ATM IV-RV spreads in Asia}
+
+
+\begin{itemize}
+\item Median spreads for S\&P tend to be higher, compared to other liquid global indices, especially at longer horizons (data since 2010)
+\end{itemize}
+
+
+\includegraphics[scale=0.35]{iv_rv_comp_AS}
+
+\end{frame}
+
+\begin{frame}{Initial look at the Data - ATM IV-RV spreads in Europe}
+
+\begin{itemize}
+\item Relative to European indices, median SPX spreads also tend to be higher, especially at longer horizons (data since 2010)
+\end{itemize}
+
+\includegraphics[scale=0.35]{iv_rv_comp_EU}
+
+\end{frame}
+
+\section{Calendar Collars on International Indices}
+
+\begin{frame}{S\&P 500 Collar, A Recap}
+
+\scalebox{0.65} {
+
+\begin{tabular}{lrrrrrrrrrrr}
+\toprule
+Strategy (1996-) & $\mu_{arith}$ & TotRetn & $\sigma$ & IR & IR$_{geo}$ & DD & Skew & $\mu_{geo}$ & $\beta$ & $\beta_+$ & $\beta-$ \\
+\midrule
+Equity & 9.8 & 210.4 & 19.2 & 0.51 & 0.43 & -55.5 & -0.06 & 8.3 & 1.00 & 1.0 & 1.00\\
+Equity Collar & 8.5 & 181.5 & 11.1 & 0.76 & 0.74 & -25.4 & -0.33 & 8.2 & 0.47 & 0.4 & 0.45\\
+\bottomrule
+\end{tabular}
+
+
+}
+
+\includegraphics[scale=0.35]{spx_collar}
+\end{frame}
+
+\begin{frame}{S\&P 500, Collar Since 2010}
+Sub-periods are re-runs of simulation, not just a sub-range of the P/L from the previously run simulation
+\includegraphics[scale=0.35]{spx_collar_2010}
+\end{frame}
+
+
+
+\begin{frame}{Eurostoxx Collar}
+
+\scalebox{0.65} {
+
+\begin{tabular}{lrrrrrrrrrrr}
+\toprule
+Strategy (2002-) & $\mu_{arith}$ & TotRetn & $\sigma$ & IR & IR$_{geo}$ & DD & Skew & $\mu_{geo}$ & $\beta$ & $\beta_+$ & $\beta-$ \\
+\midrule
+Equity & 6.2 & 97.8 & 23.6 & 0.26 & 0.15 & -57.9 & 0.12 & 3.5 & 1.00 & 1.00 & 1.00\\
+Equity Collar & 7.6 & 120.0 & 13.1 & 0.58 & 0.53 & -27.2 & 0.02 & 7.0 & 0.45 & 0.38 & 0.43\\
+\bottomrule
+\end{tabular}
+}
+
+\includegraphics[scale=0.35]{eurostoxx_collar}
+\end{frame}
+
+\begin{frame}{Eurostoxx, Collar Since 2010}
+
+\includegraphics[scale=0.35]{sx5e_collar_2010}
+\end{frame}
+
+
+
+
+\begin{frame}{Nikkei Collar}
+
+\scalebox{0.65} {
+
+\begin{tabular}{lrrrrrrrrrrr}
+\toprule
+Strategy (2004/05-) & $\mu_{arith}$ & TotRetn & $\sigma$ & IR & IR$_{geo}$ & DD & Skew & $\mu_{geo}$ & $\beta$ & $\beta_+$ & $\beta-$ \\
+\midrule
+Equity & 8.9 & 114.5 & 24.2 & 0.37 & 0.25 & -60.4 & -0.29 & 6.2 & 1.00 & 1.00 & 1.0\\
+Equity Collar & 9.2 & 118.0 & 39.1 & 0.24 & 0.04 & -66.5 & 0.98 & 1.5 & 0.58 & 0.85 & 0.4\\
+\bottomrule
+\end{tabular}
+}
+
+\includegraphics[scale=0.35]{nikkei_collar}
+\end{frame}
+
+
+\begin{frame}{Nikkei, Collar Since 2010}
+
+\includegraphics[scale=0.35]{nky_collar_2010}
+\end{frame}
+
+\begin{frame}{FTSE}
+
+\scalebox{0.65} {
+
+\begin{tabular}{lrrrrrrrrrrr}
+\toprule
+Strategy (2002-) & $\mu_{arith}$ & TotRetn & $\sigma$ & IR & IR$_{geo}$ & DD & Skew & $\mu_{geo}$ & $\beta$ & $\beta_+$ & $\beta-$ \\
+\midrule
+Equity & 7.9 & 123.3 & 18.9 & 0.42 & 0.33 & -44.5 & 0.02 & 6.3 & 1.00 & 1.00 & 1.0\\
+Equity Collar & 7.8 & 121.6 & 11.3 & 0.69 & 0.66 & -23.6 & -0.29 & 7.5 & 0.51 & 0.44 & 0.5\\
+\bottomrule
+\end{tabular}
+
+}
+
+\includegraphics[scale=0.35]{ftse_collar}
+\end{frame}
+
+
+\begin{frame}{FTSE, Collar Since 2010}
+
+\includegraphics[scale=0.35]{ftse_collar_2010}
+\end{frame}
+
+\section{Enhancements to Calendar Collars}
+
+\begin{frame}{Potential Enhancements to Calendar Collars}
+
+\begin{block}{}
+Are there variations of the calendar collar structure that can close the equity return gap while maintaining IR/drawdowns?
+\end{block}
+
+\begin{itemize}
+\item Currently, we buy a far OTM (-20\%) put. Is it possible to do better by buying protection closer to the money, but vary the notional? 
+\item What are the risk/return tradeoffs in targeting $\Delta$'s vs moneyness?
+\item Can we enhance returns by selling even shorter maturity calls, to benefit from the more negative $\Theta$
+\item Proposal for an enhanced calendar collar structure
+\end{itemize}
+\end{frame}
+
+
+\subsection{Moneyness vs Notional}
+\begin{frame}{Moneyness vs Notional Tradeoff - S\&P 500}
+
+\begin{itemize}
+\item What is our goal? 
+	\begin{itemize}
+	\item Protect against an instantatenous shock? 
+	\begin{itemize}
+	\item -10\% days are {\em extremely rare} ($3/22480=0.000133$)  
+	\item -5\% days are also quite rare ($75/22480=0.003336$)
+	\end{itemize}
+	\item Protect against prolonged drawdowns? 
+	\begin{itemize} \item Ten $\ge$ -20\%  peak-trough drawdowns since 1920, and two $\ge$ -45\%  since 2000 (a limited sample size)\end{itemize}
+	\end{itemize}
+\item Stress tests draw our attention to the extremely unlikely case---an instantaneous collapse: protecting against these rare cases can cause significant drag during normal times
+
+\item That said, there {\em are} advantages to buying ATM options: 
+\begin{itemize}
+\item better liquidity, better spreads and more alternatives to choose from...
+\item they are also nice because they remove one key choice---$\Delta$ or moneyness
+\end{itemize}
+
+\end{itemize}
+\begin{block}{Key Question}
+Can we benefit from the better characteristics of ATM options but reducing our costs by varying notionals?
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Moneyness vs Notional Tradeoff - S\&P 500 Calendar Collar}
+\begin{block}{$\downarrow$ DD $\implies$ $\uparrow$ drag}
+\begin{itemize}
+\item Eq + short call starts us with a relatively good cost v DD tradeoff
+\item If we {\em must} buy a put: $0.2\times$ ATMP $< 1\times$OTM20P$ < 0.4\times$ ATMP
+\item Buying anything over $0.4\times$ATMP comes at a high cost
+\end{itemize}
+\end{block}
+
+\begin{columns}
+
+\begin{column}{0.5\textwidth}
+
+\scalebox{0.7} {
+
+\begin{tabular}{lrrrrr}
+\toprule
+1996- & $\mu$ & $\sigma$ & $\mu/\sigma$ & DD & Cost \\
+\midrule
+Equity & 9.8 & 19.2 & 0.51 & -55.5 & 0.0\\
+\addlinespace
+-1OTM2C...\\
++0.0P & 10.3 & 14.9 & 0.69 & -37.0 & 0.5\\
++0.2ATMP & 9.3 & 12.7 & 0.73 & -29.7 & -0.5\\
++1.0OTM20P & 8.5 & 11.1 & 0.76 & -25.4 & -1.3\\
++0.4ATMP & 8.3 & 10.7 & 0.78 & -24.8 & -1.5\\
++0.6ATMP & 7.4 & 9.0 & 0.82 & -19.7 & -2.4\\
++0.8ATMP & 6.4 & 7.6 & 0.84 & -15.0 & -3.4\\
++1.0ATMP & 5.5 & 7.0 & 0.78 & -10.3 & -4.3\\
+\bottomrule
+\end{tabular}
+
+}
+
+\end{column}
+
+\begin{column}{0.5\textwidth}
+
+\scalebox{0.7} {
+
+
+\begin{tabular}{lrrrrr}
+\toprule
+2010- & $\mu$ & $\sigma$ & $\mu/\sigma$ & DD & Cost\\
+\midrule
+Equity & 13.6 & 15.2 & 0.90 & -18.5 & 0.0\\
+\addlinespace
+-1OTM2C...\\
++0.0P & 13.1 & 12.6 & 1.04 & -16.6 & -0.5\\
++0.2ATMP & 11.2 & 10.9 & 1.03 & -14.8 & -2.4\\
++1.0OTM20P & 10.0 & 10.0 & 1.00 & -13.3 & -3.6\\
++0.4ATMP & 9.3 & 9.2 & 1.00 & -13.0 & -4.3\\
++0.6ATMP & 7.4 & 7.7 & 0.96 & -11.2 & -6.2\\
++0.8ATMP & 5.5 & 6.3 & 0.87 & -9.3 & -8.1\\
++1.0ATMP & 3.6 & 5.2 & 0.69 & -7.5 & -10.0\\
+\bottomrule
+\end{tabular}
+
+}
+
+\end{column}
+
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}{Moneyness vs Notional Tradeoff - S\&P 500}
+
+\includegraphics[scale=0.31]{spx_put_notional}
+\end{frame}
+
+\subsection{Targeting $\Delta$ vs Moneyness}
+\begin{frame}{Targeting $\Delta$'s instead of Moneyness - S\&P500}
+
+\begin{itemize}
+\item $\Delta$'s affected by implied volatility
+\begin{itemize}
+\item targeting $\Delta$'s therefore implies lesser protection while rolling the puts especially when there are IV spikes ($\Delta$'s are high relative to moneyness when IV is high, therefore we effectively buy farther OTM puts)
+\item increases peak-to-trough drawdowns 
+\end{itemize}
+\item However, targeting deltas also mean selling closer to the money calls when IV is very low---increases returns
+
+\end{itemize}
+
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\scalebox{0.6} {
+\begin{tabular}{lrrrrr}
+\toprule
+1996- & $\mu$ & $\sigma$ & $\mu/\sigma$ & DD & Excess\\
+\midrule
+Eq & 9.8 & 19.2 & 0.51 & -55.5 & 0.0\\
++11DP,-30DC & 8.5 & 12.1 & 0.70 & -35.5 & -1.3\\
++20OTMP,-2OTMC & 8.5 & 11.1 & 0.76 & -25.4 & -1.3\\
+\bottomrule
+\end{tabular}
+}
+\end{column}
+
+
+\begin{column}{0.5\textwidth}
+\scalebox{0.6} {
+\begin{tabular}{lrrrrrr}
+\toprule
+2010- & $\mu$ & $\sigma$ & $\mu/\sigma$  & DD & Excess\\
+\midrule
+Eq & 13.6 & 15.2 & 0.90 &  -18.5 & 0.0\\
++11DP,-30DC & 10.6 & 10.1 & 1.05 &  -12.7 & -3.0\\
++20OTMP,-2OTMC & 10.0 & 10.0 & 1.00 &  -13.3 & -3.6\\
+\bottomrule
+\end{tabular}
+}
+\end{column}
+\end{columns}
+
+%\includegraphics[scale=0.34]{spx_collar_delta_v_moneyness}
+\end{frame}
+
+\begin{frame}{Targeting $\Delta$'s instead of Moneyness - S\&P500, 2006-}
+\includegraphics[scale=0.35]{spx_collar_delta_v_moneyness}
+\end{frame}
+
+\begin{frame}{Targeting $\Delta$'s instead of Moneyness - S\&P500, 2010-}
+
+
+\includegraphics[scale=0.35]{spx_collar_delta_2010}
+\end{frame}
+
+\begin{frame}{$\Delta$'s can vary significantly with volatility, unlike moneyness---can affect premiums paid and collected}
+
+\begin{itemize}
+\item 20\% 9M OTM puts are about 10D, but in 2008 they were nearly 25D
+\end{itemize}
+
+\begin{figure}
+\caption{Instrument $\Delta$'s in the simulation}
+\includegraphics[scale=0.34]{time_varying_deltas}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Significant variation in call $\Delta$'s}
+
+\begin{itemize}
+\item 1M 2\% OTM calls are less than 20 delta, in 2008 they were over 60D
+\end{itemize}
+
+\begin{figure}
+\caption{Instrument $\Delta$'s in the simulation}
+\includegraphics[scale=0.35]{time_varying_deltas_call}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Use of $\Delta$'s limits the premium (and possibly protection)}
+\begin{figure}
+%\caption{Instrument $\Delta$'s in the simulation}
+\includegraphics[scale=0.32]{premium_v_iv}
+\end{figure}
+We will later use this fact to sell moneyness calls and buy $\Delta$ puts
+\end{frame}
+
+\subsection{Even Shorter Maturity Calls}
+\begin{frame}{Even shorter maturity calls - S\&P 500}
+
+\begin{itemize}
+\item Short 2W call narrows  the return gap vs equity at a better IR$\implies$lesser need to lever up 
+\end{itemize}
+
+\begin{columns}
+\begin{column}{0.7\textwidth}
+\includegraphics[scale=0.26]{spx_collar_weekly_call}
+\end{column}
+\begin{column}{0.3\textwidth} 
+    \begin{center}
+     \includegraphics[scale=0.31]{spx_collar_short_pl_tx}
+     \end{center}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+
+
+\begin{frame}{Even shorter maturity calls - S\&P 500, Since 2010}
+
+\includegraphics[scale=0.37]{spx_collar_weekly_call_2010}
+
+\end{frame}
+
+
+\section{Summary - {\em Slightly} Lower Protection at a Lower Cost}
+\begin{frame}{Enhanced Calendar Collars}
+
+\begin{block}{}
+Moving to 10d or 2-week call enhances returns without altering other characteristics. 
+Targeting a 11$\Delta$ put, or using an \underline{ATM}  Put at 20\% or 30\% notional are all great candidates.
+\end{block}
+
+\begin{figure}
+
+\includegraphics[scale=0.3]{risk_v_return_summary}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Performance Summary Since 2006 and 2010}
+
+
+\begin{table}
+
+\centering
+\scalebox{0.65}{
+\begin{tabular}{lrrrrrr}
+\toprule
+2006- \footnote{{\tiny All Puts are 270\_60} } & $\mu$ & $\sigma$ & $\mu/\sigma$ & Sortino & DD & Cost \\
+\midrule
+\checkmark 0.2ATMP-2OTMC\_10\_5 & 10.0 & 13.3 & 0.75 & 0.07 & -29.4 & 0.2\\
+Eq  & 9.8 & 19.8 & 0.49 & 0.04 & -55.5 & 0.0\\
+\checkmark 11$\Delta$P-2OTMC\_10\_5 & 9.6 & 11.5 & 0.84 & 0.07 & -26.0 & -0.2\\
+0.3ATMP-2OTMC\_10\_5 & 9.4 & 12.2 & 0.77 & 0.07 & -26.2 & -0.4\\
+11$\Delta$P-2OTMC\_30\_5& 9.0 & 11.2 & 0.80 & 0.07 & -26.3 & -0.8\\
+\addlinespace
+OTM20P-2OTMC\_10\_5 & 9.0 & 11.1 & 0.81 & 0.07 & -24.3 & -0.8\\
+11$\Delta$P-30$\Delta$C\_30\_5 & 8.8 & 11.5 & 0.77 & 0.07 & -35.5 & -1.0\\
+0.4ATMP-2OTMC\_10\_5 & 8.8 & 11.1 & 0.79 & 0.07 & -23.7 & -1.0\\
+OTM20P-2OTMC\_30\_5 & 8.4 & 10.8 & 0.77 & 0.07 & -25.4 & -1.4\\
+\bottomrule
+\end{tabular}
+}
+
+\end{table}
+
+
+
+\begin{table}
+
+\centering
+
+\scalebox{0.64}{
+\begin{tabular}{lrrrrrr}
+\toprule
+2010- & $\mu$ & $\sigma$ & $\mu/\sigma$ & Sortino & DD & Cost \\
+\midrule
+Eq  & 13.5 & 15.1 & 0.89 & 0.08 & -18.5 & 0.0\\
+\checkmark 0.2ATMP-2OTMC\_10\_5 & 11.1 & 11.3 & 0.98 & 0.09 & -14.7 & -2.4\\
+11$\Delta$P-30$\Delta$C\_30\_5 & 10.5 & 10.1 & 1.04 & 0.09 & -12.7 & -3.0\\
+\checkmark 11$\Delta$P-2OTMC\_10\_5 & 10.3 & 10.7 & 0.97 & 0.09 & -13.2 & -3.2\\
+11$\Delta$P-2OTMC\_30\_5 & 10.3 & 10.3 & 1.01 & 0.09 & -13.3 & -3.2\\
+\addlinespace
+0.3ATMP-2OTMC\_10\_5  & 10.1 & 10.5 & 0.97 & 0.09 & -13.8 & -3.4\\
+OTM20P-2OTMC\_10\_5 & 9.9 & 10.5 & 0.95 & 0.08 & -13.2 & -3.6\\
+OTM20P-2OTMC\_30\_5 & 9.9 & 10.0 & 0.99 & 0.09 & -13.3 & -3.6\\
+0.4ATMP-2OTMC\_10\_5 & 9.2 & 9.7 & 0.95 & 0.08 & -12.9 & -4.3\\
+\bottomrule
+\end{tabular}
+}
+
+\end{table}
+
+\end{frame}
+
+\section{From July 7: Summary and Key Recommendations}
+
+\begin{frame}{A Review of Key Recommendations and Roadmap}
+
+\begin{itemize}
+\item Target low $\Delta$ (11) Puts instead of 20\% OTM puts - this prevents us from rolling into expensive insurance in the middle of a stress event
+\begin{itemize}
+\item Systematic and long-term evidence finds that the use of ATM Puts passively for protection (even at a lower notional) does not offer efficient tradeoffs in terms of their Greek P/L and exposures
+\item If we do want to use ATM instruments for other reasons, it's probably fine to allocate 20\% to 30\% to an ATM put instead of a low $\Delta$ Put
+\end{itemize}
+\item Move towards shorter-term calls (2W) and hold them as long as possible (roll $\le$ 5D before maturity)
+
+\begin{itemize}
+\item There is flexibility in the choice of moneyness - farther OTM instruments reduce the need to ``lever'' up the structure to close the equity return gap
+\end{itemize}
+
+\item Future
+\begin{itemize}
+\item Review evidence on the use of levered farther OTM calls for return enhancement
+\item Use of calendar collars for Eurostoxx
+\item Review evidence on structures like straddles
+\end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+
+\section{ATM Puts vs Low Delta Puts}
+
+\begin{frame}{Protecting against large losses is far more important than using up insurance for small losses}
+\includegraphics[scale=0.38]{compounding}
+
+With that out of the way, we will look at how the calendar collar and variants work during a range of drawdowns, including smaller ones!
+\end{frame}
+
+\begin{frame}{Moneyness vs Notional Tradeoff - Review}
+\begin{block}{$\downarrow$ DD $\implies$ $\uparrow$ drag}
+\begin{itemize}
+\item Eq + short call starts us with a relatively good cost v DD tradeoff
+\item If we {\em must} buy a put: $0.2\times$ ATMP $< 1\times$OTM20P$ < 0.4\times$ ATMP
+\item Buying anything over $0.4\times$ATMP comes at a high cost
+\end{itemize}
+\end{block}
+
+\begin{columns}
+
+\begin{column}{0.5\textwidth}
+
+\scalebox{0.7} {
+
+\begin{tabular}{lrrrrr}
+\toprule
+1996- & $\mu$ & $\sigma$ & $\mu/\sigma$ & DD & Cost \\
+\midrule
+Equity & 9.8 & 19.2 & 0.51 & -55.5 & 0.0\\
+\addlinespace
+-1OTM2C...\\
++0.0P & 10.3 & 14.9 & 0.69 & -37.0 & 0.5\\
++0.2ATMP & 9.3 & 12.7 & 0.73 & -29.7 & -0.5\\
++1.0OTM20P & 8.5 & 11.1 & 0.76 & -25.4 & -1.3\\
++0.4ATMP & 8.3 & 10.7 & 0.78 & -24.8 & -1.5\\
++0.6ATMP & 7.4 & 9.0 & 0.82 & -19.7 & -2.4\\
++0.8ATMP & 6.4 & 7.6 & 0.84 & -15.0 & -3.4\\
++1.0ATMP & 5.5 & 7.0 & 0.78 & -10.3 & -4.3\\
+\bottomrule
+\end{tabular}
+
+}
+
+\end{column}
+
+\begin{column}{0.5\textwidth}
+
+\scalebox{0.7} {
+
+
+\begin{tabular}{lrrrrr}
+\toprule
+2010- & $\mu$ & $\sigma$ & $\mu/\sigma$ & DD & Cost\\
+\midrule
+Equity & 13.6 & 15.2 & 0.90 & -18.5 & 0.0\\
+\addlinespace
+-1OTM2C...\\
++0.0P & 13.1 & 12.6 & 1.04 & -16.6 & -0.5\\
++0.2ATMP & 11.2 & 10.9 & 1.03 & -14.8 & -2.4\\
++1.0OTM20P & 10.0 & 10.0 & 1.00 & -13.3 & -3.6\\
++0.4ATMP & 9.3 & 9.2 & 1.00 & -13.0 & -4.3\\
++0.6ATMP & 7.4 & 7.7 & 0.96 & -11.2 & -6.2\\
++0.8ATMP & 5.5 & 6.3 & 0.87 & -9.3 & -8.1\\
++1.0ATMP & 3.6 & 5.2 & 0.69 & -7.5 & -10.0\\
+\bottomrule
+\end{tabular}
+
+}
+
+\end{column}
+
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}{Do ATM Puts Help with Smaller Drawdowns? {\bf Not Significantly Different}}
+\includegraphics[scale=0.35]{atm_puts_dd_2010}
+\end{frame}
+
+\begin{frame}{Low $\Delta$ Puts vs ATM Puts: Desired vs Undesired Greeks}
+
+An Option's {\em realized} P/L attribution:
+
+{\small
+\begin{multline}
+\Pi_{t} \approx \underbrace{\Delta_{t-1}*(S_{t}-S_{t-1}) +\nu_{t-1}*(\sigma_{t}-\sigma_{t-1})  + 0.5*\Gamma_{t-1}*(S_{t}-S_{t-1})^2}_\text{Desired Greeks}  + \\  \underbrace{\textcolor{red}{\Theta_{t-1}}*(\tau_{t}-\tau_{t-1})}_\text{Undesired} + \underbrace{\epsilon_{t}}_\text{b-a spreads,interaction terms, missing greeks {\bf etc} }
+\end{multline}
+}
+
+\scalebox{0.7}{
+
+\begin{tabular}{l|c|r|r|r|r|r|r|r|r}
+\hline
+06-17 & Total P/L & $\Delta$ & $\Gamma$ & $\epsilon$ & $\Theta$ & $\nu$ & $\frac{\Delta + \Gamma}{  \left| \Theta  \right|} $ & $\frac{\Delta + \Gamma  + \nu}{  \left| \Theta  \right|} $ & $\frac{\Delta + \Gamma  + \nu+\epsilon}{  \left| \Theta  \right|} $ \\
+\hline
+\hline
+11$\Delta$P & -1.7 & -1.4 & 2.1 & 0.2 & -3.2 & 0.5 & 0.2 & 0.4 & 0.5\\
+\hline
+ATMP & -6.3 & -4.8 & 4.1 & -0.4 & -5.4 & 0.3 & -0.1 & -0.1 & -0.2\\
+\hline
+06-09\\
+\hline \hline
+11$\Delta$P & -0.09 & -0.88 & 4.43 & -0.04 & -3.98 & 0.37 & 0.89 & 0.99 & 0.98\\
+\hline
+ATMP & -0.34 & -0.85 & 5.76 & -0.50 & -4.83 & 0.07 & 1.02 & 1.03 & 0.93\\
+\hline
+10-17\\
+\hline \hline
+11$\Delta$P & -2.53  & -1.62 & 0.95 & 0.30 & -2.80 & 0.64 & -0.24 & -0.01 & 0.10\\
+\hline
+ATMP & -9.35 & -6.91 & 3.20 & -0.31 & -5.67 & 0.34 & -0.66 & -0.59 & -0.65\\
+\hline
+
+\end{tabular}
+
+}
+
+\end{frame}
+
+
+\begin{frame}{Low $\Delta$ Puts vs ATM Puts: Greek Ratios by Year}
+\includegraphics[scale=0.6]{desirable_greeks}
+\end{frame}
+
+\begin{frame}{Low $\Delta$ Puts vs ATM Puts: Key Greek P/L by Year}
+\includegraphics[scale=0.6]{gamma_vega}
+\end{frame}
+
+
+\begin{frame}{Put Option Characteristics in the Simulation - 07-09 \footnote{In these and the following charts, {\tt OptMV} is the ``market value'' of the option computed as shares $\times$ option price and accounts for the notional allocation. {\bf Greeks are simply instrument greeks and not scaled by the notional } }}
+
+\includegraphics[scale=0.32]{greek_puts_simulation}
+
+\end{frame}
+
+\begin{frame}{Put Instrument Characteristics in the Simulation - 10-17}
+
+\includegraphics[scale=0.32]{greek_puts_simulation_10}
+
+\end{frame}
+
+
+
+\begin{frame}{Greek Attribution - Puts}
+
+\includegraphics[scale=0.33]{comparing_the_puts}
+
+\end{frame}
+
+
+\section{Short-Term Calls and Strikes}
+\begin{frame}{Impact of Strikes on Short-Term \footnote{\small all calls are \_10\_5}  Calls}
+
+\begin{columns}
+
+\begin{column}[T]{0.6\textwidth}
+\justifying
+\scalebox{0.75}{
+\begin{tabular}{lrrrrr}
+\toprule
+2006- & Retn & Risk & IR & Sortino & DD\\
+\midrule
+Eq & 9.8 & 19.8 & 0.49 & 0.04 & -55.5\\
+$11\Delta$ Put -\\
+OTM1 & 8.6 & 10.5 & 0.82 & 0.07 & -23.1\\
+OTM1.5 & 9.0 & 10.9 & 0.83 & 0.07 & -25.1\\
+OTM2.0 & 9.6 & 11.5 & 0.84 & 0.07 & -26.0\\
+OTM2.5 & 10.0 & 11.9 & 0.85 & 0.07 & -27.5\\
+OTM3.0 & 10.3 & 12.2 & 0.84 & 0.07 & -28.8\\
+\bottomrule
+\end{tabular}
+}
+
+\scalebox{0.75}{
+\begin{tabular}{lrrrrr}
+\toprule
+2010- & Retn & Risk & IR & Sortino & DD\\
+\midrule
+ Eq & 13.7 & 15.2 & 0.90 & 0.08 & -18.5\\
+$11\Delta$ Put -\\
+OTM1 
+% 
+& 9.2 & 9.7 & 0.95 & 0.08 & -12.9\\
+OTM1.5 & 9.8 & 10.3 & 0.95 & 0.08 & -13.0\\
+OTM2.0 & 10.6 & 10.8 & 0.98 & 0.09 & -13.2\\
+OTM2.5 & 11.3 & 11.3 & 1.01 & 0.09 & -13.6\\
+OTM3.0 & 11.8 & 11.6 & 1.02 & 0.09 & -13.6\\
+\bottomrule
+\end{tabular}
+}
+\end{column}
+
+\hfill
+
+
+\begin{column}[T]{0.4\textwidth}
+\justifying
+% \begin{block}{}
+\small
+\begin{itemize}
+\item Selling calls closer to the money provides more protection during volatile periods but also costs more during low vol, positive trend regimes. 
+\item Buying farther OTM calls reduces the need to lever up to close the return gap with passive equities. It also keeps $\Delta$'s closer to 0. 
+\item Note that selling short-term calls (2W instead of 1M) already keeps deltas lower and closer to 0. 
+\end{itemize}
+% \end{block}
+\end{column}
+
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}{Drawdown Profile: Calendar Collar Call Strikes 2010-}
+
+\includegraphics[scale=0.35]{st_call_moneyness_dd_2010}
+
+\end{frame}
+
+\begin{frame}{Drawdown Profile: Calendar Collar Call Strikes 2006-}
+
+\includegraphics[scale=0.35]{st_call_moneyness_dd}
+
+\end{frame}
+
+\begin{frame}{Calendar Collar - $\Delta$ Ranges}
+\centering
+
+\scalebox{0.6}{
+\begin{tabular}{lrrrrr}
+\toprule
+06-17 & Median & Max & Min & Mean & Last\\
+\midrule
++11$\Delta$P & -0.1127 & -0.0946 & -0.3263 & -0.1210 & -0.1084\\
+-OTM1.0C & -0.3254 & -0.0602 & -0.7144 & -0.3327 & -0.0863\\
+-OTM1.5C & -0.2301 & -0.0380 & -0.7039 & -0.2578 & -0.0380\\
+-OTM2.0C & -0.1485 & -0.0185 & -0.6947 & -0.1931 & -0.0392\\
+-OTM2.5C & -0.0940 & -0.0102 & -0.6854 & -0.1460 & -0.0104\\
+-OTM3.0C & -0.0595 & -0.0085 & -0.6761 & -0.1132 & -0.0089\\
+\bottomrule
+\end{tabular}
+}
+
+\includegraphics[scale=0.45]{st_call_delta_ranges}
+\end{frame}
+
+\begin{frame}{Short Calls and the Greek Tradeoff}
+
+In a short call, we like the $\Delta$ (negative, risk control) and we like the $\Theta$. We \emph{do not} like $\nu$ and being short $\Gamma$. Calls that are farther OTM offer excellent tradeoffs among the desired vs undesired greeks. 
+
+\scalebox{0.85}{
+\begin{tabular}{l|r|r|r|r|r|r|r|r}
+\hline
+06-17 & $\Delta$ & $\Gamma$ & $\epsilon$ & $\Theta$ & $\nu$ & Total & $\frac{\Theta+\Delta}{|\Gamma+\nu|}$ & $\frac{\text{Total}-(\Gamma+\nu)}{|\Gamma+\nu|}$ \\
+\hline
+OTM1.5 & 1.35 & -11.95 & 2.36 & 13.67 & -4.63 & 0.78 & 0.91 & 1.05\\
+\hline
+OTM1 & 1.11 & -12.74 & 2.12 & 14.92 & -5.04 & 0.38 & 0.90 & 1.02\\
+\hline
+OTM2.0 & 1.70 & -10.93 & 2.44 & 12.18 & -4.03 & 1.36 & 0.93 & 1.09\\
+\hline
+OTM2.5 & 1.92 & -9.83 & 2.55 & 10.72 & -3.53 & 1.83 & 0.95 & 1.14\\
+\hline
+OTM3.0 & 2.13 & -8.81 & 2.42 & 9.40 & -3.06 & 2.08 & 0.97 & 1.18\\
+\hline
+\end{tabular}
+}
+\scalebox{0.85}{
+\begin{tabular}{l|r|r|r|r|r|r|r|r}
+\hline
+10-17 & $\Delta$ & $\Gamma$ & $\epsilon$ & $\Theta$ & $\nu$ & Total & $\frac{\Theta+\Delta}{|\Gamma+\nu|}$ & $\frac{\text{Total}-(\Gamma+\nu)}{|\Gamma+\nu|}$ \\
+\hline
+OTM1.5 & -1.24 & -9.84 & 2.83 & 11.87 & -4.96 & -1.34 & 0.72 & 0.91\\
+\hline
+OTM1 & -1.49 & -10.97 & 2.54 & 13.49 & -5.48 & -1.91 & 0.73 & 0.88\\
+\hline
+OTM2.0 & -0.68 & -8.51 & 2.73 & 10.04 & -4.11 & -0.53 & 0.74 & 0.96\\
+\hline
+OTM2.5 & -0.17 & -7.20 & 2.60 & 8.38 & -3.43 & 0.18 & 0.77 & 1.02\\
+\hline
+OTM3.0 & 0.24 & -6.06 & 2.33 & 6.98 & -2.84 & 0.66 & 0.81 & 1.07\\
+\hline
+\end{tabular}
+}
+
+\end{frame}
+
+
+\begin{frame}{Greeks Attribution of 2W vs 1M Calls}
+
+\includegraphics[scale=0.32]{comparing_the_calls}
+
+\end{frame}
+
+
+\begin{frame}{Greek Attribution of Short-Term Calls At Different Moneyness}
+
+\includegraphics[scale=0.6]{call_moneyness_greek_attrib}
+
+\end{frame}
+
+
+
+\begin{frame}{Call Option Characteristics in the Simulation - 08-09}
+
+\includegraphics[scale=0.32]{greek_calls_simulation_08}
+
+\end{frame}
+
+
+\begin{frame}{Call Option Characteristics in the Simulation - 2011}
+
+\includegraphics[scale=0.32]{greek_calls_simulation_11}
+
+\end{frame}
+
+
+\begin{frame}{Call Option Characteristics in the Simulation - 2013}
+
+\includegraphics[scale=0.32]{greek_calls_simulation_13}
+
+\end{frame}
+
+
+\begin{frame}{Call Option Characteristics in the Simulation - 2015}
+
+\includegraphics[scale=0.32]{greek_calls_simulation_15}
+
+\end{frame}
+
+
+
+
+\begin{frame}{Call Option Characteristics in the Simulation - 2017}
+
+\includegraphics[scale=0.32]{greek_calls_simulation_17}
+
+\end{frame}
+
+
+
+
+\section{Roll Schedule of the Put Leg}
+
+\begin{frame}{Impact of Put  \footnote{Put Maturities, $T=270$} Roll Schedule on the Calendar Collar}
+
+
+\begin{columns}
+
+\begin{column}[t]{0.6\textwidth}
+\justifying
+\scalebox{0.8}{
+
+\begin{tabular}{lrrrr}
+\toprule
+2006- & Retn & Risk & IR & DD\\
+\midrule
+Eq & 9.8 & 19.8 & 0.49 & -55.5\\
+$11\Delta P_{T-180}$ & 8.5 & 11.8 & 0.72 & -30.2\\
+$11\Delta P_{T-90}$ & 9.2 & 11.8 & 0.78 & -28.7\\
+\checkmark $11\Delta P_{T-60}$ & 9.6 & 11.5 & 0.84 & -26.0\\
+$11\Delta P_{T-30}$ & 10.7 & 12.5 & 0.86 & -24.9\\
+
+\bottomrule
+\end{tabular}
+
+}
+
+\scalebox{0.8}{
+
+\begin{tabular}{lrrrr}
+\toprule
+2010- & Retn & Risk & IR & DD\\
+\midrule
+Eq & 13.7 & 15.2 & 0.90 & -18.5\\
+$11\Delta P_{T-180}$  & 9.9 & 10.5 & 0.94 & -14.0\\
+$11\Delta P_{T-90}$ & 10.4 & 10.8 & 0.96 & -14.2\\
+\checkmark $11\Delta P_{T-60}$ & 10.6 & 10.8 & 0.98 & -13.2\\
+$11\Delta P_{T-30}$ & 10.8 & 11.0 & 0.98 & -13.4\\
+
+\bottomrule
+\end{tabular}
+}
+\end{column}
+
+\hfill
+
+
+\begin{column}[t]{0.4\textwidth}
+%\justifying
+The roll schedule does not affect risk management. However, frequency of hitting the bid-offer spreads affects returns.\\
+ Rolling closer to maturity increases returns at similar risk, at the expense of making outcomes a tad more path dependent.
+\end{column}
+
+\end{columns}
+
+\end{frame}
+
+\section{Followup from July 13}
+
+\begin{frame}{Followup from July 13}
+\begin{block}{Review}
+\begin{itemize}
+\item For the short call leg: 2W calls, hold as close as possible to maturity
+\item Use 11$\Delta$ puts instead of 20\% OTM; use of $\Delta$'s enforce a modicum of discipline by not buying expensive puts at roll time after a huge sell-off 
+\end{itemize}
+\end{block}
+
+\begin{block}{Agenda}
+\begin{itemize}
+\item Show bonds (and other asset returns) in drawdown bar charts
+\item Is there a way to increase returns by selectively choosing leverage and moneyness for calls so we can eliminate leverage for the overall structure?
+\item Path dependency...
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Drawdowns and Other Assets}
+European and Japanese equities exacerbate drawdowns
+\includegraphics[scale=0.33]{dd_plot_assets}
+\end{frame}
+
+\begin{frame}{European and Japanese Equities Exacerbate Drawdowns}
+\small Unless we have an excellent tactical model, these exposures might partially nullify the benefits of a financially engineered stable equity structure
+\includegraphics[scale=0.31]{idxes_dd}
+\end{frame}
+
+
+\begin{frame}{Drawdowns \& the Calendar Collar}
+\includegraphics[scale=0.33]{dd_plot_with_bond_1}
+\end{frame}
+
+
+\begin{frame}{Closing the Return Gap by Selling More Calls}
+\includegraphics[scale=0.33]{levered_call_2006}
+\end{frame}
+
+\begin{frame}{Closing the Return Gap by Selling More Calls: 2010-}
+\includegraphics[scale=0.33]{levered_calls_2010}
+\end{frame}
+
+\begin{frame}{Selling More Calls - Drawdowns}
+Collars start to provide meaningful protection (about 2\%) when equities are down over 10\%
+\includegraphics[scale=0.33]{dd_bar_plot_proposal}
+\end{frame}
+
+\begin{frame}{Path Dependency}
+\small
+There is some path dependency depending on how and when you monetize the gains from the Put; they really all even out over time. More importantly, the drawdown protection in all cases is significant
+\includegraphics[scale=0.33]{path_dependency}
+\end{frame}
+
+
+
+\section{Appendix}
+
+
+\begin{frame}{Sample Call Option Surface\footnote{As of Jun 30}}
+
+\includegraphics[scale=0.32]{sample_call_opt_surface}
+
+\end{frame}
+
+\begin{frame}{Sample Put Option Surface\footnote{As of Jun 30}}
+
+\includegraphics[scale=0.32]{sample_put_opt_surface}
+
+\end{frame}
+
+
+
+\end{document}

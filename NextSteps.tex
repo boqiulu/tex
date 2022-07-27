@@ -1,0 +1,138 @@
+\documentclass{beamer}
+
+% For more themes, color themes and font themes, see:
+% http://deic.uab.es/~iblanes/beamer_gallery/index_by_theme.html
+%
+\mode<presentation>
+{
+  \usetheme{CambridgeUS}       % or try default, Darmstadt, Warsaw, ...
+  \usecolortheme{seagull} % or try albatross, beaver, crane, ...
+  \usefonttheme{professionalfonts}    % or try default, structurebold, ...
+  \setbeamertemplate{navigation symbols}{}
+  \setbeamertemplate{caption}[numbered]
+  \setbeamertemplate{caption}{\insertcaption}
+} 
+
+\newcommand{\ditto}[1][.4pt]{\xrfill{#1}~\textquotedbl~\xrfill{#1}}
+
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{paralist}
+\usepackage{amsmath}
+\usepackage{color}
+\usepackage{ragged2e}
+
+
+\AtBeginSection[]
+{
+  \begin{frame}
+    \frametitle{Table of Contents}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+% On Overleaf, these lines give you sharper preview images.
+% You might want to `comment them out before you export, though.
+\usepackage{pgfpages}
+
+\pgfpagesuselayout{resize to}[letterpaper, landscape] 
+
+
+% Here's where the presentation starts, with the info for the title slide
+
+\title[{\tt GaaOptions}]{{\tt GaaOptions}: Next Steps}
+\author[DC $|$ BL]{Dimitri Curtil \and Boqiu Lu}
+\date{\today}
+%\date{03 November 2017}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\section{Variance Risk Premium}
+\begin{frame}{Variance Risk Premium}
+
+\begin{itemize}
+\item Risk premiums can generally be characterized by the difference between risk-neutral expectations and physical realizations of underlying processes. 
+\vfill
+\item The {\bf variance risk premium [VRP]} is specified as the difference between implied and realized variance.
+\vfill
+\item Variance can be a component in determining expected risk and return due to changes in the investment opportunity set, which induces a demand for hedging (Merton 1973); moreover, not only is there variation in returns, but there is also variation in variance. 
+\vfill
+\item The market rewards bearers of these uncertainties, and while the VRP changes over time, it seems to be {\em different from zero over the long-term}.
+\vfill
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Risk-Neutral Expectation \& Physical Realization}
+\begin{itemize}
+\item The VRP is directly indicative of the payoff of a variance swap; under no-arbitrage conditions, the variance swap rate equals the risk-neutral expected value of the realized variance, which can be replicated via a portfolio of out-the-money options.
+\vfill
+\item For global equity indices, the VRP can be obtained from
+\begin{itemize}
+\item risk-neutral expectation: data from index options [from OptionMetrics]
+\item physical realization: data from index (5-minute) intraday returns [from Oxford-Man]
+\end{itemize}
+\vfill
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Risk-Neutral Component (1)}
+\begin{itemize}
+\item Using OptionMetrics data for global index options, for each days, calls and puts are first cleaned and then sorted by maturity and strike price:
+	\begin{itemize}
+	\item Prices are taken as the average of bid-offer quotes; options with zero bids, bids below [ 3/8 ], and those with quotes that violate common no-arbitrage conditions are discarded.
+	\item For any given option, the appropriate interest rate input corresponds to the zero-coupon rate that has a maturity equal to the option's expiration and is obtained by linearly 				interpolating between the two closest zero-coupon rates on the zero curve (following OptionMetrics IvyDB reference manual).
+	\end{itemize}
+\vfill	
+\item To obtain consistent risk-neutral moments, the data is filtered\footnote{\tiny Filtering follows Chang, B., Christoffersen, P., and Jacobs K. {\em Market skewness risk and the cross-section of stock returns.} Journal of Financial Economics. 2013.} to include only:
+	\begin{itemize}
+	\item Mostly out-the-money contracts (most traded and liquid), i.e. only moneyness levels higher than 97\% for calls and lower than 103\% for puts.
+	\end{itemize}
+\vfill
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Risk-Neutral Component (2)}
+\begin{itemize}
+\item Interpolation / extrapolation:
+	\begin{itemize}
+	\item Since listed option strikes are discrete, for each date and maturity, implied volatilities are interpolated over a finely-discretized moneyness domain via cubic splice to obtain a dense 			set of implied volatilities.
+	\item For out-of-range moneyness levels, implied volatilities are extrapolated from the nearest strike option.
+	\item Resulting interpolation-extrapolation generates a fine grid of 1,000 implied volatilities for moneyness levels between 0.01\% and 300\%.
+	\end{itemize}
+\vfill
+\item Pricing: the implied volatilities are then mapped into call and put prices (calls for moneyness levels greater than 1 and puts for moneyness levels less than or equal to 1).
+\vfill
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Physical Component}
+\begin{itemize}
+\item Measurements of realized variance improve as sampling frequency increases and, in the limit of continuous sampling, converges to the integrated variance; however, in practice, the semi-martingale property (where innovations are orders of magnitude larger than drift for short-term price movements) may be violated at higher than 5-minute frequency due to market microstructure.
+\item Using 5-minute intraday returns, aim to obtain an unbiased model-free estimate of the quadratic variation or the integrated variance, $IV_{t}=\int_{0}^{T}\sigma^2_{s}ds$, of the underlying process\footnote{\tiny Liu, L., Patton A., and Sheppard K. {\em Does Anything Beat 5-Minute RV? A Comparison of Realized Variance Measures Across Multiple Asset Classes.} December 2012}.
+\item Oxford-Man Institute of Quantitative Finance Realized Library\footnote{\tiny http://realized.oxford-man.ox.ac.uk/} provides daily non-parametric measures of realized variance on benchmark financial assets that are computed using high-frequency data from Thomson Reuters DataScope Tick History database.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Global Variance Risk Premiums}
+\end{frame}
+
+\section{Preliminary Evaluation: Straddles \& Strangles}
+\begin{frame}{Across Indices \& Tenors (Straddles)}
+\end{frame}
+
+\begin{frame}{Across Indices \& Deltas (Strangles)}
+\end{frame}
+
+\begin{frame}{Across Indices \& Holding Period (Straddles \& Strangles)}
+\end{frame}
+
+\section{Option Implied Risk-Neutral Probabilities}
+\begin{frame}{Option-Implied Risk-Neutral Probabilities}
+\end{frame}
+\end{document}

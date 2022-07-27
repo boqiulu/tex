@@ -1,0 +1,228 @@
+\documentclass{beamer}
+
+% For more themes, color themes and font themes, see:
+% http://deic.uab.es/~iblanes/beamer_gallery/index_by_theme.html
+%
+\mode<presentation>
+{
+  \usetheme{CambridgeUS}       % or try default, Darmstadt, Warsaw, ...
+  \usecolortheme{seagull} % or try albatross, beaver, crane, ...
+  \usefonttheme{professionalfonts}    % or try default, structurebold, ...
+  \setbeamertemplate{navigation symbols}{}
+  \setbeamertemplate{caption}[numbered]
+  \setbeamertemplate{caption}{\insertcaption}
+} 
+
+\newcommand{\ditto}[1][.4pt]{\xrfill{#1}~\textquotedbl~\xrfill{#1}}
+
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{paralist}
+\usepackage{amsmath}
+\usepackage{color}
+\usepackage{ragged2e}
+
+
+\AtBeginSection[]
+{
+  \begin{frame}
+    \frametitle{Table of Contents}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+% On Overleaf, these lines give you sharper preview images.
+% You might want to `comment them out before you export, though.
+\usepackage{pgfpages}
+
+\pgfpagesuselayout{resize to}[letterpaper, landscape] 
+
+
+% Here's where the presentation starts, with the info for the title slide
+
+\title[Equity Collar Implementation in DTR]{Equity Collar Implementation in DTR}
+\author[ AA Research ]{ AA Research }
+\date{\today}
+%\date{17 November 2017}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+%\section{Review from March 2017}
+\begin{frame}{Review from March 2017}
+\begin{itemize}
+
+\item In March 2017, we evaluated the initial implementation of the collar (S\&P 500 only) for DTR. Primary conclusions were:
+	\vfill
+	\begin{itemize}
+	\item Using time-varying weight on collar is effective in controlling drawdowns without excessive drag during recovery (constant allocation to collar incurs too much insurance cost during periods of low equity allocation and drags during recovery)
+	\vfill
+	\item While additional bonds improve returns, it also introduces risks and increases drawdowns (less bond may be preferable and may want to keep correlation shrinkage as part of simParams model)
+	\vfill
+	\vfill
+	\item Overall, the collar helps on some drawdownns and time-vary collar does not hurt too much in recovery (does not help as much as expected on major drawdowns since DTR has macro signal in simulation)
+	\vfill
+	\item With the equity collar implemented, we could be more aggressive in the equity allocation (apply leverage / multiplier)
+	\vfill	
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+%\begin{frame}{International Equity Collar Implementation in DTR}
+%\includegraphics[scale=0.325]{email.png}
+%\end{frame}
+
+\begin{frame}{International Equity Collar Implementation in DTR}
+
+\begin{itemize}
+
+\item Evaluate the impact of a combination of S\&P, Nikkei, and Euro Stoxx collars on overall DTR performance
+	\vfill
+\item Assumptions:
+	\vfill
+	\begin{itemize}
+	\item Combined DTR Beta + Relative Value positions
+	\vfill
+	\item Notional of the puts and the calls match the exposure to S\&P, Topix and sum of (DAX, CAC, AEX, IBEX, MIB) in the portfolio. 
+	\vfill
+	\item Adjust the notional of the three collars on a monthly basis.
+	\vfill
+	\item At roll date of the call, adjust the beta/futures such that the combination of futures, delta of the new short call, delta of a 9-month constant maturity 11-delta put add to 			approximately zero.
+	\vfill	
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Conclusions and Next Steps}
+\begin{itemize}
+\item The combination of S\&P, Nikkei, and Euro Stoxx collars can help to reduce the drawdowns and volatility of the total DTR portfolio --- {\bf only if there are no delta-adjustments applied}.
+
+	\begin{itemize}
+	\item The delta-adjustment is similar in mechanic to delta-hedging the position; this can add returns (without introducing more volatility) but it removes the drawdown protection benefits 		of the collar structure.
+	\item Similar to findings in March 2017, overall drawdown protection from the collar structure is not as significant given the presence of the macro signal in simulation; we evaluate the 		case with and without LEI.
+	\end{itemize}
+\item It is necessary to evaluate and re-visit the subject of {\bf what types of equity exposure DTR should take and what we intend to hedge}:
+
+	\begin{itemize}
+	\item If DTR takes global equity exposure and intend to hedge the total portfolio ($\beta + \alpha$), the collars should be implemented internationally.
+	\item If DTR takes global equity exposure and intend to hedge the beta portfolio ($\beta$ only), the collar can be implemented domestically and should suffice to hedge major tail risks (US cap weight 60\%+ and US collar will hedge global, large magnitude drawdowns).
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{DTR Total Equity Allocations by Country \& Collar Region}
+\includegraphics[scale=0.35]{dtr_equity_weights} \\
+\includegraphics[scale=0.35]{dtr_region_weights}
+\end{frame}
+
+\begin{frame}{(Short 1M Call + Long 11-Delta Put) Delta at Roll Date}
+\includegraphics[scale=0.35]{dtr_initial_delta}
+\end{frame}
+
+\begin{frame}{\large International Equity Collar Implementation and Delta Adjustment}
+\includegraphics[scale=0.35]{dtr_cll_implement}
+\end{frame}
+
+\begin{frame}{International Equity Collar Performance Attribution}
+\includegraphics[scale=0.35]{dtr_cll_attrib}
+\end{frame}
+
+\begin{frame}{DTR (with LEI) Performance by Sleeve [CL = COLLAR]}
+\includegraphics[scale=0.35]{dtr_withcll_perf} 
+\end{frame}
+
+\begin{frame}{DTR (with LEI) Performance Returns \& Drawdowns}
+\includegraphics[scale=0.35]{dtr_ret_dd} 
+\end{frame}
+
+\begin{frame}{DTR (No LEI) Performance Returns \& Drawdowns}
+\includegraphics[scale=0.35]{dtr_nolei_ret_dd}
+\end{frame}
+
+\begin{frame}{Performance Summary (Since 1996)}
+\centering
+\scalebox{0.8}{
+\begin{tabular}{lrrrrrr}
+\toprule
+Component & RET & RETgeo & VOL & IR & IRgeo & MDD\\
+\midrule
+BB & 1.5 & 1.5 & 2.3 & 0.68 & 0.67 & -4.1\\
+FX & 4.1 & 4.1 & 2.3 & 1.81 & 1.83 & -2.6\\
+SS & 0.8 & 0.8 & 2.0 & 0.39 & 0.39 & -5.1\\
+TR (with LEI) & 7.7 & 7.8 & 5.9 & 1.31 & 1.33 & -8.1\\
+TR (no LEI) & 7.3 & 7.3 & 6.2 & 1.16 & 1.17 & -17.2\\
+\midrule
+\addlinespace
+CL with LEI (with Delta-Adjustment) & 1.9 & 1.9 & 2.5 & 0.76 & 0.76 & -3.6\\
+CL no LEI (with Delta-Adjustment) & 2.1 & 2.1 & 3.0 & 0.69 & 0.68 & -3.6\\
+\midrule
+\addlinespace
+CL with LEI (no Delta-Adjustment) & -1.3 & -1.3 & 3.5 & -0.36 & -0.38 & -27.8\\
+CL no LEI (no Delta-Adjustment) & -1.0 & -1.1 & 4.1 & -0.24 & -0.26 & -24.5\\
+\midrule
+\addlinespace
+\midrule
+DTR with LEI (no CL) & 13.9 & 14.6 & 7.2 & 1.93 & 2.03 & -9.6\\
+{\bf DTR with LEI (with CL with D-A)} & 15.8 & 16.8 & 7.0 & 2.24 & 2.38 & -9.7\\
+DTR with LEI (with CL no D-A) & 12.6 & 13.3 & 6.0 & 2.11 & 2.21 & -6.6\\
+\midrule
+\addlinespace
+DTR no LEI (no CL) & 13.4 & 14.1 & 7.5 & 1.80 & 1.88 & -12.4\\
+{\bf DTR no LEI (with CL with D-A)} & 15.5 & 16.4 & 7.3 & 2.13 & 2.26 & -11.5\\
+DTR no LEI (with CL no D-A)  & 12.5 & 13.1 & 6.2 & 2.02 & 2.11 & -6.6\\
+\bottomrule
+\end{tabular}
+}
+\end{frame}
+
+\begin{frame}{\large DTR (with LEI) Drawdowns vs Top Drawdowns in MSCI World USD}
+\includegraphics[scale=0.35]{dtr_dd_vs_msci_world}
+\end{frame}
+
+\begin{frame}{\large DTR (no LEI) Drawdowns vs Top Drawdowns in MSCI World USD}
+\includegraphics[scale=0.35]{dtr_nolei_dd_vs_msci_world}
+\end{frame}
+
+\begin{frame}{\large DTR (with LEI) Performance by Sleeve [CL = COLLAR] (Since 2006)}
+\includegraphics[scale=0.35]{dtr_withcll_perf06} 
+\end{frame}
+
+\begin{frame}{\large DTR (with LEI) Performance Returns \& Drawdowns (Since 2006)}
+\includegraphics[scale=0.35]{dtr_ret_dd06} 
+\end{frame}
+
+\begin{frame}{DTR Total Allocations}
+\includegraphics[scale=0.35]{dtr_total_weights}
+\end{frame}
+
+\begin{frame}{DTR Beta Allocations}
+\includegraphics[scale=0.35]{dtr_beta_weights}
+\end{frame}
+
+\begin{frame}{Stock / Stock Allocations (Unscaled)}
+\includegraphics[scale=0.35]{ss_weights}
+\end{frame}
+
+\begin{frame}{DTR Total Equity Allocations By Sleeve}
+\includegraphics[scale=0.35]{dtr_total_weights_stk}
+\end{frame}
+
+
+\begin{frame}{Bond / Bond Allocations (Unscaled)}
+\includegraphics[scale=0.35]{bb_weights}
+\end{frame}
+
+\begin{frame}{FX Allocations (Unscaled)}
+\includegraphics[scale=0.35]{fx_weights}
+\end{frame}
+
+\begin{frame}{DTR (with LEI) Total Performance by Sleeve}
+\includegraphics[scale=0.35]{dtr_total_perf}
+\end{frame}
+
+\end{document}

@@ -1,0 +1,264 @@
+\documentclass{beamer}
+
+% For more themes, color themes and font themes, see:
+% http://deic.uab.es/~iblanes/beamer_gallery/index_by_theme.html
+%
+\mode<presentation>
+{
+  \usetheme{CambridgeUS}       % or try default, Darmstadt, Warsaw, ...
+  \usecolortheme{seagull} % or try albatross, beaver, crane, ...
+  \usefonttheme{professionalfonts}    % or try default, structurebold, ...
+  \setbeamertemplate{navigation symbols}{}
+  \setbeamertemplate{caption}[numbered]
+  \setbeamertemplate{caption}{\insertcaption}
+} 
+
+\newcommand{\ditto}[1][.4pt]{\xrfill{#1}~\textquotedbl~\xrfill{#1}}
+
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{paralist}
+\usepackage{amsmath}
+\usepackage{color}
+\usepackage{ragged2e}
+
+
+\AtBeginSection[]
+{
+  \begin{frame}
+    \frametitle{Table of Contents}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+% On Overleaf, these lines give you sharper preview images.
+% You might want to `comment them out before you export, though.
+\usepackage{pgfpages}
+
+\pgfpagesuselayout{resize to}[letterpaper, landscape] 
+
+
+% Here's where the presentation starts, with the info for the title slide
+
+\title[Put Spread Collar]{Put Spread Collar}
+\author[ AA Research ]{ AA Research }
+\date{\today}
+%\date{17 November 2017}
+
+\begin{document}
+
+\begin{frame}{SPX: Put-Spread Collars (Since 1996)}
+\includegraphics[scale=0.35]{spx_all_plot1996}
+\end{frame}
+
+\begin{frame}{SPX: Put-Spread Collars (Since 2010)}
+\includegraphics[scale=0.35]{spx_all_plot2010}
+\end{frame}
+
+\begin{frame}{SPX: Performance Summary Since 1996}
+\centering
+\scalebox{0.55}{
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+Strategy & RET & RETg & VOL & IR & IRg & MDD & Beta & Beta+ & Beta-\\
+\midrule
+Equity 1996-01-04 to 2017-11-03 & 10.3 & 8.9 & 19.0 & 0.54 & 0.47 & -70.1 & 1.00 & 1.00 & 1.00\\
+\addlinespace
+{\bf Equity \& COLLAR} & 9.3 & 9.1 & 11.1 & 0.83 & 0.81 & -28.3 & 0.49 & 0.42 & 0.46\\
+\addlinespace
+{\bf Equity \& +P 9M 10D | -C 1M 2\% OTM | -P 1M 10D} & 12.4 & 12.1 & 14.4 & 0.87 & 0.84 & -41.0 & 0.65 & 0.61 & 0.67\\
+Equity \& +P 9M 10D | -C 1M 2\% OTM | -P 1M 20D & 14.3 & 13.7 & 17.0 & 0.84 & 0.81 & -48.9 & 0.78 & 0.75 & 0.83\\
+Equity \& +P 9M 10D | -C 1M 2\% OTM | -P 1M 30D & 15.3 & 14.4 & 19.4 & 0.79 & 0.74 & -54.9 & 0.91 & 0.87 & 0.98\\
+Equity \& +P 9M 10D | -C 1M 2\% OTM | -P 1M 40D & 16.1 & 14.8 & 21.5 & 0.75 & 0.69 & -61.1 & 1.02 & 0.98 & 1.10\\
+\addlinespace
+{\bf Equity \& +P 9M 20D | -C 1M 2\% OTM | -P 1M 10D} & 11.4 & 11.2 & 12.6 & 0.91 & 0.89 & -35.5 & 0.53 & 0.49 & 0.53\\
+Equity \& +P 9M 20D | -C 1M 2\% OTM | -P 1M 20D & 13.3 & 12.9 & 15.1 & 0.88 & 0.86 & -43.4 & 0.66 & 0.63 & 0.70\\
+Equity \& +P 9M 20D | -C 1M 2\% OTM | -P 1M 30D & 14.3 & 13.6 & 17.4 & 0.82 & 0.78 & -49.4 & 0.79 & 0.75 & 0.84\\
+Equity \& +P 9M 20D | -C 1M 2\% OTM | -P 1M 40D & 15.1 & 14.2 & 19.4 & 0.78 & 0.73 & -55.0 & 0.90 & 0.86 & 0.96\\
+\addlinespace
+{\bf Equity \& +P 9M 30D | -C 1M 2\% OTM | -P 1M 10D} & 10.3 & 10.2 & 10.9 & 0.95 & 0.94 & -31.5 & 0.42 & 0.38 & 0.42\\
+Equity \& +P 9M 30D | -C 1M 2\% OTM | -P 1M 20D & 12.2 & 12.0 & 13.3 & 0.92 & 0.90 & -39.9 & 0.55 & 0.52 & 0.58\\
+Equity \& +P 9M 30D | -C 1M 2\% OTM | -P 1M 30D & 13.1 & 12.7 & 15.5 & 0.85 & 0.82 & -45.5 & 0.68 & 0.64 & 0.73\\
+Equity \& +P 9M 30D | -C 1M 2\% OTM | -P 1M 40D & 14.0 & 13.3 & 17.5 & 0.80 & 0.76 & -50.6 & 0.79 & 0.75 & 0.85\\
+
+\bottomrule
+\end{tabular}
+}
+\end{frame}
+
+\begin{frame}{SPX: Performance Summary Since 2010}
+\centering
+\scalebox{0.55}{
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+Strategy & RET & RETg & VOL & IR & IRg & MDD & Beta & Beta+ & Beta-\\
+\midrule
+Equity 2010-01-04 to 2017-11-03 & 13.9 & 13.6 & 14.8 & 0.94 & 0.92 & -19.0 & 1.00 & 1.00 & 1.00\\
+\addlinespace
+{\bf Equity \& COLLAR} & 10.7 & 10.8 & 10.0 & 1.07 & 1.08 & -14.0 & 0.64 & 0.62 & 0.65\\
+\addlinespace
+{\bf Equity \& +P 9M 10D | -C 1M 2\% OTM | -P 1M 10D} & 14.4 & 14.5 & 13.1 & 1.10 & 1.10 & -19.8 & 0.82 & 0.83 & 0.90\\
+Equity \& +P 9M 10D | -C 1M 2\% OTM | -P 1M 20D & 16.9 & 17.1 & 14.6 & 1.16 & 1.17 & -23.2 & 0.92 & 0.92 & 1.02\\
+Equity \& +P 9M 10D | -C 1M 2\% OTM | -P 1M 30D & 18.8 & 19.1 & 16.3 & 1.16 & 1.17 & -25.9 & 1.03 & 1.03 & 1.15\\
+Equity \& +P 9M 10D | -C 1M 2\% OTM | -P 1M 40D & 20.2 & 20.4 & 17.9 & 1.13 & 1.14 & -28.2 & 1.14 & 1.14 & 1.27\\
+\addlinespace
+{\bf Equity \& +P 9M 20D | -C 1M 2\% OTM | -P 1M 10D} & 12.3 & 12.3 & 11.5 & 1.07 & 1.07 & -18.2 & 0.71 & 0.71 & 0.77\\
+Equity \& +P 9M 20D | -C 1M 2\% OTM | -P 1M 20D & 14.8 & 15.0 & 13.0 & 1.14 & 1.15 & -21.6 & 0.80 & 0.80 & 0.89\\
+Equity \& +P 9M 20D | -C 1M 2\% OTM | -P 1M 30D & 16.7 & 16.9 & 14.7 & 1.14 & 1.15 & -24.3 & 0.92 & 0.91 & 1.02\\
+Equity \& +P 9M 20D | -C 1M 2\% OTM | -P 1M 40D & 18.1 & 18.2 & 16.3 & 1.11 & 1.12 & -26.5 & 1.02 & 1.01 & 1.14\\
+\addlinespace
+{\bf Equity \& +P 9M 30D | -C 1M 2\% OTM | -P 1M 10D} & 10.3 & 10.3 & 9.8 & 1.05 & 1.05 & -16.1 & 0.58 & 0.57 & 0.63\\
+Equity \& +P 9M 30D | -C 1M 2\% OTM | -P 1M 20D & 12.8 & 12.9 & 11.3 & 1.13 & 1.14 & -19.4 & 0.68 & 0.66 & 0.75\\
+Equity \& +P 9M 30D | -C 1M 2\% OTM | -P 1M 30D & 14.8 & 14.9 & 13.0 & 1.14 & 1.15 & -22.2 & 0.79 & 0.77 & 0.88\\
+Equity \& +P 9M 30D | -C 1M 2\% OTM | -P 1M 40D & 16.1 & 16.2 & 14.5 & 1.11 & 1.12 & -24.4 & 0.90 & 0.88 & 1.00\\
+\bottomrule
+\end{tabular}
+}
+\end{frame}
+
+\begin{frame}{SPX: Short 10D Put Scenarios (Since 1996)}
+\includegraphics[scale=0.35]{spx_select_plot1996}
+\end{frame}
+
+\begin{frame}{SPX: Short 10D Put Scenarios (Since 2010)}
+\includegraphics[scale=0.35]{spx_select_plot2010}
+\end{frame}
+
+\begin{frame}{SPX: Top Drawdowns (Since 1996)}
+\includegraphics[scale=0.35]{spx_select_plot_dd1996}
+\end{frame}
+
+\begin{frame}{SPX: Top Drawdowns (Since 2010)}
+\includegraphics[scale=0.35]{spx_select_plot_dd2010}
+\end{frame}
+
+\begin{frame}{SX5E: Put-Spread Collars (Since 2010)}
+\includegraphics[scale=0.35]{sx5e_all_plot2010}
+\end{frame}
+
+\begin{frame}{SX5E: Performance Summary Since 2010}
+\centering
+\scalebox{0.55}{
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+Strategy & RET & RETg & VOL & IR & IRg & MDD & Beta & Beta+ & Beta-\\
+\midrule
+Equity 2010-01-04 to 2017-11-08 & 8.6 & 6.7 & 20.9 & 0.41 & 0.32 & -37.6 & 1.00 & 1.00 & 1.00\\
+\addlinespace
+{\bf Equity \& COLLAR} & 6.8 & 6.2 & 13.0 & 0.53 & 0.48 & -20.8 & 0.57 & 0.54 & 0.59\\
+\addlinespace
+{\bf Equity \& +P 9M 10D | -C 1M 2\% OTM | -P 1M 10D} & 9.6 & 8.4 & 17.7 & 0.54 & 0.47 & -31.4 & 0.77 & 0.76 & 0.85\\
+Equity \& +P 9M 10D | -C 1M 2\% OTM | -P 1M 20D & 10.6 & 9.0 & 19.8 & 0.53 & 0.46 & -31.1 & 0.86 & 0.85 & 0.96\\
+Equity \& +P 9M 10D | -C 1M 2\% OTM | -P 1M 30D & 11.1 & 9.1 & 22.1 & 0.50 & 0.41 & -32.9 & 0.97 & 0.95 & 1.08\\
+Equity \& +P 9M 10D | -C 1M 2\% OTM | -P 1M 40D & 11.3 & 8.8 & 24.3 & 0.47 & 0.36 & -37.7 & 1.08 & 1.05 & 1.20\\
+\addlinespace
+{\bf Equity \& +P 9M 20D | -C 1M 2\% OTM | -P 1M 10D} & 8.0 & 7.1 & 15.2 & 0.53 & 0.47 & -27.8 & 0.63 & 0.61 & 0.69\\
+Equity \& +P 9M 20D | -C 1M 2\% OTM | -P 1M 20D & 9.0 & 7.8 & 17.2 & 0.52 & 0.45 & -27.4 & 0.72 & 0.70 & 0.80\\
+Equity \& +P 9M 20D | -C 1M 2\% OTM | -P 1M 30D & 9.6 & 8.0 & 19.5 & 0.49 & 0.41 & -28.7 & 0.83 & 0.80 & 0.92\\
+Equity \& +P 9M 20D | -C 1M 2\% OTM | -P 1M 40D & 9.8 & 7.7 & 21.6 & 0.45 & 0.36 & -33.2 & 0.94 & 0.90 & 1.04\\
+\addlinespace
+{\bf Equity \& +P 9M 30D | -C 1M 2\% OTM | -P 1M 10D} & 6.9 & 6.2 & 13.1 & 0.53 & 0.48 & -24.1 & 0.50 & 0.48 & 0.55\\
+Equity \& +P 9M 30D | -C 1M 2\% OTM | -P 1M 20D & 7.9 & 7.0 & 15.1 & 0.53 & 0.47 & -24.1 & 0.60 & 0.56 & 0.65\\
+Equity \& +P 9M 30D | -C 1M 2\% OTM | -P 1M 30D & 8.2 & 7.0 & 17.3 & 0.47 & 0.40 & -25.2 & 0.71 & 0.66 & 0.79\\
+Equity \& +P 9M 30D | -C 1M 2\% OTM | -P 1M 40D & 8.7 & 7.1 & 19.3 & 0.45 & 0.37 & -29.4 & 0.81 & 0.77 & 0.90\\
+\bottomrule
+\end{tabular}
+}
+\end{frame}
+
+\begin{frame}{SX5E: Short 10D Put Scenarios (Since 2010)}
+\includegraphics[scale=0.35]{sx5e_select_plot2010}
+\end{frame}
+
+\begin{frame}{SX5E: Top Drawdowns (Since 2010)}
+\includegraphics[scale=0.35]{sx5e_select_dd_plot2010}
+\end{frame}
+
+\begin{frame}{NKY: Put-Spread Collars (Since 2010)}
+\includegraphics[scale=0.35]{nky_all_plot2010}
+\end{frame}
+
+\begin{frame}{NKY: Performance Summary Since 2010}
+\centering
+\scalebox{0.55}{
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+Strategy & RET & RETg & VOL & IR & IRg & MDD & Beta & Beta+ & Beta-\\
+\midrule
+Equity 2010-01-04 to 2017-11-08 & 8.6 & 6.7 & 20.9 & 0.41 & 0.32 & -37.6 & 1.00 & 1.00 & 1.00\\
+\addlinespace
+{\bf Equity \& COLLAR} & 8.2 & 7.5 & 14.2 & 0.58 & 0.53 & -22.8 & 0.60 & 0.57 & 0.67\\
+\addlinespace
+{\bf Equity \& +P 9M 10D | -C 1M 2\% OTM | -P 1M 10D} & 13.9 & 12.8 & 19.1 & 0.73 & 0.67 & -30.2 & 0.79 & 0.79 & 0.96\\
+Equity \& +P 9M 10D | -C 1M 2\% OTM | -P 1M 20D & 16.2 & 14.9 & 21.3 & 0.76 & 0.70 & -30.7 & 0.88 & 0.86 & 1.08\\
+Equity \& +P 9M 10D | -C 1M 2\% OTM | -P 1M 30D & 17.6 & 15.9 & 23.7 & 0.74 & 0.67 & -33.7 & 0.98 & 0.95 & 1.20\\
+Equity \& +P 9M 10D | -C 1M 2\% OTM | -P 1M 40D & 18.8 & 16.6 & 26.1 & 0.72 & 0.63 & -38.7 & 1.09 & 1.05 & 1.31\\
+\addlinespace
+{\bf Equity \& +P 9M 20D | -C 1M 2\% OTM | -P 1M 10D} & 12.2 & 11.3 & 17.0 & 0.72 & 0.67 & -27.8 & 0.69 & 0.68 & 0.83\\
+Equity \& +P 9M 20D | -C 1M 2\% OTM | -P 1M 20D & 14.9 & 14.0 & 19.2 & 0.78 & 0.73 & -28.3 & 0.78 & 0.75 & 0.95\\
+Equity \& +P 9M 20D | -C 1M 2\% OTM | -P 1M 30D & 15.9 & 14.5 & 21.6 & 0.73 & 0.67 & -31.3 & 0.88 & 0.84 & 1.07\\
+Equity \& +P 9M 20D | -C 1M 2\% OTM | -P 1M 40D & 16.7 & 14.7 & 24.1 & 0.69 & 0.61 & -36.3 & 0.99 & 0.95 & 1.18\\
+\addlinespace
+{\bf Equity \& +P 9M 30D | -C 1M 2\% OTM | -P 1M 10D} & 10.9 & 10.3 & 15.0 & 0.73 & 0.68 & -24.6 & 0.53 & 0.52 & 0.60\\
+Equity \& +P 9M 30D | -C 1M 2\% OTM | -P 1M 20D & 13.2 & 12.4 & 17.0 & 0.77 & 0.73 & -25.1 & 0.62 & 0.58 & 0.73\\
+Equity \& +P 9M 30D | -C 1M 2\% OTM | -P 1M 30D & 14.7 & 13.6 & 19.4 & 0.76 & 0.70 & -28.8 & 0.73 & 0.68 & 0.85\\
+Equity \& +P 9M 30D | -C 1M 2\% OTM | -P 1M 40D & 15.9 & 14.5 & 21.7 & 0.73 & 0.67 & -33.4 & 0.83 & 0.78 & 0.96\\
+
+\bottomrule
+\end{tabular}
+}
+\end{frame}
+
+\begin{frame}{NKY: Short 10D Put Scenarios (Since 2010)}
+\includegraphics[scale=0.35]{nky_select_plot2010}
+\end{frame}
+
+\begin{frame}{NKY: Top Drawdowns (Since 2010)}
+\includegraphics[scale=0.35]{nky_select_plot_dd2010}
+\end{frame}
+
+\begin{frame}{UKX: Put-Spread Collars (Since 2010)}
+\includegraphics[scale=0.35]{ukx_all_plot2010}
+\end{frame}
+
+\begin{frame}{UKX: Performance Summary Since 2010}
+\centering
+\scalebox{0.55}{
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+Strategy & RET & RETg & VOL & IR & IRg & MDD & Beta & Beta+ & Beta-\\
+\midrule
+Equity 2010-01-04 to 2017-11-08 & 8.9 & 8.1 & 15.4 & 0.58 & 0.52 & -20.8 & 1.00 & 1.00 & 1.00\\
+\addlinespace
+{\bf Equity \& COLLAR} & 6.4 & 6.1 & 10.2 & 0.63 & 0.59 & -13.2 & 0.61 & 0.57 & 0.65\\
+\addlinespace
+{\bf Equity \& +P 9M 10D | -C 1M 2\% OTM | -P 1M 10D} & 9.5 & 9.1 & 12.8 & 0.74 & 0.71 & -19.1 & 0.76 & 0.73 & 0.85\\
+Equity \& +P 9M 10D | -C 1M 2\% OTM | -P 1M 20D & 11.1 & 10.5 & 14.9 & 0.74 & 0.70 & -23.1 & 0.88 & 0.85 & 1.01\\
+Equity \& +P 9M 10D | -C 1M 2\% OTM | -P 1M 30D & 12.2 & 11.4 & 16.7 & 0.73 & 0.68 & -24.9 & 0.99 & 0.96 & 1.14\\
+Equity \& +P 9M 10D | -C 1M 2\% OTM | -P 1M 40D & 13.0 & 12.0 & 18.3 & 0.71 & 0.65 & -26.3 & 1.10 & 1.06 & 1.25\\
+\addlinespace
+{\bf Equity \& +P 9M 20D | -C 1M 2\% OTM | -P 1M 10D} & 7.7 & 7.3 & 11.2 & 0.68 & 0.65 & -17.3 & 0.64 & 0.60 & 0.71\\
+Equity \& +P 9M 20D | -C 1M 2\% OTM | -P 1M 20D & 9.2 & 8.7 & 13.3 & 0.69 & 0.65 & -21.0 & 0.76 & 0.72 & 0.87\\
+Equity \& +P 9M 20D | -C 1M 2\% OTM | -P 1M 30D & 10.3 & 9.6 & 15.0 & 0.68 & 0.64 & -22.8 & 0.87 & 0.83 & 1.00\\
+Equity \& +P 9M 20D | -C 1M 2\% OTM | -P 1M 40D & 11.2 & 10.3 & 16.7 & 0.67 & 0.62 & -24.1 & 0.98 & 0.93 & 1.11\\
+\addlinespace
+{\bf Equity \& +P 9M 30D | -C 1M 2\% OTM | -P 1M 10D} & 6.1 & 5.8 & 9.8 & 0.63 & 0.59 & -15.8 & 0.52 & 0.48 & 0.58\\
+Equity \& +P 9M 30D | -C 1M 2\% OTM | -P 1M 20D & 7.5 & 7.1 & 11.7 & 0.64 & 0.60 & -19.3 & 0.64 & 0.59 & 0.73\\
+Equity \& +P 9M 30D | -C 1M 2\% OTM | -P 1M 30D & 8.7 & 8.1 & 13.5 & 0.65 & 0.60 & -21.4 & 0.75 & 0.70 & 0.86\\
+Equity \& +P 9M 30D | -C 1M 2\% OTM | -P 1M 40D & 9.4 & 8.6 & 15.1 & 0.62 & 0.57 & -22.7 & 0.86 & 0.81 & 0.98\\
+\bottomrule
+\end{tabular}
+}
+\end{frame}
+
+\begin{frame}{UKX: Short 10D Put Scenarios (Since 2010)}
+\includegraphics[scale=0.35]{ukx_select_plot2010}
+\end{frame}
+
+\begin{frame}{UKX: Top Drawdowns (Since 2010)}
+\includegraphics[scale=0.35]{ukx_select_plot_dd2010}
+\end{frame}
+
+\end{document}

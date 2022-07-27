@@ -1,0 +1,1257 @@
+\documentclass{beamer}
+
+% For more themes, color themes and font themes, see:
+% http://deic.uab.es/~iblanes/beamer_gallery/index_by_theme.html
+%
+\mode<presentation>
+{
+  \usetheme{CambridgeUS}       % or try default, Darmstadt, Warsaw, ...
+  \usecolortheme{seagull} % or try albatross, beaver, crane, ...
+  \usefonttheme{professionalfonts}    % or try default, structurebold, ...
+  \setbeamertemplate{navigation symbols}{}
+  \setbeamertemplate{caption}[numbered]
+  \setbeamertemplate{caption}{\insertcaption}
+} 
+
+\newcommand{\ditto}[1][.4pt]{\xrfill{#1}~\textquotedbl~\xrfill{#1}}
+
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{paralist}
+\usepackage{amsmath}
+\usepackage{color}
+\usepackage{ragged2e}
+
+
+\AtBeginSection[]
+{
+  \begin{frame}
+    \frametitle{Table of Contents}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+% On Overleaf, these lines give you sharper preview images.
+% You might want to `comment them out before you export, though.
+\usepackage{pgfpages}
+
+\pgfpagesuselayout{resize to}[letterpaper, landscape] 
+
+
+% Here's where the presentation starts, with the info for the title slide
+
+\title[{\tt GaaOptions}]{{\tt GaaOptions}: Enhancements to the Calendar Collar}
+\author[DC $|$ BL]{Dimitri Curtil  \and Boqiu Lu}
+%\date{\today}
+\date{20 October 2017}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\section{Review from July 2017 and Next Steps}
+\begin{frame}{Review from July 2017 and Next Steps}
+\begin{itemize}
+\item Objective: Implement a better risk-reward payoff structure for core strategic equity exposures via options
+\vfill
+\item Enhanced options simulation framework to provide a unified single access layer for analysis on any security in the IvyDB dataset
+\begin{itemize}
+	\item Introduced international index options dataset from OptionMetrics
+\end{itemize}
+\vfill
+\item Evaluated potential enhancements to the calendar collar
+	\begin{itemize}
+	\item Exchange low-delta puts (full notional) with ATM puts (at less than full notional)
+	\item Targeting delta for long-dated OTM put and moneyness for short-dated OTM call
+	\item Move from writing 1M to shorter-dated 2W OTM call options with the aim of reducing the use of leverage (currently 1.2x multiplier applied)
+	\end{itemize}
+\item Next: Analyze impact of transactions costs (both US and international) on the enhanced calendar collar (hereafter, CC) especially as it relates to the short-term call option and evaluate alternative cross-index structures
+\vfill
+%\item Research and introduce volatility risk premium into absolute and/or total return strategies
+%\vfill
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Notation}
+\begin{itemize}
+
+\item Original CC Structure: 
+\begin{itemize}
+\item Equity + Long Put 11D {\color{green} 270 60} + Short Call OTM {\color {red}X.X} {\color{green} {\bf 30} 5}
+\end{itemize}
+\vfill
+\item Updated CC Structure: 
+\begin{itemize}
+\item Equity + Long Put 11D {\color{green} 270 60} + Short Call OTM {\color {red}X.X} {\color{green} {\bf 10} 5}
+\end{itemize}
+\item For the option, the 1st number refers to the option tenor (in calendar days), and the 2nd number refers to the number of (calendar) days prior to expiry in which the option is closed
+\begin{itemize}
+\item For example: {\color{green} 270 60} = 270 Days Tenor $|$ Roll 60 Days Prior to Expiration
+\end{itemize}
+\vfill
+\item {\color {red}X.X} refers to the moneyness of the option (when struck in moneyness-terms); D refers to delta (when struck in delta-space)
+\vfill
+\item {\color{blue} Benchmark / Reference Structure}: 
+\begin{itemize}
+\item i) reference equity index
+\item ii) reference equity index + 9M put + 1M call option structure
+\item iii) reference equity index + 9M put + 2W call option structure
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\section{Transactions Costs for Options}
+\begin{frame}{Transactions Costs for Options}
+\begin{itemize}
+
+\item What is the effect of transactions costs (bid-offer spreads, market impact, broker commissions, and exchange/clearing fees) on the performance of index option structures such as the CC --- especially in regards to the more frequently traded call option?
+\begin{itemize}
+\item Bid-offer spreads and market impact are the typical components of transactions costs evaluation, but when instrument prices approach very low nominal values (as can be the case for OTM options, particularly in a low volatility environment), all other fees may begin to matter and need to be evaluated.
+\end{itemize}
+\vfill
+\item Bid-offer spreads in options can be significant, {\em at the instrument level}: while bid-offer spreads for equity index futures are typically on the order of single basis points, they are rarely below 1\% for S\&P 500 index options.
+\begin{itemize}
+\item Recall, while IvyDB has historical bid-offer spreads for domestic securities and indices, it does {\em not} provide useful bid-offer spread data for global index options --- most likely due to the volume of international index options being transacted OTC.
+\end{itemize}
+%\vfill 
+%\item How does the bid-offer spread relate to implied volatility and liquidity?
+\end{itemize}
+\end{frame}
+
+\begin{frame}{\large SPX: Bid-Offer vs Mid Price Effect on the CC (2W Calls)}
+\includegraphics[scale=0.35]{bid_ask_pl}
+\end{frame}
+
+\begin{frame}{\normalsize SPX: Bid-Offer vs Mid Price Effect on Performance (2W Calls) Since 1996}
+
+\begin{itemize}
+\item Evaluate the effect of bid-offer versus mid price on performance of the CC.
+\item Why does the return drag from bid-offer spreads actually decline as the call strike is set further OTM?
+\item {\small {\bf X.X\%} = Equity + Long Put 11D 270 60 + Short Call OTM {\bf X.X\%} 10 5}
+\end{itemize}
+
+\begin{table}
+\centering
+\scalebox{0.525}{
+\begin{tabular}{lrcrrrrrrrrrrr}
+\toprule
+Strategy & Retn & RetnDiff & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta-\\
+\midrule
+{\bf \color{blue} SPX} Since 1996 & 10.2 & &  220.8 & 19.1 & 0.53 & 0.05 & 0.46 & -30.4 & -0.06 & 8.7 & 1.00 & 1.00 & 1.00\\
+\addlinespace
+{\bf 3.0\%} @ Mid & 11.4 & & 245.9 & 12.1 & 0.94 & 0.08 & 0.92 & -13.1 & -0.27 & 11.2 & 0.55 & 0.47 & 0.50\\
+{\bf 3.0\%} @ Bid/Offer & 10.1 & {\bf \color{red}-1.3} & 218.4 & 12.1 & 0.83 & 0.07 & 0.81 & -15.1 & -0.23 & 9.8 & 0.55 & 0.47 & 0.49\\
+\addlinespace
+{\bf 2.5\%} @ Mid & 11.4 & & 246.8 & 11.7 & 0.97 & 0.09 & 0.96 & -11.9 & -0.28 & 11.3 & 0.52 & 0.45 & 0.48\\
+{\bf 2.5\%} @ Bid/Offer & 10.0 & {\bf \color{red} -1.4} & 216.8 & 11.7 & 0.86 & 0.08 & 0.83 & -13.5 & -0.24 & 9.8 & 0.52 & 0.44 & 0.47\\
+\addlinespace
+{\bf 2.0\%} @ Mid & 11.1 & & 241.3 & 11.3 & 0.98 & 0.09 & 0.98 & -11.4 & -0.28 & 11.1 & 0.49 & 0.42 & 0.46\\
+{\bf 2.0\%} @ Bid/Offer & 9.5 & {\bf \color{red} -1.6} & 206.8 & 11.3 & 0.84 & 0.08 & 0.82 & -13.2 & -0.25 & 9.3 & 0.49 & 0.42 & 0.46\\
+\addlinespace
+\color{blue}{\bf 1.5\%} @ Mid & 11.1 & & 241.5 & 10.8 & 1.03 & 0.09 & 1.03 & -10.5 & -0.30 & 11.1 & 0.47 & 0.40 & 0.44\\
+\color{blue}{\bf 1.5\%} @ Bid/Offer & 9.4 & {\bf \color{red} -1.7} & 203.1 & 10.8 & 0.87 & 0.08 & 0.85 & -12.4 & -0.27 & 9.2 & 0.46 & 0.40 & 0.44\\
+\addlinespace
+{\bf 1.0\%} @ Mid & 11.1 & & 239.5 & 10.3 & 1.07 & 0.10 & 1.07 & -9.8 & -0.29 & 11.1 & 0.43 & 0.38 & 0.42\\
+{\bf 1.0\%} @ Bid/Offer & 9.1 & {\bf \color{red} -2.0} & 196.1 & 10.3 & 0.88 & 0.08 & 0.86 & -11.5 & -0.24 & 8.9 & 0.43 & 0.38 & 0.41\\
+\addlinespace
+{\bf 0.5\%} @ Mid & 10.8 & & 234.2 & 9.9 & 1.09 & 0.10 & 1.10 & -8.9 & -0.28 & 10.9 & 0.40 & 0.36 & 0.40\\
+{\bf 0.5\%} @ Bid/Offer & 8.6 & {\bf \color{red} -2.2} & 186.5 & 9.9 & 0.87 & 0.08 & 0.86 & -10.6 & -0.26 & 8.5 & 0.40 & 0.36 & 0.39\\
+\addlinespace
+{\bf 0.0\%} @ Mid & 10.4 & & 224.9 & 9.4 & 1.11 & 0.10 & 1.12 & -8.7 & -0.25 & 10.5 & 0.37 & 0.33 & 0.38\\
+{\bf 0.0\%} @ Bid/Offer & 7.9 & {\bf \color{red} -2.5} & 171.8 & 9.4 & 0.85 & 0.08 & 0.83 & -10.1 & -0.21 & 7.8 & 0.37 & 0.33 & 0.37\\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+\end{frame}
+
+\begin{frame}{\normalsize SPX: Bid-Offer vs Mid Price Effect on Performance (1M Calls) Since 1996}
+\begin{itemize}
+\item The increased drag in returns from bid-offer spreads as the options near the index price / level is similarly evident in 1M call options.
+\vfill
+\item {\small {\bf X.X\%} = Equity + Long Put 11D 270 60 + Short Call OTM {\bf X.X\%} 30 5}
+\end{itemize}
+
+\begin{table}
+\centering
+\scalebox{0.525}{
+\begin{tabular}{lrcrrrrrrrrrrr}
+\toprule
+Strategy & Retn & RetnDiff & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta-\\
+\midrule
+{\bf \color{blue} SPX} Since 1996 & 10.2 & &  220.8 & 19.1 & 0.53 & 0.05 & 0.46 & -30.4 & -0.06 & 8.7 & 1.00 & 1.00 & 1.00\\
+\addlinespace
+\color{blue}{\bf 2.0\%} @ Mid & 10.5 & & 228.5 & 11.2 & 0.94 & 0.08 & 0.93 & -11.8 & -0.33 & 10.4 & 0.49 & 0.42 & 0.47\\
+\color{blue}{\bf 2.0\%} @ Bid/Offer & 9.2 & {\bf \color{red}-1.3} & 200.0 & 11.2 & 0.83 & 0.07 & 0.80 & -13.3 & -0.29 & 9.0 & 0.49 & 0.42 & 0.46\\
+\addlinespace
+{\bf 1.5\%} @ Mid & 10.7 & & 230.9 & 10.7 & 0.99 & 0.09 & 0.99 & -11.2 & -0.36 & 10.6 & 0.46 & 0.40 & 0.45\\
+{\bf 1.5\%} @ Bid/Offer & 9.2 & {\bf \color{red}-1.5} & 200.2 & 10.7 & 0.86 & 0.08 & 0.84 & -12.6 & -0.32 & 9.0 & 0.46 & 0.40 & 0.44\\
+\addlinespace
+{\bf 1.0\%} @ Mid & 10.5 & & 227.1 & 10.3 & 1.02 & 0.09 & 1.02 & -10.8 & -0.35 & 10.5 & 0.43 & 0.38 & 0.43\\
+{\bf 1.0\%} @ Bid/Offer & 8.9 & {\bf \color{red}-1.6} & 193.6 & 10.3 & 0.87 & 0.08 & 0.85 & -12.5 & -0.30 & 8.8 & 0.43 & 0.38 & 0.42\\
+\addlinespace
+{\bf 0.5\%} @ Mid & 10.5 & & 226.6 & 9.9 & 1.06 & 0.09 & 1.06 & -10.0 & -0.32 & 10.5 & 0.40 & 0.36 & 0.41\\
+{\bf 0.5\%} @ Bid/Offer & 8.8 & {\bf \color{red}-1.7} & 191.2 & 9.9 & 0.89 & 0.08 & 0.88 & -11.5 & -0.28 & 8.7 & 0.40 & 0.36 & 0.40\\
+\addlinespace
+{\bf 0.0\%} @ Mid & 9.8 & & 213.3 & 9.4 & 1.04 & 0.09 & 1.04 & -9.7 & -0.31 & 9.9 & 0.38 & 0.34 & 0.39\\
+{\bf 0.0\%} @ Bid/Offer & 8.1 & {\bf \color{red}-1.7} & 175.4 & 9.4 & 0.86 & 0.08 & 0.84 & -11.4 & -0.25 & 7.9 & 0.37 & 0.34 & 0.38\\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+\end{frame}
+
+\begin{frame}{CC: Bid-Offer Spreads}
+\begin{itemize}
+\item This effect is due to the arithmetic of how returns of portfolios with options are computed.
+\vfill
+\item While OTM options do indeed have a larger bid-offer spread relative to their instrument price as compared to ATM options, the nominal value of this spread is smaller (for example, an OTM option bid-offer spread of 0.9 points versus 9.0 points for the ATM option).
+\vfill
+\item The returns of the CC are denominated at a notional {\bf based on the price of the underlying index} (not the price of the option instrument), so a lower nominal bid-offer spread of the further OTM calls results in less drag to returns as compared to the ATM one.
+\vfill
+\item In other words, even though OTM options are `costly' to trade, they cost very little to begin with (as compared to ATM options).
+\end{itemize}
+\end{frame}
+
+\begin{frame}{CC: 2W Call Option Bid-Offer Spreads}
+\includegraphics[scale=0.35]{bid_ask_instrument_panel} \\
+\includegraphics[scale=0.35]{bid_ask_underlying_panel}
+\end{frame}
+
+\begin{frame}{\normalsize CC: Return Difference (Bid-Offer Spread vs Mid Price) by Year}
+\includegraphics[scale=0.35]{ret_year_1m} \\
+\includegraphics[scale=0.35]{ret_year_2w}
+\end{frame}
+
+\begin{frame}{\normalsize SPX: Bid-Offer vs Mid Price Effect on Performance Since 2010}
+
+\centering
+\scalebox{0.46}{
+\begin{tabular}{lrcrrrrrrrrrrr}
+\toprule
+Strategy & Retn & RetnDiff & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta-\\
+\midrule
+{\bf \color{blue} SPX} Since 2010 & 13.8 & & 107.6 & 14.9 & 0.93 & 0.08 & 0.91 & -15.5 & -0.37 & 13.6 & 1.00 & 1.00 & 1.00\\
+\midrule
+\addlinespace
+2W Calls\\
+\midrule
+{\bf 3.0\%} @ Mid & 12.8 & & 99.6 & 11.3 & 1.14 & 0.10 & 1.15 & -11.4 & -0.35 & 12.9 & 0.73 & 0.69 & 0.69\\
+{\bf 3.0\%} @ Bid/Offer & 11.9 & {\bf \color{red} -0.9} & 92.4 & 11.3 & 1.06 & 0.09 & 1.06 & -11.8 & -0.34 & 11.9 & 0.73 & 0.69 & 0.69\\
+\addlinespace
+{\bf 2.5\%} @ Mid & 12.5 & & 97.2 & 10.9 & 1.14 & 0.10 & 1.16 & -11.5 & -0.38 & 12.6 & 0.70 & 0.66 & 0.68\\
+{\bf 2.5\%} @ Bid/Offer & 11.4 & {\bf \color{red} -1.1} & 88.9 & 10.9 & 1.05 & 0.09 & 1.05 & -12.0 & -0.37 & 11.4 & 0.70 & 0.66 & 0.68\\
+\addlinespace
+{\bf 2.0\%} @ Mid & 12.1 & & 93.9 & 10.5 & 1.15 & 0.10 & 1.16 & -11.2 & -0.42 & 12.2 & 0.67 & 0.63 & 0.66\\
+{\bf 2.0\%} @ Bid/Offer & 10.7 & {\bf \color{red} -1.4} & 83.6 & 10.5 & 1.02 & 0.09 & 1.02 & -11.7 & -0.40 & 10.7 & 0.67 & 0.63 & 0.66\\
+\addlinespace
+\color{blue}{\bf 1.5\%} @ Mid & 11.6 & & 90.2 & 10.0 & 1.16 & 0.10 & 1.18 & -11.1 & -0.47 & 11.7 & 0.63 & 0.59 & 0.63\\
+\color{blue}{\bf 1.5\%} @ Bid/Offer & 10.0 & {\bf \color{red} -1.6} & 77.4 & 10.0 & 1.00 & 0.09 & 1.00 & -11.7 & -0.44 & 9.9 & 0.63 & 0.59 & 0.63\\
+\addlinespace
+{\bf 1.0\%} @ Mid & 11.4 & & 88.6 & 9.4 & 1.22 & 0.11 & 1.23 & -11.1 & -0.52 & 11.6 & 0.59 & 0.55 & 0.61\\
+{\bf 1.0\%} @ Bid/Offer & 9.4 & {\bf \color{red} -2.0} & 73.0 & 9.4 & 1.00 & 0.09 & 0.99 & -11.8 & -0.48 & 9.3 & 0.59 & 0.56 & 0.61\\
+\addlinespace
+{\bf 0.5\%} @ Mid & 10.6 & & 82.6 & 8.7 & 1.23 & 0.11 & 1.25 & -10.9 & -0.59 & 10.8 & 0.54 & 0.51 & 0.58\\
+{\bf 0.5\%} @ Bid/Offer & 8.3 & {\bf \color{red} -2.3} & 64.2 & 8.7 & 0.95 & 0.08 & 0.94 & -11.6 & -0.55 & 8.2 & 0.54 & 0.51 & 0.58\\
+\addlinespace
+{\bf 0.0\%} @ Mid & 10.0 & & 77.5 & 7.9 & 1.25 & 0.11 & 1.27 & -10.8 & -0.64 & 10.1 & 0.48 & 0.47 & 0.54\\
+{\bf 0.0\%} @ Bid/Offer & 7.1 & {\bf \color{red} -2.9} & 54.9 & 8.0 & 0.88 & 0.08 & 0.87 & -11.7 & -0.59 & 7.0 & 0.48 & 0.47 & 0.54\\
+\bottomrule
+\addlinespace
+1M Calls\\
+\midrule
+\color{blue}{\bf 2.0\%} @ Mid & 11.6 & & 90.0 & 10.1 & 1.15 & 0.10 & 1.16 & -11.6 & -0.41 & 11.7 & 0.64 & 0.62 & 0.65\\
+\color{blue}{\bf 2.0\%} @ Bid/Offer & 10.7 & {\bf \color{red} -0.9} & 83.2 & 10.1 & 1.06 & 0.09 & 1.07 & -12.0 & -0.40 & 10.7 & 0.64 & 0.62 & 0.65\\
+\addlinespace
+{\bf 1.5\%} @ Mid & 11.4 & & 88.4 & 9.6 & 1.18 & 0.11 & 1.20 & -11.6 & -0.43 & 11.5 & 0.61 & 0.60 & 0.63\\
+{\bf 1.5\%} @ Bid/Offer & 10.4 & {\bf \color{red} -1.0} & 80.6 & 9.6 & 1.08 & 0.10 & 1.08 & -12.0 & -0.41 & 10.4 & 0.61 & 0.60 & 0.63\\
+\addlinespace
+{\bf 1.0\%} @ Mid & 11.0 & & 85.4 & 9.1 & 1.20 & 0.11 & 1.22 & -11.5 & -0.44 & 11.1 & 0.57 & 0.57 & 0.60\\
+{\bf 1.0\%} @ Bid/Offer & 9.9 & {\bf \color{red} -1.1} & 76.7 & 9.1 & 1.08 & 0.10 & 1.08 & -11.9 & -0.41 & 9.9 & 0.57 & 0.57 & 0.60\\
+\addlinespace
+{\bf 0.5\%} @ Mid & 10.5 & & 81.7 & 8.6 & 1.22 & 0.11 & 1.24 & -11.2 & -0.44 & 10.7 & 0.53 & 0.53 & 0.57\\
+{\bf 0.5\%} @ Bid/Offer & 9.2 & {\bf \color{red} -1.3} & 71.9 & 8.6 & 1.07 & 0.10 & 1.08 & -11.7 & -0.41 & 9.3 & 0.53 & 0.54 & 0.57\\
+\addlinespace
+{\bf 0.0\%} @ Mid & 9.5 & & 74.0 & 8.0 & 1.19 & 0.11 & 1.20 & -11.2 & -0.46 & 9.6 & 0.49 & 0.51 & 0.54\\
+{\bf 0.0\%} @ Bid/Offer & 8.1 & {\bf \color{red} -1.4} & 62.9 & 8.1 & 1.00 & 0.09 & 1.00 & -11.7 & -0.43 & 8.1 & 0.49 & 0.51 & 0.54\\
+\bottomrule
+\end{tabular}
+}
+
+\end{frame}
+
+\begin{frame}{Additional Transactions Costs Components}
+\begin{itemize}
+\item How should we incorporate bid-offer spreads for international index options, in the absence of data from IvyDB GI?
+	\begin{itemize}
+	\item Model as a function of S\&P 500 index options bid-offer spreads, implied volatility, and contract volume/open interest?
+	\end{itemize}
+\vfill
+\item How should we account for market impact when trading options? Do we need to, given the volume and frequency of trades?
+	\begin{itemize}
+	\item Does the square-root impact law similarly hold for options? If so, necessary to map bid-offer volatility points into actual premiums for simulation purposes.
+	\item Begin to monitor MCM-option transactions (and incorporate these instruments into TCA framework?)
+	\end{itemize}
+\vfill
+\item Broker commissions and exchange/clearing fees are perhaps negligible --- even for options of very low nominal value / premium
+	\begin{itemize}
+	\item In aggregate, indicative commissions + exchange fees have been under \$2 per contract for S\&P 500 e-mini futures options (Haroldo D.)
+	\item This is not to say, however, that we should be writing OTM call options for a nickel or a dime per contract with the bid-offer spread equivalent to a minimum tick size of \$0.05! 
+	\end{itemize}
+\vfill
+\end{itemize}
+\end{frame}
+
+\begin{frame}{\large Transactions Costs Estimates (from Portfolio Management \& Trading)}
+\begin{itemize}
+\item Using estimated transactions costs from portfolio management \& trading (Haroldo D. \& Paul G. obtained bid-offer spreads as well as commissions from Bloomberg, BAML, JPM, MS), we can evaluate the performance of international index options with and without these estimated transactions costs.
+\vfill
+\end{itemize}
+\includegraphics[scale=0.25]{haroldo.png}
+\end{frame}
+
+\begin{frame}{SPX Bid-Offer Spreads: Calls vs Puts (Opening vs Closing)}
+\begin{itemize}
+\item For SPX, the indicative bid-offer spread estimates provided by Haroldo D. and Paul G. seem to mostly line up with the historical data in IvyDB.
+\vfill
+\item At closing of the option position, the instruments carry higher bid-offer spreads (most likely due to being OTM) than when the position is initiated.
+\vfill
+\end{itemize}
+
+\centering
+\scalebox{0.475}{
+\begin{tabular}{cccc}
+\toprule
+Buy or Write to {\bf OPEN}\\
+\midrule
+Call / & Moneyness & Tenor & Median Bid-Offer\\
+Put & (Initial) & (Initial) & Spread (Instrument)\\
+\midrule
+C & 0.0\% & 10 & 4.9\%\\
+C & 0.5\% & 10 & 5.5\%\\
+C & 1.0\% & 10 & 6.9\%\\
+\color{blue}C & \color{blue}1.5\% & 10 & 8.6\%\\
+C & 2.0\% & 10 & 11.1\%\\
+C & 2.5\% & 10 & 15\%\\
+C & 3.0\% & 10 & 19.8\%\\
+\midrule
+\addlinespace
+C & 0.0\% & 30 & 5.5\%\\
+C & 0.5\% & 30 & 6\%\\
+C & 1.0\% & 30 & 6.7\%\\
+C & 1.5\% & 30 & 7.3\%\\
+\color{blue}C & \color{blue}2.0\% & 30 & 8.5\%\\
+\midrule
+\addlinespace
+\color{blue}P & \color{blue}11D & 270 & 9.4\%\\
+\bottomrule
+\end{tabular}
+}
+\scalebox{0.475}{
+\begin{tabular}{cccc}
+\toprule
+Buy or Write to {\bf CLOSE}\\
+\midrule
+Call / & Moneyness & Tenor & Median Bid-Offer\\
+Put & (Initial) & (Initial)  & Spread (Instrument)\\
+\midrule
+C & 0.0\% & 10 & 7\%\\
+C & 0.5\% & 10 & 8.3\%\\
+C & 1.0\% & 10 & 10.3\%\\
+\color{blue}C & \color{blue}1.5\% & 10 & 13.4\%\\
+C & 2.0\% & 10 & 20\%\\
+C & 2.5\% & 10 & 33.3\%\\
+C & 3.0\% & 10 & 44.4\%\\
+\midrule
+\addlinespace
+C & 0.0\% & 30 & 8.4\%\\
+C & 0.5\% & 30 & 8.9\%\\
+C & 1.0\% & 30 & 9.6\%\\
+C & 1.5\% & 30 & 10.4\%\\
+\color{blue}C & \color{blue}2.0\% & 30 & 15\%\\
+\midrule
+\addlinespace
+\color{blue}P & \color{blue}11D & 270 & 34.6\%\\
+\bottomrule
+\end{tabular}
+}
+\end{frame}
+
+\section{International Index Structures}
+
+\begin{frame}{Call Deltas Across Indices by Moneyness}
+\includegraphics[scale=0.35]{delta_comparison_2w}\\
+\includegraphics[scale=0.35]{delta_comparison_1m}
+\end{frame}
+
+\begin{frame}{SX5E: CC (1M Calls, No TC)}
+\includegraphics[scale=0.35]{SX5E_Collar1M}
+\end{frame}
+
+\begin{frame}{SX5E: CC (1M Calls, No TC) (Since 2010)}
+\includegraphics[scale=0.35]{SX5E_Collar1M_2010}
+\end{frame}
+
+\begin{frame}{SX5E: CC (2W Calls, No TC)}
+\includegraphics[scale=0.35]{SX5E_Collar2W}
+\end{frame}
+
+\begin{frame}{SX5E: CC (2W Calls, No TC) (Since 2010)}
+\includegraphics[scale=0.35]{SX5E_Collar2W_2010}
+\end{frame}
+
+\begin{frame}
+{\small SX5E: {\bf X.X\%} = Equity + Long Put 11D 270 60 + Short Call OTM {\bf X.X\%}}
+\begin{table}
+\centering
+\scalebox{0.475}{
+\begin{tabular}{lrcrrrrrrrrrrr}
+\toprule
+Strategy & Retn & RetnDiff & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta-\\
+\midrule
+{\bf \color{blue} SX5E} Since 2002 & 6.3 & & 100.6 & 23.4 & 0.27 & 0.02 & 0.15 & -60.8 & 0.12 & 3.6 & 1.00 & 1.00 & 1.00\\
+\midrule
+\addlinespace
+\color{blue}{30 5 $|$ \bf 2.0\%} @ Mid & 8.4 & & 135.0 & 14.2 & 0.59 & 0.05 & 0.54 & -19.7 & 0.08 & 7.7 & 0.52 & 0.47 & 0.51\\
+\color{blue}{30 5 $|$ \bf 2.0\%} @ Bid/Offer & 7.6 & {\bf \color{red}-0.8} & 122.5 & 14.3 & 0.54 & 0.05 & 0.48 & -20.5 & 0.08 & 6.9 & 0.53 & 0.47 & 0.52\\
+\addlinespace
+{30 5 $|$ \bf 1.5\%} @ Mid & 8.3 & & 132.4 & 13.7 & 0.60 & 0.05 & 0.55 & -18.8 & 0.10 & 7.6 & 0.49 & 0.44 & 0.49\\
+{30 5 $|$ \bf 1.5\%} @ Bid/Offer & 7.5 & {\bf \color{red}-0.8} & 119.4 & 13.8 & 0.54 & 0.05 & 0.49 & -19.6 & 0.10 & 6.7 & 0.50 & 0.45 & 0.50\\
+\addlinespace
+{30 5 $|$ \bf 1.0\%} @ Mid & 7.9 & & 127.1 & 13.3 & 0.60 & 0.05 & 0.55 & -17.9 & 0.10 & 7.3 & 0.47 & 0.42 & 0.48\\
+{30 5 $|$ \bf 1.0\%} @ Bid/Offer & 7.1 & {\bf \color{red}-0.8} & 114.0 & 13.3 & 0.53 & 0.05 & 0.48 & -18.7 & 0.10 & 6.4 & 0.48 & 0.43 & 0.48\\
+\addlinespace
+{30 5 $|$ \bf 0.5\%} @ Mid & 7.5 & & 120.6 & 12.8 & 0.59 & 0.05 & 0.54 & -16.5 & 0.11 & 6.9 & 0.44 & 0.40 & 0.46\\
+{30 5 $|$ \bf 0.5\%} @ Bid/Offer & 6.7 & {\bf \color{red}-0.8} & 107.2 & 12.9 & 0.52 & 0.05 & 0.47 & -17.3 & 0.11 & 6.0 & 0.45 & 0.41 & 0.46\\
+\addlinespace
+{30 5 $|$ \bf 0.0\%} @ Mid & 7.4 & & 118.3 & 12.3 & 0.60 & 0.05 & 0.56 & -15.3 & 0.15 & 6.8 & 0.42 & 0.38 & 0.44\\
+{30 5 $|$ \bf 0.0\%} @ Bid/Offer & 6.6 & {\bf \color{red}-0.8} & 105.0 & 12.4 & 0.53 & 0.05 & 0.48 & -16.7 & 0.15 & 6.0 & 0.42 & 0.39 & 0.44\\
+\bottomrule
+
+\midrule
+
+\addlinespace
+{10 5 $|$ \bf 3.0\%} @ Mid & 8.2 & & 130.8 & 15.5 & 0.53 & 0.05 & 0.47 & -21.9 & -0.01 & 7.2 & 0.60 & 0.52 & 0.56\\
+{10 5 $|$ \bf 3.0\%} @ Bid/Offer & 7.2 & {\bf \color{red}-1.0} & 115.6 & 15.6 & 0.46 & 0.04 & 0.40 & -24.3 & -0.01 & 6.2 & 0.60 & 0.53 & 0.57\\
+\addlinespace
+\color{blue}{10 5 $|$ \bf 2.5\%} @ Mid & 8.0 & & 127.6 & 15.0 & 0.53 & 0.05 & 0.47 & -21.0 & -0.01 & 7.1 & 0.57 & 0.49 & 0.55\\
+\color{blue}{10 5 $|$ \bf 2.5\%} @ Bid/Offer & 6.9 & {\bf \color{red}-1.1} & 110.5 & 15.0 & 0.46 & 0.04 & 0.39 & -22.4 & -0.01 & 5.9 & 0.58 & 0.50 & 0.55\\
+\addlinespace
+{10 5 $|$ \bf 2.0\%} @ Mid & 8.1 & & 129.0 & 14.3 & 0.56 & 0.05 & 0.51 & -19.7 & -0.02 & 7.3 & 0.54 & 0.47 & 0.52\\
+{10 5 $|$ \bf 2.0\%} @ Bid/Offer & 6.9 & {\bf \color{red}-1.2} & 110.0 & 14.4 & 0.48 & 0.04 & 0.42 & -20.5 & -0.01 & 6.0 & 0.55 & 0.47 & 0.53\\
+\addlinespace
+{10 5 $|$ \bf 1.5\%} @ Mid & 7.8 & & 125.0 & 13.7 & 0.57 & 0.05 & 0.52 & -18.8 & -0.01 & 7.1 & 0.51 & 0.44 & 0.50\\
+{10 5 $|$ \bf 1.5\%} @ Bid/Offer & 6.5 & {\bf \color{red}-1.3} & 104.0 & 13.8 & 0.47 & 0.04 & 0.41 & -19.6 & -0.01 & 5.7 & 0.51 & 0.44 & 0.51\\
+\addlinespace
+{10 5 $|$ \bf 1.0\%} @ Mid & 7.6 & & 121.4 & 13.1 & 0.58 & 0.05 & 0.53 & -17.9 & -0.03 & 7.0 & 0.48 & 0.41 & 0.48\\
+{10 5 $|$ \bf 1.0\%} @ Bid/Offer & 6.2 & {\bf \color{red}-1.4} & 98.9 & 13.2 & 0.47 & 0.04 & 0.41 & -18.7 & -0.03 & 5.4 & 0.48 & 0.42 & 0.49\\
+\addlinespace
+{10 5 $|$ \bf 0.5\%} @ Mid & 7.7 & & 123.5 & 12.4 & 0.62 & 0.06 & 0.58 & -16.5 & -0.02 & 7.2 & 0.44 & 0.38 & 0.45\\
+{10 5 $|$ \bf 0.5\%} @ Bid/Offer & 6.2 & {\bf \color{red}-1.5} & 99.0 & 12.5 & 0.50 & 0.04 & 0.44 & -17.3 & -0.02 & 5.5 & 0.45 & 0.39 & 0.46\\
+\addlinespace
+{10 5 $|$ \bf 0.0\%} @ Mid & 7.4 & & 118.4 & 11.7 & 0.63 & 0.06 & 0.59 & -15.3 & 0.02 & 6.9 & 0.40 & 0.35 & 0.43\\
+{10 5 $|$ \bf 0.0\%} @ Bid/Offer & 5.7 & {\bf \color{red}-1.7} & 92.1 & 11.8 & 0.49 & 0.04 & 0.44 & -16.1 & 0.03 & 5.2 & 0.41 & 0.36 & 0.43\\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+\end{frame}
+
+\begin{frame}{\normalsize SX5E: CC Return Difference (Bid-Offer vs Mid Price) by Year}
+\includegraphics[scale=0.35]{sx5e_ret_year_1m} \\
+\includegraphics[scale=0.35]{sx5e_ret_year_2w}
+\end{frame}
+
+\begin{frame}
+{\small SX5E: {\bf X.X\%} = Equity + Long Put 11D 270 60 + Short Call OTM {\bf X.X\%}}
+\begin{table}
+\centering
+\scalebox{0.475}{
+\begin{tabular}{lrcrrrrrrrrrrr}
+\toprule
+Strategy & Retn & RetnDiff & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta-\\
+\midrule
+{\bf \color{blue} SX5E} Since 2010 & 8.5 & & 67.5 & 21.0 & 0.41 & 0.04 & 0.31 & -34.5 & -0.02 & 6.5 & 1.00 & 1.00 & 1.00\\
+\midrule
+\addlinespace
+\color{blue}{30 5 $|$ \bf 2.0\%} @ Mid & 6.7 & & 53.3 & 13.0 & 0.52 & 0.05 & 0.47 & -18.5 & 0.00 & 6.1 & 0.57 & 0.54 & 0.59\\
+\color{blue}{30 5 $|$ \bf 2.0\%} @ Bid/Offer & 6.2 & {\bf \color{red}-0.5} & 48.7 & 13.2 & 0.47 & 0.04 & 0.41 & -19.2 & 0.01 & 5.4 & 0.58 & 0.55 & 0.60\\
+\addlinespace
+{30 5 $|$ \bf 1.5\%} @ Mid & 6.4 & & 50.4 & 12.4 & 0.51 & 0.05 & 0.46 & -18.2 & 0.02 & 5.8 & 0.54 & 0.50 & 0.56\\
+{30 5 $|$ \bf 1.5\%} @ Bid/Offer & 5.8 & {\bf \color{red}-0.6} & 45.5 & 12.5 & 0.46 & 0.04 & 0.41 & -19.0 & 0.02 & 5.1 & 0.55 & 0.51 & 0.57\\
+\addlinespace
+{30 5 $|$ \bf 1.0\%} @ Mid & 5.7 & & 44.9 & 11.9 & 0.48 & 0.04 & 0.43 & -16.7 & 0.04 & 5.1 & 0.51 & 0.48 & 0.54\\
+{30 5 $|$ \bf 1.0\%} @ Bid/Offer & 5.0 & {\bf \color{red}-0.7} & 39.8 & 12.0 & 0.42 & 0.04 & 0.37 & -17.5 & 0.04 & 4.4 & 0.52 & 0.49 & 0.55\\
+\addlinespace
+{30 5 $|$ \bf 0.5\%} @ Mid & 5.6 & & 44.6 & 11.4 & 0.50 & 0.04 & 0.45 & -15.3 & 0.08 & 5.1 & 0.48 & 0.45 & 0.52\\
+{30 5 $|$ \bf 0.5\%} @ Bid/Offer & 5.0 & {\bf \color{red}-0.6} & 39.5 & 11.5 & 0.44 & 0.04 & 0.39 & -15.8 & 0.08 & 4.4 & 0.49 & 0.46 & 0.52\\
+\addlinespace
+{30 5 $|$ \bf 0.0\%} @ Mid & 5.7 & & 45.1 & 10.8 & 0.53 & 0.05 & 0.49 & -14.5 & 0.14 & 5.3 & 0.45 & 0.42 & 0.49\\
+{30 5 $|$ \bf 0.0\%} @ Bid/Offer & 5.0 & {\bf \color{red}-0.7} & 39.8 & 10.9 & 0.46 & 0.04 & 0.42 & -14.8 & 0.14 & 4.5 & 0.45 & 0.43 & 0.49\\
+\bottomrule
+
+\midrule
+
+\addlinespace
+{10 5 $|$ \bf 3.0\%} @ Mid & 5.9 & & 47.0 & 14.8 & 0.40 & 0.04 & 0.34 & -26.3 & -0.13 & 5.0 & 0.67 & 0.58 & 0.67\\
+{10 5 $|$ \bf 3.0\%} @ Bid/Offer & 5.2 & {\bf \color{red}-0.7} & 41.0 & 14.9 & 0.35 & 0.03 & 0.28 & -27.7 & -0.13 & 4.2 & 0.67 & 0.58 & 0.68\\
+\addlinespace
+\color{blue}{10 5 $|$ \bf 2.5\%} @ Mid & 5.2 & & 41.4 & 14.1 & 0.37 & 0.03 & 0.31 & -26.9 & -0.18 & 4.3 & 0.63 & 0.54 & 0.65\\
+\color{blue}{10 5 $|$ \bf 2.5\%} @ Bid/Offer & 4.3 & {\bf \color{red}-0.9} & 34.3 & 14.2 & 0.31 & 0.03 & 0.24 & -28.9 & -0.17 & 3.4 & 0.64 & 0.54 & 0.66\\
+\addlinespace
+{10 5 $|$ \bf 2.0\%} @ Mid & 5.4 & & 42.3 & 13.4 & 0.40 & 0.03 & 0.34 & -24.7 & -0.18 & 4.5 & 0.59 & 0.50 & 0.62\\
+{10 5 $|$ \bf 2.0\%} @ Bid/Offer & 4.3 & {\bf \color{red}-1.1} & 34.1 & 13.5 & 0.32 & 0.03 & 0.26 & -26.1 & -0.17 & 3.5 & 0.60 & 0.51 & 0.63\\
+\addlinespace
+{10 5 $|$ \bf 1.5\%} @ Mid & 5.0 & & 39.4 & 12.7 & 0.39 & 0.03 & 0.34 & -24.8 & -0.21 & 4.3 & 0.55 & 0.46 & 0.60\\
+{10 5 $|$ \bf 1.5\%} @ Bid/Offer & 3.8 & {\bf \color{red}-1.2} & 30.0 & 12.8 & 0.30 & 0.03 & 0.24 & -27.3 & -0.20 & 3.0 & 0.56 & 0.46 & 0.60\\
+\addlinespace
+{10 5 $|$ \bf 1.0\%} @ Mid & 4.8 & & 38.0 & 11.9 & 0.40 & 0.03 & 0.35 & -22.8 & -0.27 & 4.2 & 0.51 & 0.42 & 0.57\\
+{10 5 $|$ \bf 1.0\%} @ Bid/Offer & 3.5 & {\bf \color{red}-1.3} & 27.4 & 12.0 & 0.29 & 0.02 & 0.23 & -24.7 & -0.26 & 2.8 & 0.52 & 0.42 & 0.57\\
+\addlinespace
+{10 5 $|$ \bf 0.5\%} @ Mid & 5.2 & & 40.7 & 11.1 & 0.46 & 0.04 & 0.42 & -21.6 & -0.30 & 4.6 & 0.47 & 0.38 & 0.53\\
+{10 5 $|$ \bf 0.5\%} @ Bid/Offer & 3.7 & {\bf \color{red}-1.5} & 29.2 & 11.2 & 0.33 & 0.03 & 0.28 & -23.6 & -0.29 & 3.1 & 0.47 & 0.38 & 0.54\\
+\addlinespace
+{10 5 $|$ \bf 0.0\%} @ Mid & 4.9 & & 38.5 & 10.2 & 0.48 & 0.04 & 0.43 & -20.4 & -0.30 & 4.4 & 0.42 & 0.33 & 0.50\\
+{10 5 $|$ \bf 0.0\%} @ Bid/Offer & 3.3 & {\bf \color{red}-1.6} & 25.9 & 10.3 & 0.32 & 0.03 & 0.27 & -22.5 & -0.29 & 2.8 & 0.43 & 0.34 & 0.50\\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+\end{frame}
+
+
+\begin{frame}{NKY: CC (1M Calls, No TC)}
+\includegraphics[scale=0.35]{NKY_Collar1M}
+\end{frame}
+
+\begin{frame}{NKY: CC (1M Calls, No TC) (Since 2010)}
+\includegraphics[scale=0.35]{NKY_Collar1M_2010}
+\end{frame}
+
+\begin{frame}{NKY: CC (2W Calls, No TC)}
+\includegraphics[scale=0.35]{NKY_Collar2W}
+\end{frame}
+
+\begin{frame}{NKY: CC (2W Calls, No TC) (Since 2010)}
+\includegraphics[scale=0.35]{NKY_Collar2W_2010}
+\end{frame}
+
+\begin{frame}
+{\small NKY: {\bf X.X\%} = Equity + Long Put 11D 270 60 + Short Call OTM {\bf X.X\%}}
+\begin{table}
+\centering
+\scalebox{0.475}{
+\begin{tabular}{lrcrrrrrrrrrrr}
+\toprule
+Strategy & Retn & RetnDiff & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta-\\
+\midrule
+{\bf \color{blue} NKY} Since 2004 & 9.1 & & 119.1 & 24.0 & 0.38 & 0.03 & 0.27 & -54.1 & -0.29 & 6.4 & 1.00 & 1.00 & 1.00\\
+\midrule
+\addlinespace
+\color{blue}{30 5 $|$ \bf 2.0\%} @ Mid & 9.4 & & 122.6 & 19.0 & 0.49 & 0.04 & 0.42 & -27.0 & 0.66 & 7.9 & 0.56 & 0.55 & 0.60\\
+\color{blue}{30 5 $|$ \bf 2.0\%} @ Bid/Offer & 7.8 & {\bf \color{red}-1.6} & 101.7 & 19.2 & 0.41 & 0.04 & 0.32 & -30.3 & 0.63 & 6.1 & 0.57 & 0.55 & 0.61\\
+\addlinespace
+{30 5 $|$ \bf 1.5\%} @ Mid & 8.7 & & 114.0 & 19.2 & 0.45 & 0.04 & 0.37 & -27.7 & 0.63 & 7.1 & 0.53 & 0.53 & 0.58\\
+{30 5 $|$ \bf 1.5\%} @ Bid/Offer & 7.1 & {\bf \color{red}-1.6} & 93.4 & 19.3 & 0.37 & 0.03 & 0.28 & -31.0 & 0.58 & 5.4 & 0.54 & 0.53 & 0.59\\
+\addlinespace
+{30 5 $|$ \bf 1.0\%} @ Mid & 8.3 & & 108.6 & 18.8 & 0.44 & 0.04 & 0.36 & -26.8 & 0.69 & 6.8 & 0.50 & 0.50 & 0.57\\
+{30 5 $|$ \bf 1.0\%} @ Bid/Offer & 6.8 & {\bf \color{red}-1.5} & 88.2 & 18.9 & 0.36 & 0.03 & 0.27 & -30.1 & 0.64 & 5.1 & 0.51 & 0.50 & 0.58\\
+\addlinespace
+{30 5 $|$ \bf 0.5\%} @ Mid & 8.3 & & 107.9 & 18.5 & 0.45 & 0.04 & 0.37 & -25.9 & 0.75 & 6.8 & 0.48 & 0.49 & 0.54\\
+{30 5 $|$ \bf 0.5\%} @ Bid/Offer & 6.8 & {\bf \color{red}-1.5} & 88.4 & 18.6 & 0.36 & 0.03 & 0.28 & -29.0 & 0.70 & 5.2 & 0.49 & 0.48 & 0.56\\
+\addlinespace
+{30 5 $|$ \bf 0.0\%} @ Mid & 8.2 & & 107.3 & 18.6 & 0.44 & 0.04 & 0.36 & -25.1 & 0.62 & 6.7 & 0.45 & 0.46 & 0.52\\
+{30 5 $|$ \bf 0.0\%} @ Bid/Offer & 6.8 & {\bf \color{red}-1.4} & 89.2 & 18.7 & 0.36 & 0.03 & 0.28 & -29.7 & 0.60 & 5.2 & 0.46 & 0.45 & 0.53\\
+\bottomrule
+
+\midrule
+
+\addlinespace
+\color{blue}{10 5 $|$ \bf 3.0\%} @ Mid & 10.1 & & 131.6 & 19.6 & 0.51 & 0.05 & 0.43 & -27.6 & 0.58 & 8.5 & 0.60 & 0.58 & 0.63\\
+\color{blue}{10 5 $|$ \bf 3.0\%} @ Bid/Offer & 8.4 & {\bf \color{red}-1.7} & 109.6 & 19.8 & 0.42 & 0.04 & 0.33 & -30.9 & 0.55 & 6.6 & 0.61 & 0.58 & 0.64\\
+\addlinespace
+{10 5 $|$ \bf 2.5\%} @ Mid & 10.1 & & 131.7 & 19.3 & 0.52 & 0.05 & 0.44 & -26.7 & 0.61 & 8.6 & 0.58 & 0.56 & 0.61\\
+{10 5 $|$ \bf 2.5\%} @ Bid/Offer & 8.4 & {\bf \color{red}-1.7} & 109.3 & 19.5 & 0.43 & 0.04 & 0.34 & -30.0 & 0.59 & 6.7 & 0.59 & 0.56 & 0.63\\
+\addlinespace
+{10 5 $|$ \bf 2.0\%} @ Mid & 9.8 & & 128.3 & 19.0 & 0.52 & 0.05 & 0.44 & -27.0 & 0.66 & 8.3 & 0.56 & 0.55 & 0.60\\
+{10 5 $|$ \bf 2.0\%} @ Bid/Offer & 8.1 & {\bf \color{red}-1.7} & 105.7 & 19.2 & 0.42 & 0.04 & 0.34 & -30.3 & 0.63 & 6.4 & 0.57 & 0.55 & 0.61\\
+\addlinespace
+{10 5 $|$ \bf 1.5\%} @ Mid & 9.1 & & 119.2 & 19.2 & 0.48 & 0.04 & 0.39 & -27.7 & 0.63 & 7.6 & 0.53 & 0.52 & 0.58\\
+{10 5 $|$ \bf 1.5\%} @ Bid/Offer & 7.4 & {\bf \color{red}-1.7} & 96.6 & 19.3 & 0.38 & 0.03 & 0.29 & -31.0 & 0.58 & 5.7 & 0.54 & 0.52 & 0.59\\
+\addlinespace
+{10 5 $|$ \bf 1.0\%} @ Mid & 8.8 & & 115.3 & 18.7 & 0.47 & 0.04 & 0.39 & -26.8 & 0.69 & 7.3 & 0.50 & 0.50 & 0.56\\
+{10 5 $|$ \bf 1.0\%} @ Bid/Offer & 7.1 & {\bf \color{red}-1.7} & 92.4 & 18.9 & 0.37 & 0.03 & 0.29 & -30.1 & 0.64 & 5.4 & 0.51 & 0.49 & 0.58\\
+\addlinespace
+{10 5 $|$ \bf 0.5\%} @ Mid & 8.9 & & 116.4 & 18.4 & 0.48 & 0.04 & 0.41 & -25.9 & 0.75 & 7.5 & 0.47 & 0.47 & 0.54\\
+{10 5 $|$ \bf 0.5\%} @ Bid/Offer & 7.2 & {\bf \color{red}-1.7} & 94.2 & 18.5 & 0.39 & 0.04 & 0.31 & -29.0 & 0.70 & 5.7 & 0.48 & 0.47 & 0.55\\
+\addlinespace
+{10 5 $|$ \bf 0.0\%} @ Mid & 9.0 & & 117.1 & 18.6 & 0.48 & 0.04 & 0.41 & -25.1 & 0.62 & 7.5 & 0.45 & 0.44 & 0.52\\
+{10 5 $|$ \bf 0.0\%} @ Bid/Offer & 7.4 & {\bf \color{red}-1.6} & 96.3 & 18.6 & 0.40 & 0.04 & 0.31 & -29.7 & 0.60 & 5.8 & 0.46 & 0.44 & 0.53\\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+\end{frame}
+
+\begin{frame}{\normalsize NKY: CC Return Difference (Bid-Offer vs Mid Price) by Year}
+\includegraphics[scale=0.35]{nky_ret_year_1m} \\
+\includegraphics[scale=0.35]{nky_ret_year_2w}
+\end{frame}
+
+\begin{frame}
+{\small NKY: {\bf X.X\%} = Equity + Long Put 11D 270 60 + Short Call OTM {\bf X.X\%}}
+\begin{table}
+\centering
+\scalebox{0.475}{
+\begin{tabular}{lrcrrrrrrrrrrr}
+\toprule
+Strategy & Retn & RetnDiff & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta-\\
+\midrule
+{\bf \color{blue} NKY} Since 2010 & 13.2 & & 100.0 & 21.8 & 0.61 & 0.05 & 0.53 & -24.0 & -0.41 & 11.5 & 1.00 & 1.00 & 1.00\\
+\midrule
+\addlinespace
+\color{blue}{30 5 $|$ \bf 2.0\%} @ Mid & 9.2 & & 69.3 & 13.9 & 0.66 & 0.06 & 0.61 & -15.6 & -0.57 & 8.5 & 0.59 & 0.55 & 0.66\\
+\color{blue}{30 5 $|$ \bf 2.0\%} @ Bid/Offer & 8.2 & {\bf \color{red}-1.0} & 61.9 & 14.2 & 0.58 & 0.05 & 0.53 & -17.1 & -0.54 & 7.5 & 0.60 & 0.57 & 0.67\\
+\addlinespace
+{30 5 $|$ \bf 1.5\%} @ Mid & 8.9 & & 67.2 & 13.4 & 0.66 & 0.06 & 0.62 & -15.7 & -0.59 & 8.3 & 0.56 & 0.53 & 0.64\\
+{30 5 $|$ \bf 1.5\%} @ Bid/Offer & 7.9 & {\bf \color{red}-1.0} & 59.9 & 13.6 & 0.58 & 0.05 & 0.53 & -17.2 & -0.57 & 7.2 & 0.57 & 0.54 & 0.65\\
+\addlinespace
+{30 5 $|$ \bf 1.0\%} @ Mid & 8.1 & & 61.0 & 12.9 & 0.63 & 0.05 & 0.58 & -15.4 & -0.64 & 7.5 & 0.53 & 0.50 & 0.62\\
+{30 5 $|$ \bf 1.0\%} @ Bid/Offer & 7.1 & {\bf \color{red}-1.0} & 53.8 & 13.1 & 0.55 & 0.05 & 0.50 & -16.9 & -0.62 & 6.5 & 0.54 & 0.51 & 0.63\\
+\addlinespace
+{30 5 $|$ \bf 0.5\%} @ Mid & 7.4 & & 56.2 & 12.4 & 0.60 & 0.05 & 0.55 & -15.1 & -0.71 & 6.9 & 0.50 & 0.47 & 0.60\\
+{30 5 $|$ \bf 0.5\%} @ Bid/Offer & 6.5 & {\bf \color{red}-0.9} & 49.5 & 12.6 & 0.52 & 0.04 & 0.47 & -15.9 & -0.69 & 5.9 & 0.51 & 0.49 & 0.61\\
+\addlinespace
+{30 5 $|$ \bf 0.0\%} @ Mid & 7.4 & & 56.1 & 12.0 & 0.62 & 0.05 & 0.58 & -13.7 & -0.73 & 6.9 & 0.48 & 0.46 & 0.58\\
+{30 5 $|$ \bf 0.0\%} @ Bid/Offer & 6.7 & {\bf \color{red}-0.7} & 50.2 & 12.1 & 0.55 & 0.05 & 0.50 & -14.3 & -0.71 & 6.1 & 0.49 & 0.47 & 0.59\\
+\bottomrule
+
+\midrule
+
+\addlinespace
+\color{blue}{10 5 $|$ \bf 3.0\%} @ Mid & 10.2 & & 77.3 & 15.0 & 0.68 & 0.06 & 0.64 & -17.3 & -0.53 & 9.5 & 0.65 & 0.60 & 0.70\\
+\color{blue}{10 5 $|$ \bf 3.0\%} @ Bid/Offer & 9.1 & {\bf \color{red}-1.1} & 69.0 & 15.2 & 0.60 & 0.05 & 0.55 & -18.1 & -0.51 & 8.3 & 0.66 & 0.61 & 0.71\\
+\addlinespace
+{10 5 $|$ \bf 2.5\%} @ Mid & 10.0 & & 75.3 & 14.6 & 0.68 & 0.06 & 0.64 & -17.3 & -0.57 & 9.3 & 0.63 & 0.57 & 0.68\\
+{10 5 $|$ \bf 2.5\%} @ Bid/Offer & 8.8 & {\bf \color{red}-1.2} & 66.8 & 14.8 & 0.60 & 0.05 & 0.54 & -18.0 & -0.55 & 8.1 & 0.64 & 0.59 & 0.69\\
+\addlinespace
+{10 5 $|$ \bf 2.0\%} @ Mid & 9.9 & & 74.9 & 14.0 & 0.71 & 0.06 & 0.67 & -15.6 & -0.61 & 9.3 & 0.60 & 0.55 & 0.66\\
+{10 5 $|$ \bf 2.0\%} @ Bid/Offer & 8.7 & {\bf \color{red}-1.2} & 65.9 & 14.2 & 0.61 & 0.05 & 0.56 & -17.1 & -0.58 & 8.0 & 0.61 & 0.56 & 0.67\\
+\addlinespace
+{10 5 $|$ \bf 1.5\%} @ Mid & 9.6 & & 72.5 & 13.4 & 0.71 & 0.06 & 0.68 & -15.7 & -0.66 & 9.1 & 0.56 & 0.51 & 0.64\\
+{10 5 $|$ \bf 1.5\%} @ Bid/Offer & 8.3 & {\bf \color{red}-1.3} & 63.0 & 13.6 & 0.61 & 0.05 & 0.57 & -17.2 & -0.64 & 7.7 & 0.58 & 0.53 & 0.65\\
+\addlinespace
+{10 5 $|$ \bf 1.0\%} @ Mid & 9.0 & & 67.7 & 12.8 & 0.70 & 0.06 & 0.66 & -15.4 & -0.73 & 8.5 & 0.53 & 0.48 & 0.61\\
+{10 5 $|$ \bf 1.0\%} @ Bid/Offer & 7.7 & {\bf \color{red}-1.3} & 58.0 & 12.9 & 0.59 & 0.05 & 0.55 & -16.9 & -0.70 & 7.1 & 0.54 & 0.49 & 0.62\\
+\addlinespace
+{10 5 $|$ \bf 0.5\%} @ Mid & 8.6 & & 64.6 & 12.2 & 0.70 & 0.06 & 0.67 & -15.1 & -0.85 & 8.1 & 0.50 & 0.45 & 0.60\\
+{10 5 $|$ \bf 0.5\%} @ Bid/Offer & 7.3 & {\bf \color{red}-1.3} & 55.2 & 12.3 & 0.59 & 0.05 & 0.55 & -15.9 & -0.82 & 6.8 & 0.51 & 0.46 & 0.60\\
+\addlinespace
+{10 5 $|$ \bf 0.0\%} @ Mid & 8.7 & & 66.0 & 11.7 & 0.75 & 0.06 & 0.71 & -13.7 & -0.92 & 8.4 & 0.47 & 0.42 & 0.58\\
+{10 5 $|$ \bf 0.0\%} @ Bid/Offer & 7.6 & {\bf \color{red}-1.1} & 57.3 & 11.8 & 0.64 & 0.05 & 0.60 & -14.3 & -0.90 & 7.1 & 0.48 & 0.43 & 0.58\\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+\end{frame}
+
+\begin{frame}{UKX: CC (1M Calls, No TC)}
+\includegraphics[scale=0.35]{FTSe_Collar1M}
+\end{frame}
+
+\begin{frame}{UKX: CC (1M Calls, No TC) (Since 2010)}
+\includegraphics[scale=0.35]{FTSE_Collar1M_2010}
+\end{frame}
+
+\begin{frame}{UKX: CC (2W Calls, No TC)}
+\includegraphics[scale=0.35]{FTSE_Collar2W}
+\end{frame}
+
+\begin{frame}{UKX: CC (2W Calls, No TC) (Since 2010)}
+\includegraphics[scale=0.35]{FTSE_Collar2W_2010}
+\end{frame}
+
+\begin{frame}
+{\small UKX: {\bf X.X\%} = Equity + Long Put 11D 270 60 + Short Call OTM {\bf X.X\%}}
+\begin{table}
+\centering
+\scalebox{0.475}{
+\begin{tabular}{lrcrrrrrrrrrrr}
+\toprule
+Strategy & Retn & RetnDiff & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta-\\
+\midrule
+{\bf \color{blue} UKX} Since 2002 & 7.8 & & 122.6 & 18.8 & 0.41 & 0.04 & 0.33 & -39.4 & 0.02 & 6.2 & 1.00 & 1.00 & 1.00\\
+\midrule
+\addlinespace
+\color{blue}{30 5 $|$ \bf 2.0\%} @ Mid & 8.4 & & 132.9 & 11.7 & 0.72 & 0.06 & 0.69 & -16.4 & -0.20 & 8.0 & 0.54 & 0.48 & 0.53\\
+\color{blue}{30 5 $|$ \bf 2.0\%} @ Bid/Offer & 5.8 & {\bf \color{red}-2.6} & 91.2 & 12.3 & 0.47 & 0.04 & 0.42 & -19.2 & -0.17 & 5.1 & 0.59 & 0.53 & 0.57\\
+\addlinespace
+{30 5 $|$ \bf 1.5\%} @ Mid & 8.5 & & 134.5 & 11.3 & 0.75 & 0.07 & 0.73 & -16.1 & -0.20 & 8.2 & 0.52 & 0.46 & 0.51\\
+{30 5 $|$ \bf 1.5\%} @ Bid/Offer & 6.0 & {\bf \color{red}-2.5} & 94.9 & 11.8 & 0.51 & 0.05 & 0.46 & -18.5 & -0.18 & 5.5 & 0.56 & 0.51 & 0.55\\
+\addlinespace
+{30 5 $|$ \bf 1.0\%} @ Mid & 8.3 & & 131.4 & 10.8 & 0.77 & 0.07 & 0.74 & -14.9 & -0.22 & 8.0 & 0.49 & 0.44 & 0.49\\
+{30 5 $|$ \bf 1.0\%} @ Bid/Offer & 6.0 & {\bf \color{red}-2.0} & 95.3 & 11.2 & 0.54 & 0.05 & 0.49 & -17.2 & -0.20 & 5.5 & 0.52 & 0.48 & 0.52\\
+\addlinespace
+{30 5 $|$ \bf 0.5\%} @ Mid & 8.1 & & 128.7 & 10.4 & 0.78 & 0.07 & 0.76 & -14.1 & -0.23 & 7.9 & 0.46 & 0.42 & 0.47\\
+{30 5 $|$ \bf 0.5\%} @ Bid/Offer & 6.3 & {\bf \color{red}-1.8} & 99.0 & 10.7 & 0.58 & 0.05 & 0.54 & -16.3 & -0.22 & 5.8 & 0.49 & 0.45 & 0.50\\
+\addlinespace
+{30 5 $|$ \bf 0.0\%} @ Mid & 8.3 & & 130.4 & 10.0 & 0.82 & 0.07 & 0.80 & -13.4 & -0.22 & 8.1 & 0.43 & 0.40 & 0.45\\
+{30 5 $|$ \bf 0.0\%} @ Bid/Offer & 6.9 & {\bf \color{red}-1.4} & 109.6 & 10.2 & 0.68 & 0.06 & 0.65 & -15.3 & -0.23 & 6.6 & 0.45 & 0.42 & 0.47\\
+\bottomrule
+
+\midrule
+
+\addlinespace
+{10 5 $|$ \bf 3.0\%} @ Mid & 8.6 & & 136.1 & 12.5 & 0.69 & 0.06 & 0.65 & -17.7 & -0.16 & 8.1 & 0.59 & 0.53 & 0.56\\
+{10 5 $|$ \bf 3.0\%} @ Bid/Offer & 5.9 & {\bf \color{red}-2.7} & 94.0 & 13.1 & 0.45 & 0.04 & 0.40 & -21.3 & -0.13 & 5.2 & 0.64 & 0.58 & 0.60\\
+\addlinespace
+\color{blue}{10 5 $|$ \bf 2.5\%} @ Mid & 8.7 & & 136.8 & 12.1 & 0.71 & 0.06 & 0.68 & -16.9 & -0.16 & 8.2 & 0.57 & 0.51 & 0.54\\
+\color{blue}{10 5 $|$ \bf 2.5\%} @ Bid/Offer & 6.0 & {\bf \color{red}-2.7} & 94.6 & 12.7 & 0.47 & 0.04 & 0.42 & -19.8 & -0.13 & 5.3 & 0.62 & 0.56 & 0.58\\
+\addlinespace
+{10 5 $|$ \bf 2.0\%} @ Mid & 8.4 & & 132.9 & 11.7 & 0.72 & 0.06 & 0.69 & -16.4 & -0.20 & 8.0 & 0.54 & 0.48 & 0.53\\
+{10 5 $|$ \bf 2.0\%} @ Bid/Offer & 5.8 & {\bf \color{red}-2.6} & 91.2 & 12.3 & 0.47 & 0.04 & 0.42 & -19.2 & -0.17 & 5.1 & 0.59 & 0.53 & 0.57\\
+\addlinespace
+{10 5 $|$ \bf 1.5\%} @ Mid & 8.5 & & 134.3 & 11.3 & 0.75 & 0.07 & 0.72 & -16.1 & -0.21 & 8.2 & 0.52 & 0.46 & 0.51\\
+{10 5 $|$ \bf 1.5\%} @ Bid/Offer & 6.0 & {\bf \color{red}-2.5} & 94.6 & 11.8 & 0.51 & 0.05 & 0.46 & -18.5 & -0.18 & 5.4 & 0.56 & 0.51 & 0.55\\
+\addlinespace
+{10 5 $|$ \bf 1.0\%} @ Mid & 8.3 & & 131.1 & 10.8 & 0.77 & 0.07 & 0.74 & -15.0 & -0.22 & 8.0 & 0.49 & 0.44 & 0.49\\
+{10 5 $|$ \bf 1.0\%} @ Bid/Offer & 6.0 & {\bf \color{red}-2.3} & 95.1 & 11.2 & 0.54 & 0.05 & 0.49 & -17.3 & -0.21 & 5.5 & 0.52 & 0.48 & 0.52\\
+\addlinespace
+{10 5 $|$ \bf 0.5\%} @ Mid & 8.1 & & 128.7 & 10.4 & 0.78 & 0.07 & 0.76 & -14.1 & -0.23 & 7.9 & 0.46 & 0.42 & 0.47\\
+{10 5 $|$ \bf 0.5\%} @ Bid/Offer & 6.3 & {\bf \color{red}-1.8} & 99.0 & 10.7 & 0.58 & 0.05 & 0.54 & -16.3 & -0.22 & 5.8 & 0.49 & 0.45 & 0.50\\
+\addlinespace
+{10 5 $|$ \bf 0.0\%} @ Mid & 8.3 & & 130.4 & 10.0 & 0.82 & 0.07 & 0.80 & -13.4 & -0.22 & 8.1 & 0.43 & 0.40 & 0.45\\
+{10 5 $|$ \bf 0.0\%} @ Bid/Offer & 6.9 & {\bf \color{red}-1.4} & 109.6 & 10.2 & 0.68 & 0.06 & 0.65 & -15.3 & -0.23 & 6.6 & 0.45 & 0.42 & 0.47\\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+\end{frame}
+
+\begin{frame}{\normalsize UKX: CC Return Difference (Bid-Offer vs Mid Price) by Year}
+\includegraphics[scale=0.35]{ukx_ret_year_1m} \\
+\includegraphics[scale=0.35]{ukx_ret_year_2w}
+\end{frame}
+
+\begin{frame}
+{\small UKX: {\bf X.X\%} = Equity + Long Put 11D 270 60 + Short Call OTM {\bf X.X\%}}
+\begin{table}
+\centering
+\scalebox{0.475}{
+\begin{tabular}{lrcrrrrrrrrrrr}
+\toprule
+Strategy & Retn & RetnDiff & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta-\\
+\midrule
+{\bf \color{blue} UKX} Since 2010 & 9.0 & & 69.9 & 15.5 & 0.58 & 0.05 & 0.52 & -16.5 & -0.11 & 8.1 & 1.00 & 1.00 & 1.00\\
+\midrule
+\addlinespace
+\color{blue}{30 5 $|$ \bf 2.0\%} @ Mid & 6.4 & & 50.0 & 10.2 & 0.63 & 0.06 & 0.59 & -12.0 & -0.23 & 6.1 & 0.61 & 0.57 & 0.65\\
+\color{blue}{30 5 $|$ \bf 2.0\%} @ Bid/Offer & 5.9 & {\bf \color{red}-0.5} & 45.7 & 10.4 & 0.57 & 0.05 & 0.53 & -12.2 & -0.21 & 5.5 & 0.63 & 0.59 & 0.65\\
+\addlinespace
+{30 5 $|$ \bf 1.5\%} @ Mid & 6.4 & & 49.8 & 9.8 & 0.65 & 0.06 & 0.62 & -11.5 & -0.23 & 6.1 & 0.58 & 0.54 & 0.62\\
+{30 5 $|$ \bf 1.5\%} @ Bid/Offer & 5.8 & {\bf \color{red}-0.6} & 45.2 & 9.9 & 0.59 & 0.05 & 0.55 & -11.7 & -0.22 & 5.5 & 0.59 & 0.55 & 0.63\\
+\addlinespace
+{30 5 $|$ \bf 1.0\%} @ Mid & 6.2 & & 47.9 & 9.3 & 0.66 & 0.06 & 0.63 & -11.1 & -0.24 & 5.9 & 0.54 & 0.51 & 0.59\\
+{30 5 $|$ \bf 1.0\%} @ Bid/Offer & 5.6 & {\bf \color{red}-0.6} & 43.2 & 9.4 & 0.59 & 0.05 & 0.56 & -11.4 & -0.22 & 5.2 & 0.55 & 0.52 & 0.60\\
+\addlinespace
+{30 5 $|$ \bf 0.5\%} @ Mid & 6.1 & & 47.3 & 8.8 & 0.69 & 0.06 & 0.66 & -10.8 & -0.24 & 5.9 & 0.50 & 0.48 & 0.56\\
+{30 5 $|$ \bf 0.5\%} @ Bid/Offer & 5.5 & {\bf \color{red}-0.6} & 42.6 & 8.9 & 0.61 & 0.05 & 0.58 & -11.0 & -0.23 & 5.2 & 0.51 & 0.49 & 0.57\\
+\addlinespace
+{30 5 $|$ \bf 0.0\%} @ Mid & 6.2 & & 47.9 & 8.3 & 0.74 & 0.07 & 0.72 & -10.6 & -0.24 & 6.0 & 0.46 & 0.45 & 0.53\\
+{30 5 $|$ \bf 0.0\%} @ Bid/Offer & 5.6 & {\bf \color{red}-0.6} & 43.6 & 8.4 & 0.66 & 0.06 & 0.64 & -10.7 & -0.22 & 5.4 & 0.47 & 0.46 & 0.54\\
+\bottomrule
+
+\midrule
+
+\addlinespace
+{10 5 $|$ \bf 3.0\%} @ Mid & 6.6 & & 51.1 & 11.1 & 0.59 & 0.05 & 0.56 & -13.2 & -0.19 & 6.1 & 0.68 & 0.63 & 0.69\\
+{10 5 $|$ \bf 3.0\%} @ Bid/Offer & 6.1 & {\bf \color{red}-0.5} & 47.5 & 11.2 & 0.55 & 0.05 & 0.50 & -13.4 & -0.18 & 5.6 & 0.69 & 0.64 & 0.70\\
+\addlinespace
+\color{blue}{10 5 $|$ \bf 2.5\%} @ Mid & 6.4 & & 49.6 & 10.7 & 0.60 & 0.05 & 0.56 & -12.4 & -0.20 & 6.0 & 0.65 & 0.60 & 0.67\\
+\color{blue}{10 5 $|$ \bf 2.5\%} @ Bid/Offer & 5.9 & {\bf \color{red}-0.5} & 45.6 & 10.8 & 0.54 & 0.05 & 0.50 & -12.7 & -0.19 & 5.4 & 0.66 & 0.61 & 0.68\\
+\addlinespace
+{10 5 $|$ \bf 2.0\%} @ Mid & 6.3 & & 48.9 & 10.3 & 0.61 & 0.05 & 0.58 & -12.1 & -0.23 & 5.9 & 0.61 & 0.57 & 0.65\\
+{10 5 $|$ \bf 2.0\%} @ Bid/Offer & 5.7 & {\bf \color{red}-0.6} & 44.6 & 10.4 & 0.55 & 0.05 & 0.51 & -12.3 & -0.21 & 5.3 & 0.63 & 0.59 & 0.66\\
+\addlinespace
+{10 5 $|$ \bf 1.5\%} @ Mid & 6.2 & & 48.5 & 9.8 & 0.64 & 0.06 & 0.60 & -11.6 & -0.23 & 5.9 & 0.58 & 0.54 & 0.62\\
+{10 5 $|$ \bf 1.5\%} @ Bid/Offer & 5.6 & {\bf \color{red}-0.6} & 43.9 & 9.9 & 0.57 & 0.05 & 0.53 & -11.9 & -0.22 & 5.3 & 0.59 & 0.55 & 0.63\\
+\addlinespace
+{10 5 $|$ \bf 1.0\%} @ Mid & 6.0 & & 46.5 & 9.3 & 0.64 & 0.06 & 0.61 & -11.2 & -0.24 & 5.7 & 0.54 & 0.51 & 0.60\\
+{10 5 $|$ \bf 1.0\%} @ Bid/Offer & 5.4 & {\bf \color{red}-0.6} & 41.8 & 9.5 & 0.57 & 0.05 & 0.53 & -11.5 & -0.23 & 5.0 & 0.55 & 0.52 & 0.60\\
+\addlinespace
+{10 5 $|$ \bf 0.5\%} @ Mid & 5.9 & & 45.7 & 8.9 & 0.66 & 0.06 & 0.63 & -10.9 & -0.25 & 5.6 & 0.50 & 0.48 & 0.56\\
+{10 5 $|$ \bf 0.5\%} @ Bid/Offer & 5.3 & {\bf \color{red}-0.6} & 41.0 & 9.0 & 0.59 & 0.05 & 0.56 & -11.2 & -0.23 & 5.0 & 0.51 & 0.49 & 0.57\\
+\addlinespace
+{10 5 $|$ \bf 0.0\%} @ Mid & 5.9 & & 46.3 & 8.4 & 0.71 & 0.06 & 0.69 & -10.8 & -0.24 & 5.8 & 0.47 & 0.45 & 0.53\\
+{10 5 $|$ \bf 0.0\%} @ Bid/Offer & 5.4 & {\bf \color{red}-0.5} & 41.9 & 8.5 & 0.64 & 0.06 & 0.61 & -10.9 & -0.23 & 5.2 & 0.47 & 0.46 & 0.54\\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+\end{frame}
+
+\begin{frame}
+{\large SX5E \& NKY: Comparison of Reference Calendar Collar Structures}
+\centering
+\scalebox{0.475}{
+\begin{tabular}{lrcrrrrrrrrrrr | c }
+\toprule
+Strategy & Retn & RetnDiff & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta- & \colorbox{yellow}{\bf Return Gap}\\
+\midrule
+{\bf \color{blue} SX5E} Since 2002 & 6.3 & & 100.6 & 23.4 & 0.27 & 0.02 & 0.15 & -60.8 & 0.12 & 3.6 & 1.00 & 1.00 & 1.00\\
+\midrule
+\addlinespace
+\color{blue}{30 5 $|$ \bf 2.0\%} @ Mid & 8.4 & & 135.0 & 14.2 & 0.59 & 0.05 & 0.54 & -19.7 & 0.08 & 7.7 & 0.52 & 0.47 & 0.51\\
+\color{blue}{30 5 $|$ \bf 2.0\%} @ Bid/Offer & 7.6 & {\bf \color{red}-0.8} & 122.5 & 14.3 & 0.54 & 0.05 & 0.48 & -20.5 & 0.08 & 6.9 & 0.53 & 0.47 & 0.52 & {\bf -0.92x}\\
+
+\addlinespace
+\color{blue}{10 5 $|$ \bf 2.5\%} @ Mid & 8.0 & & 127.6 & 15.0 & 0.53 & 0.05 & 0.47 & -21.0 & -0.01 & 7.1 & 0.57 & 0.49 & 0.55\\
+\color{blue}{10 5 $|$ \bf 2.5\%} @ Bid/Offer & 6.9 & {\bf \color{red}-1.1} & 110.5 & 15.0 & 0.46 & 0.04 & 0.39 & -22.4 & -0.01 & 5.9 & 0.58 & 0.50 & 0.55 & {\bf -0.64x}\\
+\midrule
+{\bf \color{blue} SX5E} Since 2010 & 8.5 & & 67.5 & 21.0 & 0.41 & 0.04 & 0.31 & -34.5 & -0.02 & 6.5 & 1.00 & 1.00 & 1.00\\
+\midrule
+\addlinespace
+\color{blue}{30 5 $|$ \bf 2.0\%} @ Mid & 6.7 & & 53.3 & 13.0 & 0.52 & 0.05 & 0.47 & -18.5 & 0.00 & 6.1 & 0.57 & 0.54 & 0.59\\
+\color{blue}{30 5 $|$ \bf 2.0\%} @ Bid/Offer & 6.2 & {\bf \color{red}-0.5} & 48.7 & 13.2 & 0.47 & 0.04 & 0.41 & -19.2 & 0.01 & 5.4 & 0.58 & 0.55 & 0.60 & {\bf 0.17x}\\
+
+\addlinespace
+\color{blue}{10 5 $|$ \bf 2.5\%} @ Mid & 5.2 & & 41.4 & 14.1 & 0.37 & 0.03 & 0.31 & -26.9 & -0.18 & 4.3 & 0.63 & 0.54 & 0.65\\
+\color{blue}{10 5 $|$ \bf 2.5\%} @ Bid/Offer & 4.3 & {\bf \color{red}-0.9} & 34.3 & 14.2 & 0.31 & 0.03 & 0.24 & -28.9 & -0.17 & 3.4 & 0.64 & 0.54 & 0.66 & {\bf 0.48x}\\
+\addlinespace
+
+\bottomrule
+\end{tabular}
+}
+
+\vfill
+
+\centering
+\scalebox{0.475}{
+\begin{tabular}{lrcrrrrrrrrrrr | c}
+\toprule
+Strategy & Retn & RetnDiff & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta- & \colorbox{yellow}{\bf Return Gap}\\
+\midrule
+{\bf \color{blue} NKY} Since 2004 & 9.1 & & 119.1 & 24.0 & 0.38 & 0.03 & 0.27 & -54.1 & -0.29 & 6.4 & 1.00 & 1.00 & 1.00\\
+\midrule
+\addlinespace
+\color{blue}{30 5 $|$ \bf 2.0\%} @ Mid & 9.4 & & 122.6 & 19.0 & 0.49 & 0.04 & 0.42 & -27.0 & 0.66 & 7.9 & 0.56 & 0.55 & 0.60\\
+\color{blue}{30 5 $|$ \bf 2.0\%} @ Bid/Offer & 7.8 & {\bf \color{red}-1.6} & 101.7 & 19.2 & 0.41 & 0.04 & 0.32 & -30.3 & 0.63 & 6.1 & 0.57 & 0.55 & 0.61 & {\bf 0.05x}\\
+
+\addlinespace
+\color{blue}{10 5 $|$ \bf 3.0\%} @ Mid & 10.1 & & 131.6 & 19.6 & 0.51 & 0.05 & 0.43 & -27.6 & 0.58 & 8.5 & 0.60 & 0.58 & 0.63\\
+\color{blue}{10 5 $|$ \bf 3.0\%} @ Bid/Offer & 8.4 & {\bf \color{red}-1.7} & 109.6 & 19.8 & 0.42 & 0.04 & 0.33 & -30.9 & 0.55 & 6.6 & 0.61 & 0.58 & 0.64 & {\bf -0.03x}\\
+\midrule
+{\bf \color{blue} NKY} Since 2010 & 13.2 & & 100.0 & 21.8 & 0.61 & 0.05 & 0.53 & -24.0 & -0.41 & 11.5 & 1.00 & 1.00 & 1.00\\
+\midrule
+\addlinespace
+\color{blue}{30 5 $|$ \bf 2.0\%} @ Mid & 9.2 & & 69.3 & 13.9 & 0.66 & 0.06 & 0.61 & -15.6 & -0.57 & 8.5 & 0.59 & 0.55 & 0.66\\
+\color{blue}{30 5 $|$ \bf 2.0\%} @ Bid/Offer & 8.2 & {\bf \color{red}-1.0} & 61.9 & 14.2 & 0.58 & 0.05 & 0.53 & -17.1 & -0.54 & 7.5 & 0.60 & 0.57 & 0.67 & {\bf 0.35x}\\
+
+\addlinespace
+\color{blue}{10 5 $|$ \bf 3.0\%} @ Mid & 10.2 & & 77.3 & 15.0 & 0.68 & 0.06 & 0.64 & -17.3 & -0.53 & 9.5 & 0.65 & 0.60 & 0.70\\
+\color{blue}{10 5 $|$ \bf 3.0\%} @ Bid/Offer & 9.1 & {\bf \color{red}-1.1} & 69.0 & 15.2 & 0.60 & 0.05 & 0.55 & -18.1 & -0.51 & 8.3 & 0.66 & 0.61 & 0.71 & {\bf 0.28x}\\
+\addlinespace
+
+\bottomrule
+\end{tabular}
+}
+
+\end{frame}
+
+\begin{frame}
+{\large UKX \& SPX: Comparison of Reference Calendar Collar Structures}
+
+\centering
+\scalebox{0.475}{
+\begin{tabular}{lrcrrrrrrrrrrr | c}
+\toprule
+Strategy & Retn & RetnDiff & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta- & \colorbox{yellow}{\bf Return Gap}\\
+\midrule
+{\bf \color{blue} UKX} Since 2002 & 7.8 & & 122.6 & 18.8 & 0.41 & 0.04 & 0.33 & -39.4 & 0.02 & 6.2 & 1.00 & 1.00 & 1.00\\
+\midrule
+\addlinespace
+\color{blue}{30 5 $|$ \bf 2.0\%} @ Mid & 8.4 & & 132.9 & 11.7 & 0.72 & 0.06 & 0.69 & -16.4 & -0.20 & 8.0 & 0.54 & 0.48 & 0.53\\
+\color{blue}{30 5 $|$ \bf 2.0\%} @ Bid/Offer & 5.8 & {\bf \color{red}-2.6} & 91.2 & 12.3 & 0.47 & 0.04 & 0.42 & -19.2 & -0.17 & 5.1 & 0.59 & 0.53 & 0.57 & {\bf 0.18x}\\
+
+\addlinespace
+\color{blue}{10 5 $|$ \bf 2.5\%} @ Mid & 8.7 & & 136.8 & 12.1 & 0.71 & 0.06 & 0.68 & -16.9 & -0.16 & 8.2 & 0.57 & 0.51 & 0.54\\
+\color{blue}{10 5 $|$ \bf 2.5\%} @ Bid/Offer & 6.0 & {\bf \color{red}-2.7} & 94.6 & 12.7 & 0.47 & 0.04 & 0.42 & -19.8 & -0.13 & 5.3 & 0.62 & 0.56 & 0.58 & {\bf 0.15x}\\
+\midrule
+{\bf \color{blue} UKX} Since 2010 & 9.0 & & 69.9 & 15.5 & 0.58 & 0.05 & 0.52 & -16.5 & -0.11 & 8.1 & 1.00 & 1.00 & 1.00\\
+\midrule
+\addlinespace
+\color{blue}{30 5 $|$ \bf 2.0\%} @ Mid & 6.4 & & 50.0 & 10.2 & 0.63 & 0.06 & 0.59 & -12.0 & -0.23 & 6.1 & 0.61 & 0.57 & 0.65\\
+\color{blue}{30 5 $|$ \bf 2.0\%} @ Bid/Offer & 5.9 & {\bf \color{red}-0.5} & 45.7 & 10.4 & 0.57 & 0.05 & 0.53 & -12.2 & -0.21 & 5.5 & 0.63 & 0.59 & 0.65 & {\bf 0.32x}\\
+
+\addlinespace
+\color{blue}{10 5 $|$ \bf 2.5\%} @ Mid & 6.4 & & 49.6 & 10.7 & 0.60 & 0.05 & 0.56 & -12.4 & -0.20 & 6.0 & 0.65 & 0.60 & 0.67\\
+\color{blue}{10 5 $|$ \bf 2.5\%} @ Bid/Offer & 5.9 & {\bf \color{red}-0.5} & 45.6 & 10.8 & 0.54 & 0.05 & 0.50 & -12.7 & -0.19 & 5.4 & 0.66 & 0.61 & 0.68 & {\bf 0.33x}\\
+\addlinespace
+
+\bottomrule
+\end{tabular}
+}
+
+\vfill
+
+\centering
+\scalebox{0.475}{
+\begin{tabular}{lrcrrrrrrrrrrr | c}
+\toprule
+Strategy & Retn & RetnDiff & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta- & \colorbox{yellow}{\bf Return Gap}\\
+\midrule
+{\bf \color{blue} SPX} Since 1996 & 10.2 & &  220.8 & 19.1 & 0.53 & 0.05 & 0.46 & -30.4 & -0.06 & 8.7 & 1.00 & 1.00 & 1.00\\
+\midrule
+\addlinespace
+\color{blue}{30 5 $|$ \bf 2.0\%} @ Mid & 10.5 & & 228.5 & 11.2 & 0.94 & 0.08 & 0.93 & -11.8 & -0.33 & 10.4 & 0.49 & 0.42 & 0.47\\
+\color{blue}{30 5 $|$ \bf 2.0\%} @ Bid/Offer & 9.2 & {\bf \color{red}-1.3} & 200.0 & 11.2 & 0.83 & 0.07 & 0.80 & -13.3 & -0.29 & 9.0 & 0.49 & 0.42 & 0.46 & {\bf -0.03x}\\
+
+\addlinespace
+\color{blue}{10 5 $|$ \bf 1.5\%} @ Mid & 11.1 & & 241.5 & 10.8 & 1.03 & 0.09 & 1.03 & -10.5 & -0.30 & 11.1 & 0.47 & 0.40 & 0.44\\
+\color{blue}{10 5 $|$ \bf 1.5\%} @ Bid/Offer & 9.4 & {\bf \color{red} -1.7} & 203.1 & 10.8 & 0.87 & 0.08 & 0.85 & -12.4 & -0.27 & 9.2 & 0.46 & 0.40 & 0.44 & {\bf -0.06x}\\
+\midrule
+{\bf \color{blue} SPX} Since 2010 & 13.8 & & 107.6 & 14.9 & 0.93 & 0.08 & 0.91 & -15.5 & -0.37 & 13.6 & 1.00 & 1.00 & 1.00\\
+\midrule
+\addlinespace
+\color{blue}{30 5 $|$ \bf 2.0\%} @ Mid & 11.6 & & 90.0 & 10.1 & 1.15 & 0.10 & 1.16 & -11.6 & -0.41 & 11.7 & 0.64 & 0.62 & 0.65\\
+\color{blue}{30 5 $|$ \bf 2.0\%} @ Bid/Offer & 10.7 & {\bf \color{red} -0.9} & 83.2 & 10.1 & 1.06 & 0.09 & 1.07 & -12.0 & -0.40 & 10.7 & 0.64 & 0.62 & 0.65 & {\bf 0.21x}\\
+
+\addlinespace
+\color{blue}{10 5 $|$ \bf 1.5\%} @ Mid & 11.6 & & 90.2 & 10.0 & 1.16 & 0.10 & 1.18 & -11.1 & -0.47 & 11.7 & 0.63 & 0.59 & 0.63\\
+\color{blue}{10 5 $|$ \bf 1.5\%} @ Bid/Offer & 10.0 & {\bf \color{red} -1.6} & 77.4 & 10.0 & 1.00 & 0.09 & 1.00 & -11.7 & -0.44 & 9.9 & 0.63 & 0.59 & 0.63 & {\bf 0.27x}\\
+\addlinespace
+
+\bottomrule
+\end{tabular}
+}
+
+\end{frame}
+
+\section{Cross-Index Structures}
+
+\begin{frame}{Cross-Index Calendar Collar}
+\begin{itemize}
+\item With the exception of UKX, based on estimated transactions costs from portfolio management and trading, the performance of the CC for SX5E and NKY are not reduced significantly more than they are for SPX. 
+\item Nevertheless, there remains significantly higher liquidity / volume / open interest in options on SPX (relative to ones on international indices) as well as the implementation convenience of using one index options structure. The question is --- what is the basis risk?
+\item Evaluate the effectiveness of cross-index structures (SX5E equity + SPX options vs SX5E equity + SX5E options, for instance).
+	\begin{itemize}
+	\item Further extensions will utilize cross-index option legs (SX5E equity + SX5E call + SPX put, for instance).
+	\end{itemize}
+\item Assume all returns are localized but unhedged to the currency of the underlying equity, i.e. EUR for SX5E. 
+	\begin{itemize}
+	\item For SPX options, the return in EUR is (approximately): $R_{asset}^{EUR} \approx R_{asset}^{USD}(1+R_{spot}^{\frac{USD}{EUR}})$
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{SX5E: Cross-Index CC (1M Calls)}
+\includegraphics[scale=0.35]{sx5e_cross_1m_otm2}
+\end{frame}
+
+\begin{frame}{SX5E: Cross-Index CC (2W Calls Approx. Delta-Matched)}
+\includegraphics[scale=0.35]{sx5e_cross_2w_otm}
+\end{frame}
+
+\begin{frame}{SX5E \& NKY: Cross-Index CC Performance Summary}
+\begin{table}
+\centering
+\scalebox{0.475}{
+
+\begin{tabular}{lrrrrrrrrrrrr}
+\toprule
+Strategy & Retn & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta-\\
+\midrule
+{\bf \color{blue} SX5E} Since 2002 & 6.3 & 100.6 & 23.4 & 0.27 & 0.02 & 0.15 & -60.8 & 0.12 & 3.6 & 1.00 & 1.00 & 1.00\\
+\midrule
+{\bf 1M Calls} \\
+\color{blue}SX5E \& SX5E L P 11D 270 60 S C OTM2.0 30 5 & 7.6 & 122.5 & 14.3 & 0.54 & 0.05 & 0.48 & -20.5 & 0.08 & 6.9 & 0.53 & 0.47 & 0.52\\
+SX5E \& SPX L P 11D 270 60 S C OTM2.0 30 5 & 6.6 & 106.5 & 20.5 & 0.32 & 0.03 & 0.23 & -36.6 & -0.27 & 4.6 & 0.76 & 0.72 & 0.72\\
+SX5E \& NKY L P 11D 270 60 S C OTM2.0 30 5 & 7.9 & 107.8 & 24.6 & 0.32 & 0.03 & 0.20 & -24.8 & 0.29 & 5.0 & 0.84 & 0.91 & 0.75\\
+SX5E \& UKX L P 11D 270 60 S C OTM2.0 30 5 & 4.2 & 67.8 & 17.8 & 0.24 & 0.02 & 0.15 & -36.6 & 0.13 & 2.7 & 0.71 & 0.68 & 0.68\\
+\bottomrule
+
+\midrule
+
+\addlinespace
+{\bf 2W Calls (Approx. Delta-Matched)} \\
+\color{blue}SX5E \& SX5E L P 11D 270 60 S C OTM2.5 10 5 & 6.9 & 110.5 & 15.0 & 0.46 & 0.04 & 0.39 & -22.4 & -0.01 & 5.9 & 0.58 & 0.50 & 0.55\\
+SX5E \& SPX L P 11D 270 60 S C OTM1.5 10 5 & 6.9 & 110.5 & 20.5 & 0.34 & 0.03 & 0.24 & -33.3 & -0.25 & 4.9 & 0.75 & 0.71 & 0.71\\
+SX5E \& NKY L P 11D 270 60 S C OTM3.0 10 5 & 8.4 & 114.7 & 24.3 & 0.35 & 0.03 & 0.23 & -26.1 & 0.32 & 5.6 & 0.85 & 0.91 & 0.76\\
+SX5E \& UKX L P 11D 270 60 S C OTM2.5 10 5 & 4.4 & 71.1 & 18.2 & 0.24 & 0.02 & 0.15 & -37.6 & 0.13 & 2.8 & 0.73 & 0.70 & 0.69\\
+\bottomrule
+\end{tabular}
+
+}
+\end{table}
+
+\begin{table}
+\centering
+\scalebox{0.475}{
+
+\begin{tabular}{lrrrrrrrrrrrr}
+\toprule
+Strategy & Retn & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta-\\
+\midrule
+{\bf \color{blue} NKY} Since 2004 & 9.1 & 119.1 & 24.0 & 0.38 & 0.03 & 0.27 & -54.1 & -0.29 & 6.4 & 1.00 & 1.00 & 1.00\\
+\midrule
+{\bf 1M Calls} \\
+\color{blue}NKY \& NKY L P 11D 270 60 S C OTM2.0 30 5 & 7.8 & 101.7 & 19.2 & 0.41 & 0.04 & 0.32 & -30.3 & 0.63 & 6.1 & 0.57 & 0.55 & 0.61\\
+NKY \& SPX L P 11D 270 60 S C OTM2.0 30 5 & 9.2 & 120.5 & 25.6 & 0.36 & 0.03 & 0.24 & -36.5 & -0.17 & 6.1 & 0.94 & 0.92 & 0.94\\
+NKY \& SX5E L P 11D 270 60 S C OTM2.0 30 5 & 9.1 & 118.3 & 23.3 & 0.39 & 0.03 & 0.28 & -33.5 & -0.14 & 6.5 & 0.84 & 0.82 & 0.81\\
+NKY \& UKX L P 11D 270 60 S C OTM2.0 30 5 & 6.7 & 87.3 & 22.5 & 0.30 & 0.03 & 0.19 & -42.0 & -0.09 & 4.2 & 0.87 & 0.85 & 0.82\\
+\bottomrule
+
+\midrule
+
+\addlinespace
+{\bf 2W Calls (Approx. Delta-Matched)}\\
+\color{blue}NKY \& NKY L P 11D 270 60 S C OTM3.0 10 5 & 8.4 & 109.6 & 19.8 & 0.42 & 0.04 & 0.33 & -30.9 & 0.55 & 6.6 & 0.61 & 0.58 & 0.64\\
+NKY \& SPX L P 11D 270 60 S C OTM1.5 10 5 & 9.6 & 125.3 & 25.7 & 0.37 & 0.03 & 0.25 & -34.1 & -0.15 & 6.5 & 0.94 & 0.92 & 0.94\\
+NKY \& SX5E L P 11D 270 60 S C OTM2.5 10 5 & 8.1 & 105.4 & 23.0 & 0.35 & 0.03 & 0.24 & -35.2 & -0.12 & 5.6 & 0.86 & 0.83 & 0.82\\
+NKY \& UKX L P 11D 270 60 S C OTM2.5 10 5 & 7.1 & 92.3 & 22.5 & 0.31 & 0.03 & 0.21 & -40.0 & -0.10 & 4.6 & 0.88 & 0.86 & 0.83\\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+\end{frame}
+
+\begin{frame}{NKY: Cross-Index CC (1M Calls)}
+\includegraphics[scale=0.35]{nky_cross_1m_otm2}
+\end{frame}
+
+\begin{frame}{NKY: Cross-Index CC (2W Calls Approx. Delta-Matched)}
+\includegraphics[scale=0.35]{nky_cross_2w_otm}
+\end{frame}
+
+\begin{frame}{UKX: Cross-Index CC (1M Calls)}
+\includegraphics[scale=0.35]{ukx_cross_1m_otm2}
+\end{frame}
+
+\begin{frame}{UKX: Cross-Index CC (2W Calls Approx. Delta-Matched)}
+\includegraphics[scale=0.35]{ukx_cross_2w_otm}
+\end{frame}
+
+\begin{frame}{UKX \& SPX: Cross-Index CC Performance Summary}
+\begin{table}
+\centering
+\scalebox{0.475}{
+
+\begin{tabular}{lrrrrrrrrrrrr}
+\toprule
+Strategy & Retn & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta-\\
+\midrule
+{\bf \color{blue} UKX} Since 2002 & 7.8 & 122.6 & 18.8 & 0.41 & 0.04 & 0.33 & -39.4 & 0.02 & 6.2 & 1.00 & 1.00 & 1.00\\
+\midrule
+{\bf 1M Calls} \\
+\color{blue}UKX \& UKX L P 11D 270 60 S C OTM2.0 30 5 & 5.8 & 91.2 & 12.3 & 0.47 & 0.04 & 0.42 & -19.2 & -0.17 & 5.1 & 0.59 & 0.53 & 0.57\\
+UKX \& SX5E L P 11D 270 60 S C OTM2.0 30 5 & 9.5 & 150.8 & 12.5 & 0.77 & 0.07 & 0.74 & -14.8 & 0.08 & 9.2 & 0.47 & 0.41 & 0.46\\
+UKX \& NKY L P 11D 270 60 S C OTM2.0 30 5 & 8.5 & 114.3 & 21.7 & 0.39 & 0.04 & 0.29 & -20.5 & 0.55 & 6.3 & 0.79 & 0.89 & 0.67\\
+UKX \& SPX L P 11D 270 60 S C OTM2.0 30 5 & 8.0 & 127.0 & 17.1 & 0.47 & 0.04 & 0.40 & -18.8 & -0.39 & 6.8 & 0.71 & 0.69 & 0.65\\
+\bottomrule
+
+\midrule
+
+\addlinespace
+{\bf 2W Calls (Approx. Delta-Matched)} \\
+\color{blue}UKX \& UKX L P 11D 270 60 S C OTM2.5 10 5 & 6.0 & 94.6 & 12.7 & 0.47 & 0.04 & 0.42 & -19.8 & -0.13 & 5.3 & 0.62 & 0.56 & 0.58\\
+UKX \& SX5E L P 11D 270 60 S C OTM2.5 10 5 & 8.8 & 138.7 & 12.5 & 0.70 & 0.06 & 0.66 & -15.7 & 0.09 & 8.3 & 0.52 & 0.45 & 0.48\\
+UKX \& NKY L P 11D 270 60 S C OTM3.0 10 5 & 9.0 & 120.7 & 21.5 & 0.42 & 0.04 & 0.32 & -21.1 & 0.59 & 6.9 & 0.81 & 0.89 & 0.69\\
+UKX \& SPX L P 11D 270 60 S C OTM1.5 10 5 & 8.2 & 130.4 & 17.1 & 0.48 & 0.04 & 0.41 & -18.0 & -0.37 & 7.0 & 0.70 & 0.68 & 0.64\\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+\begin{table}
+\centering
+\scalebox{0.475}{
+
+\begin{tabular}{lrrrrrrrrrrrr}
+\toprule
+Strategy & Retn & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta-\\
+\midrule
+{\bf \color{blue} SPX} Since 2002 & 8.9 & 141.0 & 19.0 & 0.47 & 0.04 & 0.39 & -47.4 & -0.02 & 7.4 & 1.00 & 1.00 & 1.00\\
+\midrule
+{\bf 1M Calls} \\
+\color{blue}SPX \& SPX L P 11D 270 60 S C OTM2.0 30 5 & 8.8 & 139.0 & 11.1 & 0.80 & 0.07 & 0.77 & -18.8 & -0.25 & 8.6 & 0.47 & 0.40 & 0.42\\
+SPX \& SX5E L P 11D 270 60 S C OTM2.0 30 5 & 10.6 & 167.0 & 16.1 & 0.66 & 0.06 & 0.60 & -17.4 & 0.19 & 9.7 & 0.62 & 0.58 & 0.60\\
+SPX \& NKY L P 11D 270 60 S C OTM2.0 30 5 & 8.9 & 119.7 & 23.8 & 0.38 & 0.03 & 0.26 & -30.7 & -0.26 & 6.3 & 0.91 & 0.92 & 0.87\\
+SPX \& UKX L P 11D 270 60 S C OTM2.0 30 5 & 7.4 & 117.0 & 16.6 & 0.45 & 0.04 & 0.37 & -31.2 & 0.35 & 6.2 & 0.76 & 0.76 & 0.71\\
+\bottomrule
+
+\midrule
+\addlinespace
+{\bf 2W Calls (Approx. Delta-Matched)} \\
+\color{blue}SPX \& SPX L P 11D 270 60 S C OTM1.5 10 5 & 9.0 & 142.5 & 10.7 & 0.84 & 0.08 & 0.82 & -17.4 & -0.22 & 8.8 & 0.45 & 0.38 & 0.39\\
+SPX \& SX5E L P 11D 270 60 S C OTM2.5 10 5 & 9.7 & 152.8 & 15.8 & 0.61 & 0.06 & 0.56 & -20.5 & 0.21 & 8.8 & 0.65 & 0.61 & 0.60\\
+SPX \& NKY L P 11D 270 60 S C OTM3.0 10 5 & 9.5 & 126.9 & 23.4 & 0.40 & 0.04 & 0.30 & -31.8 & -0.28 & 6.9 & 0.92 & 0.92 & 0.89\\
+SPX \& UKX L P 11D 270 60 S C OTM2.5 10 5 & 7.6 & 119.1 & 16.7 & 0.45 & 0.04 & 0.38 & -31.6 & 0.33 & 6.4 & 0.78 & 0.77 & 0.72\\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+\end{frame}
+
+\begin{frame}{SPX: Cross-Index CC (1M Calls)}
+\includegraphics[scale=0.35]{spx_cross_1m_otm2}
+\end{frame}
+
+\begin{frame}{SPX: Cross-Index CC (2W Calls Approx. Delta-Matched)}
+\includegraphics[scale=0.35]{spx_cross_2w_otm}
+\end{frame}
+
+\begin{frame}{Conclusions and Next Steps}
+\begin{itemize}
+\item Primary question remains how to close the total return gap with the index option structures (is it possible without the use of leverage?)
+\begin{itemize}
+\item More tactical information for call writing
+\item Risk management for closing options positions
+\end {itemize}
+\end{itemize}
+\vfill
+\begin{itemize}
+\item Transactions costs for international options (at least based on provided estimates) are not prohibitively more expensive than corresponding index options for SPX.
+\begin{itemize}
+\item Improve transactions cost analysis beyond constant estimates
+\end{itemize}
+\vfill
+\item There can be significant basis risk from using index options of one market crossed with another index --- determining factors are ease/complexity of implementation and tolerance for mis-tracking
+\vfill
+\item Develop more robust framework for selecting index option structures (no one trade works, all of the time)
+\vfill
+\end{itemize}
+
+\end{frame}
+
+\section{Appendix}
+
+\begin{frame}{OTM Option IV-RV Spread}
+\includegraphics[scale=0.35]{call_iv_rv}\\
+\includegraphics[scale=0.35]{put_iv_rv}
+\end{frame}
+
+\begin{frame}{\large SPX CC: 2W Call Option Bid-Offer Spreads \& Implied Volatility}
+\includegraphics[scale=0.35]{bid_ask_scatter_panel2}
+\includegraphics[scale=0.35]{bid_ask_scatter_panel1}
+\end{frame}
+
+\begin{frame}{\large SPX CC: 2W Call Option Bid-Offer Spreads \& Trade Volume}
+\includegraphics[scale=0.35]{bid_ask_scatter_panel4}
+\includegraphics[scale=0.35]{bid_ask_scatter_panel3}
+\end{frame}
+
+\begin{frame}{\small SX5E: {\bf X.X\%} = Equity + Long Put 11D 270 60 + Short Call OTM {\bf 1M X.X\%}}
+\includegraphics[scale=0.35]{sx5e_1m_bid_offer_mid}
+\end{frame}
+\begin{frame}{\small SX5E: {\bf X.X\%} = Equity + Long Put 11D 270 60 + Short Call OTM {\bf 2W X.X\%}}
+\includegraphics[scale=0.35]{sx5e_2w_bid_offer_mid}
+\end{frame}
+
+\begin{frame}{\small NKY: {\bf X.X\%} = Equity + Long Put 11D 270 60 + Short Call OTM {\bf 1M X.X\%}}
+\includegraphics[scale=0.35]{nky_1m_bid_offer_mid}
+\end{frame}
+\begin{frame}{\small NKY: {\bf X.X\%} = Equity + Long Put 11D 270 60 + Short Call OTM {\bf 2W X.X\%}}
+\includegraphics[scale=0.35]{nky_2w_bid_offer_mid}
+\end{frame}
+
+\begin{frame}{\small UKX: {\bf X.X\%} = Equity + Long Put 11D 270 60 + Short Call OTM {\bf 1M X.X\%}}
+\includegraphics[scale=0.35]{ukx_1m_bid_offer_mid}
+\end{frame}
+\begin{frame}{\small UKX: {\bf X.X\%} = Equity + Long Put 11D 270 60 + Short Call OTM {\bf 2W X.X\%}}
+\includegraphics[scale=0.35]{ukx_2w_bid_offer_mid}
+\end{frame}
+
+\begin{frame}{SPX OTM (10D \& 30D) Call: Delta at Initial Trade Date}
+\includegraphics[scale=0.35]{spx_delta_inception}
+\end{frame}
+\begin{frame}{UKX OTM (10D \& 30D) Call: Delta at Initial Trade Date}
+\includegraphics[scale=0.35]{ukx_delta_inception}
+\end{frame}
+\begin{frame}{SX5E OTM (10D \& 30D) Call: Delta at Initial Trade Date}
+\includegraphics[scale=0.35]{sx5e_delta_inception}
+\end{frame}
+\begin{frame}{NKY OTM (10D \& 30D) Call: Delta at Initial Trade Date}
+\includegraphics[scale=0.35]{nky_delta_inception}
+\end{frame}
+
+\begin{frame}{SPX: CC (1M Calls, TC)}
+\includegraphics[scale=0.35]{SPX_Collar1M}
+\end{frame}
+
+\begin{frame}{SPX: CC (1M Calls, TC) (Since 2010)}
+\includegraphics[scale=0.35]{SPX_Collar1M_2010}
+\end{frame}
+
+\begin{frame}{SPX: CC (2W Calls, TC)}
+\includegraphics[scale=0.35]{SPX_Collar2W}
+\end{frame}
+
+\begin{frame}{SPX: CC (2W Calls, TC) (Since 2010)}
+\includegraphics[scale=0.35]{SPX_Collar2W_2010}
+\end{frame}
+
+\begin{frame}{\large SPX: CC Performance Summary}
+
+\centering
+\scalebox{0.45}{
+\begin{tabular}{lrrrrrrrrrrrr}
+\toprule
+Strategy & Retn & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta-\\
+\midrule
+{\bf \color{blue} SPX} (Since 1996) & 10.3 & 223.7 & 19.0 & 0.54 & 0.05 & 0.47 & -30.4 & -0.06 & 8.8 & 1.00 & 1.00 & 1.00\\
+\midrule
+1M Calls (Since 1996)\\
+\color{blue}Equity \& L P 11D 270 60 S C OTM2.0 30 5 & 9.3 & 201.9 & 11.2 & 0.83 & 0.07 & 0.81 & -13.3 & -0.29 & 9.0 & 0.49 & 0.42 & 0.46\\
+Equity \& L P 11D 270 60 S C OTM1.5 30 5 & 9.3 & 201.7 & 10.7 & 0.87 & 0.08 & 0.85 & -12.6 & -0.32 & 9.1 & 0.46 & 0.40 & 0.44\\
+Equity \& L P 11D 270 60 S C OTM1.0 30 5 & 8.9 & 194.6 & 10.2 & 0.87 & 0.08 & 0.86 & -12.5 & -0.30 & 8.8 & 0.43 & 0.38 & 0.42\\
+Equity \& L P 11D 270 60 S C OTM0.5 30 5 & 8.8 & 191.9 & 9.9 & 0.89 & 0.08 & 0.88 & -11.5 & -0.28 & 8.7 & 0.40 & 0.36 & 0.40\\
+Equity \& L P 11D 270 60 S C ATM0.0 30 5 & 8.1 & 175.8 & 9.4 & 0.86 & 0.08 & 0.84 & -11.4 & -0.25 & 7.9 & 0.37 & 0.34 & 0.38\\
+\addlinespace
+\bottomrule
+\addlinespace
+2W Calls (Since 1996)\\
+Equity \& L P 11D 270 60 S C OTM3.0 10 5 & 10.2 & 220.9 & 12.1 & 0.84 & 0.08 & 0.82 & -15.1 & -0.23 & 9.9 & 0.55 & 0.47 & 0.49\\
+Equity \& L P 11D 270 60 S C OTM2.5 10 5 & 10.1 & 219.3 & 11.7 & 0.86 & 0.08 & 0.84 & -13.5 & -0.24 & 9.8 & 0.52 & 0.45 & 0.47\\
+\color{blue}Equity \& L P 11D 270 60 S C OTM2.0 10 5 & 9.6 & 209.3 & 11.3 & 0.85 & 0.08 & 0.83 & -13.2 & -0.25 & 9.4 & 0.49 & 0.42 & 0.46\\
+Equity \& L P 11D 270 60 S C OTM1.5 10 5 & 9.4 & 205.5 & 10.8 & 0.87 & 0.08 & 0.86 & -12.4 & -0.27 & 9.3 & 0.46 & 0.40 & 0.44\\
+Equity \& L P 11D 270 60 S C OTM1.0 10 5 & 9.1 & 198.1 & 10.3 & 0.88 & 0.08 & 0.87 & -11.5 & -0.25 & 8.9 & 0.43 & 0.38 & 0.41\\
+Equity \& L P 11D 270 60 S C OTM0.5 10 5 & 8.6 & 187.9 & 9.8 & 0.88 & 0.08 & 0.86 & -10.6 & -0.26 & 8.5 & 0.40 & 0.36 & 0.39\\
+Equity \& L P 11D 270 60 S C ATM0.0 10 5 & 7.9 & 172.7 & 9.3 & 0.85 & 0.08 & 0.83 & -10.1 & -0.21 & 7.8 & 0.37 & 0.33 & 0.37\\
+\addlinespace
+\bottomrule
+\addlinespace
+{\bf \color{blue} SPX} (Since 2010) & 13.8 & 107.6 & 14.9 & 0.93 & 0.08 & 0.91 & -15.5 & -0.37 & 13.6 & 1.00 & 1.00 & 1.00\\
+\midrule
+1M Calls (Since 2010)\\
+\color{blue}Equity \& L P 11D 270 60 S C OTM2.0 30 5 & 10.7 & 83.2 & 10.1 & 1.06 & 0.09 & 1.07 & -12.0 & -0.40 & 10.7 & 0.64 & 0.62 & 0.65\\
+Equity \& L P 11D 270 60 S C OTM1.5 30 5 & 10.4 & 80.6 & 9.6 & 1.08 & 0.10 & 1.08 & -12.0 & -0.41 & 10.4 & 0.61 & 0.60 & 0.63\\
+Equity \& L P 11D 270 60 S C OTM1.0 30 5 & 9.9 & 76.7 & 9.1 & 1.08 & 0.10 & 1.08 & -11.9 & -0.41 & 9.9 & 0.57 & 0.57 & 0.60\\
+Equity \& L P 11D 270 60 S C OTM0.5 30 5 & 9.2 & 71.9 & 8.6 & 1.07 & 0.10 & 1.08 & -11.7 & -0.41 & 9.3 & 0.53 & 0.54 & 0.57\\
+Equity \& L P 11D 270 60 S C ATM0.0 30 5 & 8.1 & 62.9 & 8.1 & 1.00 & 0.09 & 1.00 & -11.7 & -0.43 & 8.1 & 0.49 & 0.51 & 0.54\\
+\addlinespace
+\bottomrule
+\addlinespace
+2W Calls (Since 2010)\\
+Equity \& L P 11D 270 60 S C OTM3.0 10 5 & 11.9 & 92.4 & 11.3 & 1.06 & 0.09 & 1.06 & -11.8 & -0.34 & 11.9 & 0.73 & 0.69 & 0.69\\
+Equity \& L P 11D 270 60 S C OTM2.5 10 5 & 11.4 & 88.9 & 10.9 & 1.05 & 0.09 & 1.05 & -12.0 & -0.37 & 11.4 & 0.70 & 0.66 & 0.68\\
+Equity \& L P 11D 270 60 S C OTM2.0 10 5 & 10.7 & 83.6 & 10.5 & 1.02 & 0.09 & 1.02 & -11.7 & -0.40 & 10.7 & 0.67 & 0.63 & 0.66\\
+\color{blue}Equity \& L P 11D 270 60 S C OTM1.5 10 5 & 10.0 & 77.4 & 10.0 & 1.00 & 0.09 & 1.00 & -11.7 & -0.44 & 9.9 & 0.63 & 0.59 & 0.63\\
+Equity \& L P 11D 270 60 S C OTM1.0 10 5 & 9.4 & 73.0 & 9.4 & 1.00 & 0.09 & 0.99 & -11.8 & -0.48 & 9.3 & 0.59 & 0.56 & 0.61\\
+Equity \& L P 11D 270 60 S C OTM0.5 10 5 & 8.3 & 64.2 & 8.7 & 0.95 & 0.08 & 0.94 & -11.6 & -0.55 & 8.2 & 0.54 & 0.51 & 0.58\\
+Equity \& L P 11D 270 60 S C ATM0.0 10 5 & 7.1 & 54.9 & 8.0 & 0.88 & 0.08 & 0.87 & -11.7 & -0.59 & 7.0 & 0.48 & 0.47 & 0.54\\
+\bottomrule
+\end{tabular}
+
+
+}
+
+\end{frame}
+
+\end{document}
+
+

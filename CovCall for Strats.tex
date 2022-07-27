@@ -1,0 +1,187 @@
+\documentclass{beamer}
+
+% For more themes, color themes and font themes, see:
+% http://deic.uab.es/~iblanes/beamer_gallery/index_by_theme.html
+%
+\mode<presentation>
+{
+  \usetheme{Madrid}       % or try default, Darmstadt, Warsaw, ...
+  \usecolortheme{default} % or try albatross, beaver, crane, ...
+  \usefonttheme{professionalfonts}    % or try default, structurebold, ...
+  \setbeamertemplate{navigation symbols}{}
+  \setbeamertemplate{caption}[numbered]
+  \setbeamertemplate{caption}{\insertcaption}
+} 
+
+\newcommand{\ditto}[1][.4pt]{\xrfill{#1}~\textquotedbl~\xrfill{#1}}
+
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{paralist}
+\usepackage{amsmath}
+
+
+\AtBeginSection[]
+{
+  \begin{frame}
+    \frametitle{Table of Contents}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+
+% On Overleaf, these lines give you sharper preview images.
+% You might want to `comment them out before you export, though.
+\usepackage{pgfpages}
+
+\pgfpagesuselayout{resize to}[letterpaper, landscape] 
+
+
+% Here's where the presentation starts, with the info for the title slide
+
+\title[Better Strategic $\beta$]{Option Collars for Strategic $\beta$ Allocation in Outcome Oriented Strategies}
+\author[AV]{Anil Vijendran}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+
+\begin{frame}{Enhancing the Strategic Equity Exposure in DTR}
+	\begin{itemize}
+		\item To deliver equity-like returns, growth-oriented outcome strategies will need to maintain a core/strategic equity exposure
+		\item PROPOSAL: enhance the core\footnote{just US, for now} equity allocation with a collar
+			\begin{itemize} \item Passive $\beta$ (futures) $+$ a short position in a short-dated call $+$ a long position in a far out-of-the-money long-dated put \end{itemize}
+	
+		\item How does it work
+			\begin{itemize}
+			\item Covered calls reduce $\beta$ while replacing the lower $\beta$ with returns due to the volatility risk premium
+			\item Further enhance the strategy with true tail risk protection via a far OTM put
+			\item The result is lower vol, drawdowns, and a significant improvement in IR compared to returns from passive equities 
+			\item There is catch (always): \emph{lower returns in extreme bull markets}
+			\end{itemize}
+
+		\item Rule-based, low-maintenance, relatively easy to implement and enables DTR to rely less on bonds (and on the estimated $\rho_{s/b}$) for downside risk protection
+	\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Simulated\footnote{Usual caveats apply...} Performance vs Passive Equities}
+Combine the equity leg with 
+\begin{itemize} 
+\item short call (1m, 2\% OTM), rolled very close to expiry ($T-5$)
+\item a long term (9m) 20\% OTM put, rolled considerably before expiry (2m)
+\end{itemize}
+
+\scalebox{0.73}{
+\begin{tabular}{lrrrrrrrr}
+\toprule
+Strategy (\textbf{06-16}) & Retn & Geo & Beta & Excess & Risk & IR & IRGeo & MaxDD\\
+\midrule
+Equity & 9.4 & 7.6 & 1.00 & 0.0 & 20.2 & 0.46 & 0.38 & -55.5\\
+Cvd Call, Put & 8.9 & 8.8 & 0.33 & -0.5 & 10.1 & 0.88 & 0.87 & -21.8\\
+
+\end{tabular}
+}
+
+\scalebox{0.73}{
+\begin{tabular}{lrrrrrrrr}
+\toprule
+Strategy (\textbf{10-16}) & Retn & Geo & Beta & Excess & Risk & IR & IRGeo & MaxDD\\
+\midrule
+Equity & 13.4 & 12.9 & 1.00 & 0.0 & 15.6 & 0.86 & 0.83 & -18.5\\
+Cvd Call, Put & 9.2 & 9.3 & 0.45 & -4.2 & 8.6 & 1.07 & 1.08 & -9.3\\
+\end{tabular}
+}
+\scalebox{0.73}{
+\begin{tabular}{lrrrrrrrr}
+\toprule
+Strategy (\textbf{2013}) & Retn & Geo & Beta & Excess & Risk & IR & IRGeo & MaxDD\\
+\midrule
+Equity & 28.6 & 32.3 & 1.00 & 0.0 & 11.1 & 2.58 & 2.92 & -5.8\\
+Cvd Call, Put & 23.0 & 25.4 & 0.73 & -5.6 & 8.4 & 2.75 & 3.04 & -3.7\\
+\end{tabular}
+}
+\scalebox{0.73}{
+\begin{tabular}{lrrrrrrrr}
+\toprule
+Strategy (\textbf{14-16}) & Retn & Geo & Beta & Excess & Risk & IR & IRGeo & MaxDD\\
+\midrule
+Equity & 9.6 & 9.1 & 1.00 & 0.0 & 13.5 & 0.72 & 0.68 & -12.2\\
+Cvd Call, Put & 8.0 & 7.9 & 0.62 & -1.6 & 8.8 & 0.91 & 0.90 & -7.1\\
+\bottomrule
+\end{tabular}
+}
+
+\end{frame}
+
+
+\begin{frame}{1996-2016: Equity-like returns, Lower $\sigma$ and drawdowns}
+
+\includegraphics[scale=0.45]{covcall_call_spread_put_call_dd}
+
+\end{frame}
+
+\begin{frame}{2010-2016: Better IR in Lower-Vol Periods}
+
+\includegraphics[scale=0.48]{covcall_call_spread_put_call_dd_2010}
+
+\end{frame}
+
+\begin{frame}{Calendar Year Returns 2006-2016}
+
+\includegraphics[scale=0.48]{covcall_collar_bar1}
+
+\end{frame}
+
+
+\begin{frame}{Calendar Year Returns 1996-2005}
+
+\includegraphics[scale=0.48]{covcall_collar_bar2}
+
+\end{frame}
+
+
+\begin{frame}{What to Expect During a Sell-Off}
+\fontsize{6pt}{7.2}\selectfont
+\begin{block}{}
+\begin{itemize}
+
+\item Sell-offs can be prolonged and at volatility levels below 40: 1999-2003, 08 Q1-Q3, or sharp steep drops: 2008 Q4. 
+\item Short-term calls are very good to taking advantage of these prolonged sell-offs at somewhat lower volatility. Puts come in handy for sharp drops (eg 2008). Together, they diversify the ability to offer a better risk-reward trade off.
+\item \textbf{Unless there is a clear short-term view, long puts offer very poor reward for the premium paid}. For example, over the past 20 years a 20\% OTM Put has cost 2.4\% annually. %\textbf{$\Delta$-hedging a long put pays up for the VRP without a large portion of the accompanying protection}
+
+\end{itemize}
+
+\end{block}
+
+\includegraphics[scale=0.35]{sell_off}
+\end{frame}
+
+\begin{frame}{$\Delta$ of the Option Sleeve - Zooming into 2016}
+
+\begin{center}
+\begin{block}{}
+\fontsize{7pt}{7.2}\selectfont
+\begin{itemize}
+\item When the instrument is chosen (at roll time, or when the positions are initially established), the median $\Delta$'s of the (short) call and (long) put legs are $\sim -0.3$ and $\sim -0.1$ respectively
+\item However, as can be seen below, there can be considerable variation around the $\Delta$'s of the higher $\gamma$ short-term options, particularly as they approach expiry; while market conditions can change these deltas significantly, routine mechanics as the options approach expiry also affect their $\Delta$'s
+\item We have to be careful as we interpret/explain the $\Delta$-adjusted exposures of our equity positions
+
+\end{itemize}
+
+\end{block}
+
+\includegraphics[scale=0.34]{covcall_call_deltas_ts}
+\end{center}
+\end{frame}
+
+
+
+
+\end{document}

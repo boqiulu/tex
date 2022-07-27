@@ -1,0 +1,305 @@
+\documentclass{beamer}
+
+% For more themes, color themes and font themes, see:
+% http://deic.uab.es/~iblanes/beamer_gallery/index_by_theme.html
+%
+\mode<presentation>
+{
+  \usetheme{CambridgeUS}       % or try default, Darmstadt, Warsaw, ...
+  \usecolortheme{seagull} % or try albatross, beaver, crane, ...
+  \usefonttheme{professionalfonts}    % or try default, structurebold, ...
+  \setbeamertemplate{navigation symbols}{}
+  \setbeamertemplate{caption}[numbered]
+  \setbeamertemplate{caption}{\insertcaption}
+} 
+
+\newcommand{\ditto}[1][.4pt]{\xrfill{#1}~\textquotedbl~\xrfill{#1}}
+
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{paralist}
+\usepackage{amsmath}
+\usepackage{color}
+\usepackage{ragged2e}
+
+
+\AtBeginSection[]
+{
+  \begin{frame}
+    \frametitle{Table of Contents}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+% On Overleaf, these lines give you sharper preview images.
+% You might want to `comment them out before you export, though.
+\usepackage{pgfpages}
+
+\pgfpagesuselayout{resize to}[letterpaper, landscape] 
+
+
+% Here's where the presentation starts, with the info for the title slide
+
+\title[DTR Recalibration + Options]{DTR Recalibration + Options}
+\author[ Asset Allocation Research ]{ Asset Allocation Research }
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{DTR Beta Recalibration + Options}
+
+\begin{itemize}
+\item In Jan \& Feb 2018, DTR recalibrations were evaluated along with the new enhanced cash model. The recalibration aims to attain 2/3 of the upside while limiting the downside to no more than 1/2 of a reference portfolios.
+
+\item We evaluate modifications to portfolio construction using a long-term horizon risk estimate [LT risk] as well as the removal of the CLI component [no CLI] in DTR Beta, along with the inclusion of options for tail risk hedging.
+
+\begin{itemize}
+\item DTR Base = current DTR Beta with new enhanced cash model
+\item DTR Recal = recalibrated DTR Beta with new enhanced cash model
+\item DTR Recal [LT risk] = DTR Recal via long-term horizon risk estimates
+\item DTR Recal [no CLI] = DTR Recal, excluding CLI component
+\item DTR Recal [LT risk + no CLI] = DTR Recal via long-term horizon risk estimates, excluding CLI component
+\end{itemize}
+
+\item Options include US-only (starting 1996) scenario as well as US (starting 1996) + EU (starting 2002) + JP (starting 2004) scenario
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{DTR Beta Recalibration: Asset Allocations}
+\includegraphics[scale=0.35]{dtr_asset_weights_by_sleeve}
+\end{frame}
+
+\begin{frame}{DTR Beta Recalibration: Asset Allocations}
+\includegraphics[scale=0.35]{dtr_asset_weights}
+\end{frame}
+
+\begin{frame}{DTR Beta Recalibration: Stock Allocations}
+\includegraphics[scale=0.35]{dtr_beta_weights_stk}
+\end{frame}
+
+\begin{frame}{DTR Beta Recalibration: Bond Allocations}
+\includegraphics[scale=0.35]{dtr_beta_weights_bnd}
+\end{frame}
+
+\begin{frame}{DTR Beta Recalibration: Cash Allocations}
+\includegraphics[scale=0.35]{dtr_beta_weights_csh}
+\end{frame}
+
+\begin{frame}{DTR Beta Recalibration: Commodity Allocations}
+\includegraphics[scale=0.35]{dtr_beta_weights_com}
+\end{frame}
+
+\begin{frame}{DTR Beta Recalibration: Stock Allocations by Region}
+\includegraphics[scale=0.35]{dtr_region_weights}
+\end{frame}
+
+\begin{frame}{DTR Beta Recalibration: Cumulative Returns (Since 1996)}
+\includegraphics[scale=0.35]{dtr_total_perf}
+\end{frame}
+
+\begin{frame}{DTR Beta Recalibration: Cumulative Returns (Since 2010)}
+\includegraphics[scale=0.35]{dtr_total_perf_2010}
+\end{frame}
+
+\begin{frame}{DTR Beta Recalibration: Collar Implementation}
+\includegraphics[scale=0.35]{dtr_cll_implement}
+\end{frame}
+
+\begin{frame}{DTR Beta Recalibration: Cumulative Returns (Since 1996)}
+\includegraphics[scale=0.35]{dtr_ret_dd}
+\end{frame}
+
+\begin{frame}{DTR Beta Recalibration: Cumulative Returns (Since 2010)}
+\includegraphics[scale=0.35]{dtr_ret_dd_2010}
+\end{frame}
+
+\begin{frame}{DTR Beta Recalibration: Cumulative Returns (Since 1996)}
+\includegraphics[scale=0.35]{dtr_ret_dd_comparison}
+\end{frame}
+
+\begin{frame}{DTR Beta Recalibration: Cumulative Returns (Since 2010)}
+\includegraphics[scale=0.35]{dtr_ret_dd_comparison_2010}
+\end{frame}
+
+\begin{frame}{DTR Beta Recalibration: Cumulative Returns (Since 1996)}
+\includegraphics[scale=0.35]{dtr_ret_dd_comparison_nocli}
+\end{frame}
+
+\begin{frame}{DTR Beta Recalibration: Cumulative Returns (Since 2010)}
+\includegraphics[scale=0.35]{dtr_ret_dd_comparison_nocli_2010}
+\end{frame}
+
+\begin{frame}{DTR Beta Recalibration: Cumulative Returns Difference}
+\includegraphics[scale=0.35]{dtr_ret_comparison}
+\end{frame}
+
+\begin{frame}{DTR Beta Recalibration: Cumulative Returns Difference}
+\includegraphics[scale=0.35]{dtr_ret_comparison_2010}
+\end{frame}
+
+\begin{frame}{DTR Beta Recalibration: 10 MSCI World Unhedged DDs}
+\includegraphics[scale=0.35]{dtr_dd_vs_msci_world1}
+\includegraphics[scale=0.35]{dtr_dd_vs_msci_world1_2010}
+\end{frame}
+
+\begin{frame}{DTR Beta Recalibration: 10 MSCI World Unhedged DDs}
+\includegraphics[scale=0.35]{dtr_dd_vs_msci_world2}
+\includegraphics[scale=0.35]{dtr_dd_vs_msci_world2_2010}
+\end{frame}
+
+\begin{frame}{DTR Beta Recalibration: 10 MSCI World Unhedged DDs}
+\includegraphics[scale=0.35]{dtr_dd_vs_msci_world3}
+\includegraphics[scale=0.35]{dtr_dd_vs_msci_world3_2010}
+\end{frame}
+
+\begin{frame}{DTR Beta Recalibration: 10 MSCI World Unhedged DDs}
+\includegraphics[scale=0.35]{dtr_dd_vs_msci_world5}
+\includegraphics[scale=0.35]{dtr_dd_vs_msci_world5_2010}
+\end{frame}
+
+\begin{frame}{DTR Beta Recalibration: 10 MSCI World Unhedged DDs}
+\includegraphics[scale=0.35]{dtr_dd_vs_msci_world4}
+\includegraphics[scale=0.35]{dtr_dd_vs_msci_world4_2010}
+\end{frame}
+
+\begin{frame}{DTR Beta Recalibration:\\ Performance Summary (Since 1996)}
+\centering
+\scalebox{0.9}{
+\begin{tabular}{lrrrrrr}
+\toprule
+ & RET & RETg & VOL & IR & IRg & MDD\\
+\midrule
+{\bf No Options}\\
+TR Base & 9.9 & 10.2 & 6.2 & 1.59 & 1.64 & -9.1\\
+TR Recal & 10.4 & 10.7 & 7.0 & 1.48 & 1.52 & -11.6\\
+TR Recal [LT risk] & 11.5 & 11.8 & 8.4 & 1.36 & 1.40 & -19.1\\
+TR Recal [no CLI] & 9.9 & 10.1 & 7.4 & 1.35 & 1.38 & -17.5\\
+TR Recal [LT risk + no CLI] & 10.6 & 10.7 & 9.8 & 1.08 & 1.09 & -41.0\\
+\bottomrule
+\midrule
+{\bf With Options}\\
+TR Base & 8.8 & 9.0 & 6.4 & 1.38 & 1.41 & -7.9\\
+TR Recal & 9.1 & 9.2 & 7.2 & 1.26 & 1.28 & -10.0\\
+TR Recal [LT risk] & 10.2 & 10.3 & 9.0 & 1.14 & 1.15 & -14.8\\
+TR Recal [no CLI] & 8.8 & 8.9 & 7.6 & 1.16 & 1.17 & -10.7\\
+TR Recal [LT risk + no CLI] & 9.9 & 9.7 & 11.0 & 0.90 & 0.88 & -26.5\\
+\bottomrule
+\end{tabular}
+}
+\end{frame}
+
+
+\begin{frame}{DTR Beta Recalibration:\\ Performance Summary (Since 1999)}
+\centering
+\scalebox{0.9}{
+\begin{tabular}{lrrrrrr}
+\toprule
+ & RET & RETg & VOL & IR & IRg & MDD\\
+\midrule
+{\bf No Options}\\
+TR Base & 9.4 & 9.7 & 6.1 & 1.55 & 1.59 & -9.1\\
+TR Recal & 10.1 & 10.3 & 7.1 & 1.43 & 1.46 & -11.6\\
+TR Recal [LT risk] & 10.8 & 11.0 & 8.5 & 1.27 & 1.29 & -19.1\\
+TR Recal [no CLI] & 9.5 & 9.7 & 7.5 & 1.27 & 1.29 & -17.5\\
+TR Recal [LT risk + no CLI] & 9.7 & 9.6 & 10.1 & 0.96 & 0.95 & -41.0\\
+\bottomrule
+\midrule
+{\bf With Options}\\
+TR Base & 8.9 & 9.1 & 6.3 & 1.42 & 1.45 & -7.9\\
+TR Recal & 9.3 & 9.5 & 7.3 & 1.28 & 1.30 & -10.0\\
+TR Recal [LT risk] & 10.4 & 10.5 & 9.1 & 1.14 & 1.15 & -14.8\\
+TR Recal [no CLI] & 9.0 & 9.1 & 7.8 & 1.16 & 1.17 & -10.7\\
+TR Recal [LT risk + no CLI] & 9.9 & 9.7 & 11.5 & 0.87 & 0.85 & -26.5\\
+\bottomrule
+\end{tabular}
+}
+\end{frame}
+
+\begin{frame}{DTR Beta Recalibration:\\ Performance Summary (Since 2004)}
+\centering
+\scalebox{0.9}{
+\begin{tabular}{lrrrrrr}
+\toprule
+ & RET & RETg & VOL & IR & IRg & MDD\\
+\midrule
+{\bf No Options}\\
+TR Base & 9.3 & 9.5 & 6.2 & 1.49 & 1.52 & -9.1\\
+TR Recal & 10.0 & 10.2 & 7.5 & 1.33 & 1.36 & -11.6\\
+TR Recal [LT risk] & 10.8 & 11.0 & 8.8 & 1.23 & 1.25 & -19.1\\
+TR Recal [no CLI] & 9.8 & 9.9 & 7.9 & 1.23 & 1.25 & -17.5\\
+TR Recal [LT risk + no CLI] & 9.9 & 9.8 & 10.8 & 0.92 & 0.91 & -41.0\\
+\bottomrule
+\midrule
+{\bf With Options}\\
+TR Base & 8.5 & 8.6 & 6.4 & 1.32 & 1.35 & -7.9\\
+TR Recal & 8.9 & 9.0 & 7.7 & 1.16 & 1.17 & -10.0\\
+TR Recal [LT risk] & 10.0 & 10.0 & 9.4 & 1.07 & 1.07 & -14.8\\
+TR Recal [no CLI] & 9.0 & 9.0 & 8.3 & 1.09 & 1.09 & -10.7\\
+TR Recal [LT risk + no CLI] & 9.7 & 9.4 & 12.3 & 0.79 & 0.76 & -26.5\\
+\bottomrule
+\end{tabular}
+}
+\end{frame}
+
+
+\begin{frame}{DTR Beta Recalibration:\\ Performance Summary (Since 2007)}
+\centering
+\scalebox{0.9}{
+\begin{tabular}{lrrrrrr}
+\toprule
+ & RET & RETg & VOL & IR & IRg & MDD\\
+\midrule
+{\bf No Options}\\
+TR Base & 8.9 & 9.1 & 6.3 & 1.41 & 1.44 & -9.1\\
+TR Recal & 9.7 & 9.9 & 7.7 & 1.27 & 1.29 & -11.6\\
+TR Recal [LT risk] & 10.8 & 10.9 & 9.4 & 1.15 & 1.16 & -18.1\\
+TR Recal [no CLI] & 9.5 & 9.5 & 8.2 & 1.15 & 1.16 & -17.5\\
+TR Recal [LT risk + no CLI] & 9.6 & 9.3 & 11.7 & 0.81 & 0.79 & -40.7\\
+\bottomrule
+\midrule
+{\bf With Options}\\
+TR Base & 8.0 & 8.1 & 6.5 & 1.24 & 1.25 & -7.9\\
+TR Recal & 8.5 & 8.6 & 7.9 & 1.08 & 1.09 & -10.0\\
+TR Recal [LT risk] & 9.9 & 9.8 & 10.1 & 0.98 & 0.98 & -14.8\\
+TR Recal [no CLI] & 8.6 & 8.6 & 8.6 & 1.00 & 0.99 & -10.7\\
+TR Recal [LT risk + no CLI] & 9.5 & 9.0 & 13.6 & 0.70 & 0.66 & -26.5\\
+\bottomrule
+\end{tabular}
+}
+\end{frame}
+
+\begin{frame}{DTR Beta Recalibration:\\ Performance Summary (Since 2010)}
+\centering
+\scalebox{0.9}{
+\begin{tabular}{lrrrrrr}
+\toprule
+ & RET & RETg & VOL & IR & IRg & MDD\\
+\midrule
+{\bf No Options}\\
+TR Base & 10.7 & 11.1 & 6.3 & 1.71 & 1.77 & -9.1\\
+TR Recal & 11.7 & 12.0 & 7.9 & 1.48 & 1.53 & -11.6\\
+TR Recal [LT risk] & 12.3 & 12.8 & 7.8 & 1.57 & 1.63 & -10.3\\
+TR Recal [no CLI] & 11.8 & 12.2 & 7.9 & 1.50 & 1.55 & -11.6\\
+TR Recal [LT risk + no CLI] & 12.6 & 13.0 & 7.9 & 1.59 & 1.65 & -10.3\\
+\bottomrule
+\midrule
+{\bf With Options}\\
+TR Base & 9.2 & 9.4 & 6.4 & 1.44 & 1.47 & -7.9\\
+TR Recal & 9.8 & 9.9 & 8.1 & 1.21 & 1.23 & -10.0\\
+TR Recal [LT risk] & 10.5 & 10.7 & 8.1 & 1.30 & 1.33 & -8.9\\
+TR Recal [no CLI] & 9.9 & 10.1 & 8.1 & 1.23 & 1.25 & -10.0\\
+TR Recal [LT risk + no CLI] & 10.7 & 11.0 & 8.1 & 1.32 & 1.35 & -8.9\\
+\bottomrule
+\end{tabular}
+}
+\end{frame}
+
+\end{document}

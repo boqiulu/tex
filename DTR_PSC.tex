@@ -1,0 +1,512 @@
+\documentclass{beamer}
+
+% For more themes, color themes and font themes, see:
+% http://deic.uab.es/~iblanes/beamer_gallery/index_by_theme.html
+%
+\mode<presentation>
+{
+  \usetheme{CambridgeUS}       % or try default, Darmstadt, Warsaw, ...
+  \usecolortheme{seagull} % or try albatross, beaver, crane, ...
+  \usefonttheme{professionalfonts}    % or try default, structurebold, ...
+  \setbeamertemplate{navigation symbols}{}
+  \setbeamertemplate{caption}[numbered]
+  \setbeamertemplate{caption}{\insertcaption}
+} 
+
+\newcommand{\ditto}[1][.4pt]{\xrfill{#1}~\textquotedbl~\xrfill{#1}}
+
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{paralist}
+\usepackage{amsmath}
+\usepackage{color}
+\usepackage{ragged2e}
+
+
+\AtBeginSection[]
+{
+  \begin{frame}
+    \frametitle{Table of Contents}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+% On Overleaf, these lines give you sharper preview images.
+% You might want to `comment them out before you export, though.
+\usepackage{pgfpages}
+
+\pgfpagesuselayout{resize to}[letterpaper, landscape] 
+
+
+% Here's where the presentation starts, with the info for the title slide
+
+\title[International Options in Total Return]{International Options in Total Return}
+\author[ AA Research ]{ AA Research }
+\date{11 January 2018}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Review from 2017}
+
+\begin{itemize}
+
+\item In April, the Calendar Collar (CC) was introduced (US only) into the Total Return (TR) strategies. 
+	\begin{itemize}
+	\item Per HD: since inception, the CC has underperformed the index by 43.6 bps; the opportunity cost of removing the 1.2x multiplier (additional $\approx$ 6\% equity futures on 10 Nov 2017) was 20.9 bps. If the multiplier was kept to year end, the underperformance would be 22.7 bps.
+	\item In simulation: over the post-2010 period, the annualized total return of the S\&P 500=13.8\% and 1.2x CC=12.9\% (difference of $\approx$ 0.9\%). At 30\% notional, this would be $\approx$ 27 bps (cost).
+	\end{itemize}
+\vfill
+\item Last year, the following topics were reviewed in regards to the CC:
+	\begin{itemize}
+	\item Jul: Introduced international options dataset
+	\item Sep: Options transactions cost analysis
+	\item Oct: International options and cross-index structures
+	\item Nov: Lower notional alternatives \& risk management of short calls
+	\item Dec: Impact of international option structures in TR
+	\end{itemize}
+	
+\vfill
+
+\item For 2018, the initial agenda item is to make a decision about {\bf if and how to implement international options in the TR strategies}.
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Current CC Implementation}
+
+\begin{itemize}
+\item The current implementation of the CC in the US is to cover a designated notional amount (currently 30\%) and apply leverage (currently 1.2x) to the CC structure $\rightarrow$ 36\% exposure in total.
+	\begin{itemize}
+	\vfill
+	\item The application of leverage is intended \underline {to close the return differential} between the underlying index and the CC (a lower return but higher risk/return structure), especially in periods when the underlying index performs strongly; however, of course, leverage amplifies performance both on the upside \& downside.
+	\vfill
+	\item These multiplier are based on historical / recent (since 2010) performance and will likely change for both the US and international indices --- not to mention that they are \underline {not equivalent across indices}. 
+	\item Historical / indicative multipliers: \underline {US $\approx$ 1.2x; JP $\approx$ 1.4x; UK $\approx$ 1.3x; EU $\approx$ 1.2x}
+	\vfill
+	\end{itemize}
+\vfill
+\item If implementing the CC internationally, then {\bf how should these multipliers be set going forward?} What are the future multipliers?
+\begin{itemize}
+\item Can the implementation of options in TR (both domestically and internationally) be simplified, without the use of such multipliers?
+\end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Two Key Questions}
+\begin{block}{\bf{(1) What Exposure to Hedge?}}
+Is the objective to hedge the the beta exposure or the combined total portfolio exposure?
+\begin{itemize}
+	\item If hedging the beta portfolio ($\beta$ only), options can be implemented domestically (given US cap weight 60\%+), and US options should suffice to hedge global, large magnitude drawdowns.
+	\item If hedging the total portfolio ($\beta+\alpha$), options could be implemented internationally to cover global exposures and avoid basis risks.
+\end{itemize}
+\end{block}
+
+\begin{block}{\bf{(2) What Drawdowns to Hedge?}}
+The implicit aim is to protect against relatively large (beyond -10\%) market drawdowns over a medium to long time horizon.
+\begin{itemize} 
+\item Mitigating light-to-moderate market corrections or short-term market swings may requires a different approach towards managing risk.
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}{From Beta Hedge to Tail Risk Hedge}
+\begin{itemize}
+\item The answers to these two questions seem to be: {\em hedge the total portfolio exposure for relatively large market drawdowns}.
+\vfill
+\item This hedging objective makes the inclusion of international options more relevant but also necessitates a re-orientation of the options program (from beta hedge to tail risk hedge).
+
+
+\begin{block}
+
+%\begin{itemize}
+\centerline {\underline{\bf Beta Hedge} (for better beta): Equity $\rightarrow$ Multiplier x (Equity + Options)}
+\centerline {\bf $\big\downarrow$}
+\centerline {\underline{\bf Tail Risk Hedge} (for better outcome): Portfolio $\rightarrow$ Portfolio + Options}
+%\end{itemize}
+
+\end{block}
+
+
+\item For a tail risk hedging program, can we forgo some protection of short / sharp market corrections in order to shield the TR portfolios from longer and larger magnitude drawdowns at a cost that will keep the portfolio more in line with long-term equity returns (all while removing the need for historically measured and country-specific multipliers that will change over time)?
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{What's a Multiplier? From Collars to Put Spread Collars}
+\begin{itemize}
+\item The multiplier entails the addition (or subtraction) of directional exposure to the overall equity options structure. Instead of setting a multiplier based on historical recent performance that is subject to change, why not let the market set the multiplier?
+\vfill
+\item {\bf Put Spread Collar} = Long Put + Short Call + {\color{blue}{\em Short Put}}
+\item[] = Long Put + Short Straddle/Strangle = Long Collar + {\color{blue}{\em Short Put}}
+\vfill
+\item As indicated empirically, writing options generates returns via exposure to the volatility risk premium. The addition of a short put (delta positive) can further enhance returns over the long-run to close some of the return differential versus the underlying equity index. 
+\vfill
+\item However, by design, the PSC will necessarily also introduce some additional drawdowns and volatility (relative to the CC) over the (short) horizons at which the short put is written. Note, the \underline {current $>$1.0x multiplier applied to the CC has this effect this as well}!
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{US: Collar vs Put Spread Collar (Since 1996)}
+\begin{itemize}
+\item To start, compare (option positions only) the {\bf existing US CC vs PSC} (which includes additional short position in a 1M 11-delta put).
+\end{itemize}
+
+%\centering
+%\scalebox{0.6}{
+%\begin{tabular}{lrrrrrrrrr}
+%\toprule
+%Strategy & RET & RETg & VOL & IR & IRg & MDD & Beta & Beta+ & Beta-\\
+%\midrule
+%Calendar Collar & -1.0 & -1.7 & 11.6 & -0.09 & -0.14 & -50.6 & -0.51 & -0.58 & -0.54\\
+%Put Spread (Calendar) Collar & 2.1 & 1.7 & 10.0 & 0.21 & 0.16 & -24.8 & -0.36 & -0.39 & -0.33\\
+%\bottomrule
+%\end{tabular}
+%}
+
+\includegraphics[scale=0.35]{collar_vs_putspreadcollar}
+
+\begin{itemize}
+\item The PSC offers a similar tail risk hedging profile when necessary but at \underline{more sustainable cost over the long-run, without the need for leverage}.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{International: Collar vs Put Spread Collar (Since 2010)}
+\begin{itemize}
+\item Across international indices, the PSC profile (relative to the CC) is {\bf similar to that in the US}, generating returns in market drawdown periods while maintaining lower costs over the long-run.
+\end{itemize}
+\includegraphics[scale=0.35]{collar_vs_putspreadcollar_gbr}
+\includegraphics[scale=0.35]{collar_vs_putspreadcollar_emu}
+\includegraphics[scale=0.35]{collar_vs_putspreadcollar_jpn}
+\end{frame}
+
+\begin{frame}{\Large US: Equity Collar vs Equity Put Spread Collar (Since 1996)}
+\begin{itemize}
+\item Combined with equity, the PSC can actually outperform (in terms of returns) both the index, the CC, and even the 1.2x CC. The PSC structure can be {\bf set}\footnote{\tiny Raise the long 9M put from 11-delta to 20-delta, include the short 1M 10-delta put, and retain the short 1M 2\% OTM call. } {\bf to meet specific portfolio objectives for TR}.
+\end{itemize}
+\includegraphics[scale=0.35]{EQ_collar_vs_putspreadcollar}
+\end{frame}
+
+\begin{frame}{Top 10 US Equity Drawdowns (Since 1996 \& Since 2010)}
+\includegraphics[scale=0.35]{drawdown_comparison_CC_PSC}
+\includegraphics[scale=0.35]{drawdown_comparison_CC_PSC_2010}
+\end{frame}
+
+\begin{frame}{Historical (Annualized) Hedging Costs (Since 2010)}
+\begin{itemize}
+\item Outside of market downturns, the focus naturally shifts towards hedging costs. Over the period since 2010, when equity markets have broadly made gains across the board, the PSC has incurred approximately half or less than half the cost of the CC, depending on the index.
+
+\end{itemize}
+
+\vfill
+
+\centering
+\scalebox{0.8}{
+\begin{tabular}{lcccc}
+\toprule
+(Annualized) Return & US & EU & UK & JP\\
+\addlinespace
+\midrule
+\addlinespace
+{\bf Equity} (Index Only) & 13.9\% & 8.6\% & 8.9\% & 13.2\% \\
+\addlinespace
+\midrule
+\addlinespace
+{\bf Calendar Collar} (Options Only) & -3.2\% & -1.8\% & -2.5\% & -5.0\%\\
+\addlinespace
+{\bf Put Spread Collar} (Options Only) & -1.6\% & -0.6\% & -1.2\% & -1.0\%\\
+\bottomrule
+\end{tabular}
+}
+\vfill
+\begin{itemize}
+\item Certainly, multipliers / leverage can be applied to close the return differential of the CC (as is being implemented currently), but the PSC removes the guesswork of customized / calibrated / changing multipliers and offers effective hedging at more sustainable cost.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Historical Delta Profile for US PSC (Since 2010)}
+\includegraphics[scale=0.35]{psc_option_deltas}
+\end{frame}
+
+\begin{frame}{Simple 60\% Equity Portfolio Analysis (20\% US, EU, JP)}
+\centering
+\scalebox{0.65}{
+\begin{tabular}{lrrrrrr}
+\toprule
+Performance Summary (Since 2010) & RET & RETg & VOL & IR & IRg & MDD\\
+\midrule
+Equity {\em (20\% US $|$ 20\% EU $|$ 20\% JP)} & 6.8 & 6.7 & 8.1 & 0.84 & 0.83 & -14.7\\
+Equity \& CC {\em (+9M Put 11D $|$ -1M Call 2\% OTM)} & 5.2 & 5.1 & 6.1 & 0.84 & 0.83 & -10.3\\
+Equity \& PSC {\em (+9M Put 20D $|$ -1M Call 2\% OTM $|$ -1M Put 10D)} & 6.2 & 6.2 & 6.4 & 0.98 & 0.97 & -11.1\\
+\bottomrule
+\end{tabular}
+}
+\includegraphics[scale=0.35]{msci_lite}
+\end{frame}
+
+\begin{frame}{DTR Sim: CC and PSC Allocation and Performance}
+\includegraphics[scale=0.35]{dtr_psc_implement}\\
+\includegraphics[scale=0.35]{dtr_psc_attrib}
+\end{frame}
+
+\begin{frame}{DTR Sim: Performance with CC and PSC}
+\includegraphics[scale=0.35]{dtr_withpsc_perf}
+\end{frame}
+
+\begin{frame}{DTR Sim: Performance with CC and PSC}
+\includegraphics[scale=0.35]{dtr_ret_dd_psc}
+\end{frame}
+
+\begin{frame}{SPX: Performance Summary Since 1996}
+\centering
+\scalebox{0.59}{
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+Strategy & RET & RETg & VOL & IR & IRg & MDD & Beta & Beta+ & Beta-\\
+\midrule
+{\bf Equity (Since 1996)} & 10.3 & 8.9 & 19.0 & 0.54 & 0.47 & -70.1 & 1.00 & 1.00 & 1.00\\
+\midrule
+\addlinespace
+{\bf Equity \& Calendar Collar} & 9.3 & 9.1 & 11.1 & 0.83 & 0.81 & -28.3 & 0.49 & 0.42 & 0.46\\
+{\bf Equity \& 1.2X Calendar Collar} & 11.2 & 10.8 & 13.4 & 0.83 & 0.81 & -33.9 & 0.49 & 0.42 & 0.46\\
+\midrule
+\addlinespace
+{\bf Equity \& Put Spread Calendar Collars} \\
+\midrule
+\addlinespace
+{\em Long 9M 10-Delta Put Cases} \\
+\addlinespace
+Equity \& +P 9M 10D $|$ -C 1M 2\% OTM $|$ -P 1M 10D & 12.4 & 12.1 & 14.4 & 0.87 & 0.84 & -41.0 & 0.65 & 0.61 & 0.67\\
+Equity \& +P 9M 10D $|$ -C 1M 2\% OTM $|$ -P 1M 20D & 14.3 & 13.7 & 17.0 & 0.84 & 0.81 & -48.9 & 0.78 & 0.75 & 0.83\\
+Equity \& +P 9M 10D $|$ -C 1M 2\% OTM $|$ -P 1M 30D & 15.3 & 14.4 & 19.4 & 0.79 & 0.74 & -54.9 & 0.91 & 0.87 & 0.98\\
+Equity \& +P 9M 10D $|$ -C 1M 2\% OTM $|$ -P 1M 40D & 16.1 & 14.8 & 21.5 & 0.75 & 0.69 & -61.1 & 1.02 & 0.98 & 1.10\\
+\midrule
+\addlinespace
+{\em Long 9M 20-Delta Put Cases} \\
+\addlinespace
+\color{blue}{Equity \& +P 9M 20D $|$ -C 1M 2\% OTM $|$ -P 1M 10D} & 11.4 & 11.2 & 12.6 & 0.91 & 0.89 & -35.5 & 0.53 & 0.49 & 0.53\\
+Equity \& +P 9M 20D $|$ -C 1M 2\% OTM $|$ -P 1M 20D & 13.3 & 12.9 & 15.1 & 0.88 & 0.86 & -43.4 & 0.66 & 0.63 & 0.70\\
+Equity \& +P 9M 20D $|$ -C 1M 2\% OTM $|$ -P 1M 30D & 14.3 & 13.6 & 17.4 & 0.82 & 0.78 & -49.4 & 0.79 & 0.75 & 0.84\\
+Equity \& +P 9M 20D $|$ -C 1M 2\% OTM $|$ -P 1M 40D & 15.1 & 14.2 & 19.4 & 0.78 & 0.73 & -55.0 & 0.90 & 0.86 & 0.96\\
+\midrule
+\addlinespace
+{\em Long 9M 30-Delta Put Cases} \\
+\addlinespace
+Equity \& +P 9M 30D $|$ -C 1M 2\% OTM $|$ -P 1M 10D & 10.3 & 10.2 & 10.9 & 0.95 & 0.94 & -31.5 & 0.42 & 0.38 & 0.42\\
+Equity \& +P 9M 30D $|$ -C 1M 2\% OTM $|$ -P 1M 20D & 12.2 & 12.0 & 13.3 & 0.92 & 0.90 & -39.9 & 0.55 & 0.52 & 0.58\\
+Equity \& +P 9M 30D $|$ -C 1M 2\% OTM $|$ -P 1M 30D & 13.1 & 12.7 & 15.5 & 0.85 & 0.82 & -45.5 & 0.68 & 0.64 & 0.73\\
+Equity \& +P 9M 30D $|$ -C 1M 2\% OTM $|$ -P 1M 40D & 14.0 & 13.3 & 17.5 & 0.80 & 0.76 & -50.6 & 0.79 & 0.75 & 0.85\\
+\midrule
+\bottomrule
+\end{tabular}
+}
+\end{frame}
+
+\begin{frame}{SPX: Performance Summary Since 2010}
+\centering
+\scalebox{0.59}{
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+Strategy & RET & RETg & VOL & IR & IRg & MDD & Beta & Beta+ & Beta-\\
+\midrule
+{\bf Equity (Since 2010)} & 13.9 & 13.6 & 14.8 & 0.94 & 0.92 & -19.0 & 1.00 & 1.00 & 1.00\\
+\midrule
+\addlinespace
+{\bf Equity \& Calendar Collar} & 10.7 & 10.8 & 10.0 & 1.07 & 1.08 & -14.0 & 0.64 & 0.62 & 0.65\\
+{\bf Equity \& 1.2X Calendar Collar} & 12.9 & 12.9 & 12.0 & 1.07 & 1.08 & -16.8 & 0.64 & 0.62 & 0.65\\
+\midrule
+\addlinespace
+{\bf Equity \& Put Spread Calendar Collars} \\
+\midrule
+\addlinespace
+{\em Long 9M 10-Delta Put Cases} \\
+\addlinespace
+Equity \& +P 9M 10D $|$ -C 1M 2\% OTM $|$ -P 1M 10D & 14.4 & 14.5 & 13.1 & 1.10 & 1.10 & -19.8 & 0.82 & 0.83 & 0.90\\
+Equity \& +P 9M 10D $|$ -C 1M 2\% OTM $|$ -P 1M 20D & 16.9 & 17.1 & 14.6 & 1.16 & 1.17 & -23.2 & 0.92 & 0.92 & 1.02\\
+Equity \& +P 9M 10D $|$ -C 1M 2\% OTM $|$ -P 1M 30D & 18.8 & 19.1 & 16.3 & 1.16 & 1.17 & -25.9 & 1.03 & 1.03 & 1.15\\
+Equity \& +P 9M 10D $|$ -C 1M 2\% OTM $|$ -P 1M 40D & 20.2 & 20.4 & 17.9 & 1.13 & 1.14 & -28.2 & 1.14 & 1.14 & 1.27\\
+\midrule
+\addlinespace
+{\em Long 9M 20-Delta Put Cases} \\
+\addlinespace
+\color{blue}{Equity \& +P 9M 20D $|$ -C 1M 2\% OTM $|$ -P 1M 10D} & 12.3 & 12.3 & 11.5 & 1.07 & 1.07 & -18.2 & 0.71 & 0.71 & 0.77\\
+Equity \& +P 9M 20D $|$ -C 1M 2\% OTM $|$ -P 1M 20D & 14.8 & 15.0 & 13.0 & 1.14 & 1.15 & -21.6 & 0.80 & 0.80 & 0.89\\
+Equity \& +P 9M 20D $|$ -C 1M 2\% OTM $|$ -P 1M 30D & 16.7 & 16.9 & 14.7 & 1.14 & 1.15 & -24.3 & 0.92 & 0.91 & 1.02\\
+Equity \& +P 9M 20D $|$ -C 1M 2\% OTM $|$ -P 1M 40D & 18.1 & 18.2 & 16.3 & 1.11 & 1.12 & -26.5 & 1.02 & 1.01 & 1.14\\
+\midrule
+\addlinespace
+{\em Long 9M 30-Delta Put Cases} \\
+\addlinespace
+Equity \& +P 9M 30D $|$ -C 1M 2\% OTM $|$ -P 1M 10D & 10.3 & 10.3 & 9.8 & 1.05 & 1.05 & -16.1 & 0.58 & 0.57 & 0.63\\
+Equity \& +P 9M 30D $|$ -C 1M 2\% OTM $|$ -P 1M 20D & 12.8 & 12.9 & 11.3 & 1.13 & 1.14 & -19.4 & 0.68 & 0.66 & 0.75\\
+Equity \& +P 9M 30D $|$ -C 1M 2\% OTM $|$ -P 1M 30D & 14.8 & 14.9 & 13.0 & 1.14 & 1.15 & -22.2 & 0.79 & 0.77 & 0.88\\
+Equity \& +P 9M 30D $|$ -C 1M 2\% OTM $|$ -P 1M 40D & 16.1 & 16.2 & 14.5 & 1.11 & 1.12 & -24.4 & 0.90 & 0.88 & 1.00\\
+\midrule
+\bottomrule
+\end{tabular}
+}
+\end{frame}
+
+\begin{frame}{SX5E: Performance Summary Since 2010}
+\centering
+\scalebox{0.59}{
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+Strategy & RET & RETg & VOL & IR & IRg & MDD & Beta & Beta+ & Beta-\\
+\midrule
+{\bf Equity (Since 2010)} & 8.6 & 6.7 & 20.9 & 0.41 & 0.32 & -37.6 & 1.00 & 1.00 & 1.00\\
+\midrule
+\addlinespace
+{\bf Equity \& Calendar Collar} & 6.8 & 6.2 & 13.0 & 0.53 & 0.48 & -20.8 & 0.57 & 0.54 & 0.59\\
+\midrule
+\addlinespace
+{\bf Equity \& Put Spread Calendar Collars} \\
+\midrule
+\addlinespace
+{\em Long 9M 10-Delta Put Cases} \\
+\addlinespace
+Equity \& +P 9M 10D $|$ -C 1M 2\% OTM $|$ -P 1M 10D & 9.6 & 8.4 & 17.7 & 0.54 & 0.47 & -31.4 & 0.77 & 0.76 & 0.85\\
+Equity \& +P 9M 10D $|$ -C 1M 2\% OTM $|$ -P 1M 20D & 10.6 & 9.0 & 19.8 & 0.53 & 0.46 & -31.1 & 0.86 & 0.85 & 0.96\\
+Equity \& +P 9M 10D $|$ -C 1M 2\% OTM $|$ -P 1M 30D & 11.1 & 9.1 & 22.1 & 0.50 & 0.41 & -32.9 & 0.97 & 0.95 & 1.08\\
+Equity \& +P 9M 10D $|$ -C 1M 2\% OTM $|$ -P 1M 40D & 11.3 & 8.8 & 24.3 & 0.47 & 0.36 & -37.7 & 1.08 & 1.05 & 1.20\\
+\midrule
+\addlinespace
+{\em Long 9M 20-Delta Put Cases} \\
+\addlinespace
+\color{blue}{Equity \& +P 9M 20D $|$ -C 1M 2\% OTM $|$ -P 1M 10D} & 8.0 & 7.1 & 15.2 & 0.53 & 0.47 & -27.8 & 0.63 & 0.61 & 0.69\\
+Equity \& +P 9M 20D $|$ -C 1M 2\% OTM $|$ -P 1M 20D & 9.0 & 7.8 & 17.2 & 0.52 & 0.45 & -27.4 & 0.72 & 0.70 & 0.80\\
+Equity \& +P 9M 20D $|$ -C 1M 2\% OTM $|$ -P 1M 30D & 9.6 & 8.0 & 19.5 & 0.49 & 0.41 & -28.7 & 0.83 & 0.80 & 0.92\\
+Equity \& +P 9M 20D $|$ -C 1M 2\% OTM $|$ -P 1M 40D & 9.8 & 7.7 & 21.6 & 0.45 & 0.36 & -33.2 & 0.94 & 0.90 & 1.04\\
+\midrule
+\addlinespace
+{\em Long 9M 30-Delta Put Cases} \\
+\addlinespace
+Equity \& +P 9M 30D $|$ -C 1M 2\% OTM $|$ -P 1M 10D & 6.9 & 6.2 & 13.1 & 0.53 & 0.48 & -24.1 & 0.50 & 0.48 & 0.55\\
+Equity \& +P 9M 30D $|$ -C 1M 2\% OTM $|$ -P 1M 20D & 7.9 & 7.0 & 15.1 & 0.53 & 0.47 & -24.1 & 0.60 & 0.56 & 0.65\\
+Equity \& +P 9M 30D $|$ -C 1M 2\% OTM $|$ -P 1M 30D & 8.2 & 7.0 & 17.3 & 0.47 & 0.40 & -25.2 & 0.71 & 0.66 & 0.79\\
+Equity \& +P 9M 30D $|$ -C 1M 2\% OTM $|$ -P 1M 40D & 8.7 & 7.1 & 19.3 & 0.45 & 0.37 & -29.4 & 0.81 & 0.77 & 0.90\\
+\midrule
+\bottomrule
+\end{tabular}
+}
+\end{frame}
+
+\begin{frame}{NKY: Performance Summary Since 2010}
+\centering
+\scalebox{0.59}{
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+Strategy & RET & RETg & VOL & IR & IRg & MDD & Beta & Beta+ & Beta-\\
+\midrule
+{\bf Equity (Since 2010)} & 13.2 & 11.5 & 21.8 & 0.61 & 0.53 & -29.9 & 1.00 & 1.00 & 1.00\\
+\midrule
+\addlinespace
+{\bf Equity \& Calendar Collar} & 8.2 & 7.5 & 14.2 & 0.58 & 0.53 & -22.8 & 0.60 & 0.57 & 0.67\\
+\midrule
+\addlinespace
+{\bf Equity \& Put Spread Calendar Collars} \\
+\midrule
+\addlinespace
+{\em Long 9M 10-Delta Put Cases} \\
+\addlinespace
+Equity \& +P 9M 10D $|$ -C 1M 2\% OTM $|$ -P 1M 10D & 13.9 & 12.8 & 19.1 & 0.73 & 0.67 & -30.2 & 0.79 & 0.79 & 0.96\\
+Equity \& +P 9M 10D $|$ -C 1M 2\% OTM $|$ -P 1M 20D & 16.2 & 14.9 & 21.3 & 0.76 & 0.70 & -30.7 & 0.88 & 0.86 & 1.08\\
+Equity \& +P 9M 10D $|$ -C 1M 2\% OTM $|$ -P 1M 30D & 17.6 & 15.9 & 23.7 & 0.74 & 0.67 & -33.7 & 0.98 & 0.95 & 1.20\\
+Equity \& +P 9M 10D $|$ -C 1M 2\% OTM $|$ -P 1M 40D & 18.8 & 16.6 & 26.1 & 0.72 & 0.63 & -38.7 & 1.09 & 1.05 & 1.31\\
+\midrule
+\addlinespace
+{\em Long 9M 20-Delta Put Cases} \\
+\addlinespace
+\color{blue}{Equity \& +P 9M 20D $|$ -C 1M 2\% OTM $|$ -P 1M 10D} & 12.2 & 11.3 & 17.0 & 0.72 & 0.67 & -27.8 & 0.69 & 0.68 & 0.83\\
+Equity \& +P 9M 20D $|$ -C 1M 2\% OTM $|$ -P 1M 20D & 14.9 & 14.0 & 19.2 & 0.78 & 0.73 & -28.3 & 0.78 & 0.75 & 0.95\\
+Equity \& +P 9M 20D $|$ -C 1M 2\% OTM $|$ -P 1M 30D & 15.9 & 14.5 & 21.6 & 0.73 & 0.67 & -31.3 & 0.88 & 0.84 & 1.07\\
+Equity \& +P 9M 20D $|$ -C 1M 2\% OTM $|$ -P 1M 40D & 16.7 & 14.7 & 24.1 & 0.69 & 0.61 & -36.3 & 0.99 & 0.95 & 1.18\\
+\midrule
+\addlinespace
+{\em Long 9M 30-Delta Put Cases} \\
+\addlinespace
+Equity \& +P 9M 30D $|$ -C 1M 2\% OTM $|$ -P 1M 10D & 10.9 & 10.3 & 15.0 & 0.73 & 0.68 & -24.6 & 0.53 & 0.52 & 0.60\\
+Equity \& +P 9M 30D $|$ -C 1M 2\% OTM $|$ -P 1M 20D & 13.2 & 12.4 & 17.0 & 0.77 & 0.73 & -25.1 & 0.62 & 0.58 & 0.73\\
+Equity \& +P 9M 30D $|$ -C 1M 2\% OTM $|$ -P 1M 30D & 14.7 & 13.6 & 19.4 & 0.76 & 0.70 & -28.8 & 0.73 & 0.68 & 0.85\\
+Equity \& +P 9M 30D $|$ -C 1M 2\% OTM $|$ -P 1M 40D & 15.9 & 14.5 & 21.7 & 0.73 & 0.67 & -33.4 & 0.83 & 0.78 & 0.96\\
+\midrule
+\bottomrule
+\end{tabular}
+}
+\end{frame}
+
+\begin{frame}{UKX: Performance Summary Since 2010}
+\centering
+\scalebox{0.59}{
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+Strategy & RET & RETg & VOL & IR & IRg & MDD & Beta & Beta+ & Beta-\\
+\midrule
+{\bf Equity (Since 2010)} & 8.9 & 8.1 & 15.4 & 0.58 & 0.52 & -20.8 & 1.00 & 1.00 & 1.00\\
+\midrule
+\addlinespace
+{\bf Equity \& Calendar Collar} & 6.4 & 6.1 & 10.2 & 0.63 & 0.59 & -13.2 & 0.61 & 0.57 & 0.65\\
+\midrule
+\addlinespace
+{\bf Equity \& Put Spread Calendar Collars} \\
+\midrule
+\addlinespace
+{\em Long 9M 10-Delta Put Cases} \\
+\addlinespace
+Equity \& +P 9M 10D $|$ -C 1M 2\% OTM $|$ -P 1M 10D & 9.5 & 9.1 & 12.8 & 0.74 & 0.71 & -19.1 & 0.76 & 0.73 & 0.85\\
+Equity \& +P 9M 10D $|$ -C 1M 2\% OTM $|$ -P 1M 20D & 11.1 & 10.5 & 14.9 & 0.74 & 0.70 & -23.1 & 0.88 & 0.85 & 1.01\\
+Equity \& +P 9M 10D $|$ -C 1M 2\% OTM $|$ -P 1M 30D & 12.2 & 11.4 & 16.7 & 0.73 & 0.68 & -24.9 & 0.99 & 0.96 & 1.14\\
+Equity \& +P 9M 10D $|$ -C 1M 2\% OTM $|$ -P 1M 40D & 13.0 & 12.0 & 18.3 & 0.71 & 0.65 & -26.3 & 1.10 & 1.06 & 1.25\\
+\midrule
+\addlinespace
+{\em Long 9M 20-Delta Put Cases} \\
+\addlinespace
+\color{blue}{Equity \& +P 9M 20D $|$ -C 1M 2\% OTM $|$ -P 1M 10D} & 7.7 & 7.3 & 11.2 & 0.68 & 0.65 & -17.3 & 0.64 & 0.60 & 0.71\\
+Equity \& +P 9M 20D $|$ -C 1M 2\% OTM $|$ -P 1M 20D & 9.2 & 8.7 & 13.3 & 0.69 & 0.65 & -21.0 & 0.76 & 0.72 & 0.87\\
+Equity \& +P 9M 20D $|$ -C 1M 2\% OTM $|$ -P 1M 30D & 10.3 & 9.6 & 15.0 & 0.68 & 0.64 & -22.8 & 0.87 & 0.83 & 1.00\\
+Equity \& +P 9M 20D $|$ -C 1M 2\% OTM $|$ -P 1M 40D & 11.2 & 10.3 & 16.7 & 0.67 & 0.62 & -24.1 & 0.98 & 0.93 & 1.11\\
+\midrule
+\addlinespace
+{\em Long 9M 30-Delta Put Cases} \\
+\addlinespace
+Equity \& +P 9M 30D $|$ -C 1M 2\% OTM $|$ -P 1M 10D & 6.1 & 5.8 & 9.8 & 0.63 & 0.59 & -15.8 & 0.52 & 0.48 & 0.58\\
+Equity \& +P 9M 30D $|$ -C 1M 2\% OTM $|$ -P 1M 20D & 7.5 & 7.1 & 11.7 & 0.64 & 0.60 & -19.3 & 0.64 & 0.59 & 0.73\\
+Equity \& +P 9M 30D $|$ -C 1M 2\% OTM $|$ -P 1M 30D & 8.7 & 8.1 & 13.5 & 0.65 & 0.60 & -21.4 & 0.75 & 0.70 & 0.86\\
+Equity \& +P 9M 30D $|$ -C 1M 2\% OTM $|$ -P 1M 40D & 9.4 & 8.6 & 15.1 & 0.62 & 0.57 & -22.7 & 0.86 & 0.81 & 0.98\\
+\midrule
+\bottomrule
+\end{tabular}
+}
+\end{frame}
+
+\begin{frame}{DTR Sim: Total Equity Allocations by Country \& Region}
+\includegraphics[scale=0.35]{dtr_equity_weights} \\
+\includegraphics[scale=0.35]{dtr_region_weights}
+\end{frame}
+
+\begin{frame}{DTR Sim: Total Allocations}
+\includegraphics[scale=0.35]{dtr_total_weights}
+\end{frame}
+
+\begin{frame}{DTR Sim: Beta Allocations}
+\includegraphics[scale=0.35]{dtr_beta_weights}
+\end{frame}
+
+\begin{frame}{S/S Sim: Allocations (Unscaled)}
+\includegraphics[scale=0.35]{ss_weights}
+\end{frame}
+
+\begin{frame}{DTR Sim: Total Equity Allocations By Sleeve}
+\includegraphics[scale=0.35]{dtr_total_weights_stk}
+\end{frame}
+
+\end{document}

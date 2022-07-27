@@ -1,0 +1,1058 @@
+\documentclass{beamer}
+
+% For more themes, color themes and font themes, see:
+% http://deic.uab.es/~iblanes/beamer_gallery/index_by_theme.html
+%
+\mode<presentation>
+{
+  \usetheme{CambridgeUS}       % or try default, Darmstadt, Warsaw, ...
+  \usecolortheme{seagull} % or try albatross, beaver, crane, ...
+  \usefonttheme{professionalfonts}    % or try default, structurebold, ...
+  \setbeamertemplate{navigation symbols}{}
+  \setbeamertemplate{caption}[numbered]
+  \setbeamertemplate{caption}{\insertcaption}
+} 
+
+\newcommand{\ditto}[1][.4pt]{\xrfill{#1}~\textquotedbl~\xrfill{#1}}
+
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{paralist}
+\usepackage{amsmath}
+\usepackage{color}
+\usepackage{ragged2e}
+
+
+\AtBeginSection[]
+{
+  \begin{frame}
+    \frametitle{Table of Contents}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+% On Overleaf, these lines give you sharper preview images.
+% You might want to `comment them out before you export, though.
+\usepackage{pgfpages}
+
+\pgfpagesuselayout{resize to}[letterpaper, landscape] 
+
+
+% Here's where the presentation starts, with the info for the title slide
+
+\title[{\tt GaaOptions}]{{\tt GaaOptions}: Enhancements to the Calendar Collar Follow-Ups}
+\author[DC $|$ BL]{ Dimitri Curtil \and Boqiu Lu}
+%\date{\today}
+\date{16 November 2017}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\section{International Options Structures}
+\begin{frame}{International Options Structures and Transactions Costs}
+\begin{itemize}
+
+\item In late October, we evaluated the effect of transactions costs on the collar structure both for SPX as well as for international indices (SX5E, UKX, NKY) with transactions costs estimates as provided by portfolio management and trading.
+\vfill
+\item At equal notional comparisons, the effect of bid-offer spreads is more pronounced for ATM structures than OTM --- simply an arithmetic effect of how portfolio + options returns are computed against the underlying notional. As follow-up, we evaluate delta-matched notional comparisons.
+\vfill
+\item We evaluate reduced notional ATM call writing for the Calendar Collar (CC) as well as adjustments in terms of holding closer to expiration or rolling early when a significant portion of the premium is collected.
+\vfill
+\item We also re-visit other option structures previously examined (put-spreads and put-spread-collars) within the updated GaaOptions framework.
+\vfill
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}{International Options Structures and Transactions Costs}
+\begin{itemize}
+\item For international index collars, the performance of the structures were mostly in line with expectations: lower drawdowns \& volatility versus the underlying index at the expense of aggregate returns over the longer-run.
+
+\item Transactions costs for international options (at least based on estimates provided) are not prohibitively more expensive than corresponding index option for SPX.
+
+\item There can be significant basis risks from using index options of one market crossed with another index - the determining factors is the ease/complexity of implementation and the tolerance for mis-tracking as well as which drawdowns (light / moderate / severe) we are trying to reduce.
+
+\item Primary question remains how to close the total return gap with index options structures (without the use of leverage), while still preserving the desired aspects of drawdown mitigation and volatility control.
+\end{itemize}
+\end{frame}
+
+\section{Alternatives for Managing the Short Call}
+\begin{frame}{Alternatives for Managing the Short Call}
+\begin{itemize}
+\item In the low volatility period of recent years, writing call options necessarily entails a lower nominal level of premium (as compensation for foregoing upside participation). 
+\vfill 
+\item As a consequence of the return drag (versus the underlying index) introduced from these lower premium call writes, leverage is applied (currently 1.2x for the SPX) to the Calendar Collar (CC) --- which may undo some of the drawdown mitigation benefits of the structure. 
+\vfill
+\item Are there alternatives for managing the short call? Evaluate the following:
+\begin{itemize}
+\item Replace the OTM call with a delta-equivalent lower notional ATM call
+\item Hold the short call position even closer to expiration
+\item Rolling short call position early
+\vfill
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Summary: Reduced Notional ATM}
+\begin{itemize}
+\item Replace the OTM call with a delta-equivalent lower notional ATM call
+\begin{itemize}
+\item Over the long-run, lower notional ATM call replacements have incurred a wider gap (relative to OTM calls) in returns against the underlying index. 
+\vfill
+\item In the post 2010 period, drawdowns were similar between the two structures; over the full sample period, lower notional ATM calls had slightly larger drawdowns.
+\vfill
+\item Transactions costs were marginally lower for lower notional ATM call structures (but incremental savings from transactions costs were not enough to close the wider return gap).
+\vfill
+\item In the recent period of low volatility (and hence low delta calls), further reducing the notional of the ATM call structure (to $ \approx$ 20\%, for instance) may be considered as an alternative to writing the OTM call. 
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{\normalsize SPX: Reduced Notional ATM (1M Calls)}
+
+\centering
+\scalebox{0.47}{
+\begin{tabular}{lrcrrrrrrrrrrr}
+\toprule
+\toprule
+Strategy & Retn & RetnDiff & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta-\\
+\midrule
+{\bf \color{blue} SPX} Since 1996 & 10.3 & & 224.7 & 19.0 & 0.54 & 0.05 & 0.47 & -30.4 & -0.06 & 8.9 & 1.00 & 1.00 & 1.00\\
+\midrule
+\color{blue}{\bf 30 $|$ 5 --- 2.0\%} @ Mid (Delta $\approx$ 0.35) & 10.5 & & 228.5 & 11.2 & 0.94 & 0.08 & 0.93 & -11.8 & -0.33 & 10.4 & 0.49 & 0.42 & 0.47\\
+\color{blue}{\bf 30 $|$ 5 --- 2.0\%} @ Bid/Offer (Delta $\approx$ 0.35) & 9.2 & {\bf \color{red}-1.3} & 200.0 & 11.2 & 0.83 & 0.07 & 0.80 & -13.3 & -0.29 & 9.0 & 0.49 & 0.42 & 0.46\\
+\midrule
+\addlinespace
+{\bf 30 $|$ 5 --- ATM} 20\% Notional @ Mid & 9.2 & & 200.6 & 13.6 & 0.68 & 0.06 & 0.64 & -22.6 & -0.14 & 8.6 & 0.68 & 0.63 & 0.62\\
+{\bf 30 $|$ 5 --- ATM} 20\% Notional @ Bid/Offer & 8.7 & {\bf \color{red}-0.5} & 189.4 & 13.5 & 0.64 & 0.06 & 0.60 & -24.0 & -0.11 & 8.1 & 0.67 & 0.62 & 0.61\\
+\addlinespace
+{\bf 30 $|$ 5 --- ATM} 30\% Notional @ Mid & 9.3 & & 202.4 & 12.9 & 0.72 & 0.06 & 0.68 & -20.5 & -0.17 & 8.8 & 0.64 & 0.59 & 0.59\\
+{\bf 30 $|$ 5 --- ATM} 30\% Notional @ Bid/Offer & 8.6 & {\bf \color{red}-0.6} & 187.8 & 12.9 & 0.67 & 0.06 & 0.63 & -22.2 & -0.14 & 8.1 & 0.64 & 0.59 & 0.58\\
+\addlinespace
+{\bf 30 $|$ 5 --- ATM} 40\% Notional @ Mid & 9.4 & & 204.1 & 12.3 & 0.76 & 0.07 & 0.73 & -18.5 & -0.20 & 9.0 & 0.60 & 0.56 & 0.56\\
+{\bf 30 $|$ 5 --- ATM} 40\% Notional @ Bid/Offer & 8.5 & {\bf \color{red}-0.9} & 186.1 & 12.2 & 0.70 & 0.06 & 0.66 & -20.5 & -0.17 & 8.1 & 0.60 & 0.55 & 0.55\\
+\addlinespace
+{\bf 30 $|$ 5 --- ATM} 50\% Notional @ Mid & 9.4 & & 205.8 & 11.7 & 0.81 & 0.07 & 0.78 & -16.6 & -0.23 & 9.1 & 0.57 & 0.52 & 0.53\\
+{\bf 30 $|$ 5 --- ATM} 50\% Notional @ Bid/Offer & 8.5 & {\bf \color{red}-0.9} & 184.4 & 11.6 & 0.73 & 0.07 & 0.69 & -18.8 & -0.19 & 8.1 & 0.56 & 0.52 & 0.52\\
+\addlinespace
+\color{blue}{\bf 30 $|$ 5 --- ATM} 60\% Notional @ Mid & 9.5 & & 207.5 & 11.1 & 0.86 & 0.08 & 0.84 & -14.7 & -0.26 & 9.3 & 0.53 & 0.48 & 0.50\\
+\color{blue}{\bf 30 $|$ 5 --- ATM} 60\% Notional @ Bid/Offer & 8.4 & {\bf \color{red}-1.1} & 182.8 & 11.1 & 0.76 & 0.07 & 0.73 & -17.1 & -0.22 & 8.1 & 0.52 & 0.48 & 0.50\\
+\addlinespace
+\midrule
+{\bf \color{blue} SPX} Since 2010 & 13.9 & & 108.6 & 14.9 & 0.94 & 0.08 & 0.92 & -15.5 & -0.37 & 13.6 & 1.00 & 1.00 & 1.00\\
+\midrule
+\color{blue}{\bf 30 $|$ 5 --- 2.0\%} @ Mid (Delta $\approx$ 0.25) & 11.6 & & 90.0 & 10.1 & 1.15 & 0.10 & 1.16 & -11.6 & -0.41 & 11.7 & 0.64 & 0.62 & 0.65\\
+\color{blue}{\bf 30 $|$ 5 --- 2.0\%} @ Bid/Offer (Delta $\approx$ 0.25) & 10.7 & {\bf \color{red} -0.9} & 83.2 & 10.1 & 1.06 & 0.09 & 1.07 & -12.0 & -0.40 & 10.7 & 0.64 & 0.62 & 0.65\\
+\midrule
+\addlinespace
+{\bf 30 $|$ 5 --- ATM} 20\% Notional @ Mid & 11.0 & & 86.3 & 11.6 & 0.95 & 0.09 & 0.94 & -13.0 & -0.29 & 10.9 & 0.77 & 0.76 & 0.75\\
+{\bf 30 $|$ 5 --- ATM} 20\% Notional @ Bid/Offer & 10.8 & {\bf \color{red}-0.2} & 84.8 & 11.1 & 0.98 & 0.09 & 0.97 & -12.3 & -0.31 & 10.8 & 0.74 & 0.73 & 0.72\\
+\addlinespace
+{\bf 30 $|$ 5 --- ATM} 30\% Notional @ Mid & 10.8 & & 84.8 & 11.1 & 0.98 & 0.09 & 0.97 & -12.3 & -0.31 & 10.8 & 0.74 & 0.73 & 0.72\\
+{\bf 30 $|$ 5 --- ATM} 30\% Notional @ Bid/Offer & 10.3 & {\bf \color{red}-0.5} & 80.7 & 11.0 & 0.94 & 0.08 & 0.92 & -12.3 & -0.30 & 10.2 & 0.74 & 0.73 & 0.72\\
+\addlinespace
+{\bf 30 $|$ 5 --- ATM} 40\% Notional @ Mid & 10.7 & & 83.3 & 10.5 & 1.01 & 0.09 & 1.01 & -11.7 & -0.33 & 10.6 & 0.70 & 0.70 & 0.70\\
+{\bf 30 $|$ 5 --- ATM} 40\% Notional @ Bid/Offer & 10.0 & {\bf \color{red}-0.7} & 78.2 & 10.5 & 0.95 & 0.08 & 0.94 & -12.0 & -0.32 & 9.9 & 0.70 & 0.70 & 0.69\\
+\addlinespace
+\color{blue}{\bf 30 $|$ 5 --- ATM} 50\% Notional @ Mid & 10.5 & & 81.8 & 10.1 & 1.04 & 0.09 & 1.04 & -11.5 & -0.35 & 10.5 & 0.67 & 0.66 & 0.67\\
+\color{blue}{\bf 30 $|$ 5 --- ATM} 50\% Notional @ Bid/Offer & 9.7 & {\bf \color{red}-0.8} & 75.7 & 10.1 & 0.96 & 0.09 & 0.95 & -11.8 & -0.34 & 9.6 & 0.67 & 0.67 & 0.67\\
+\addlinespace
+{\bf 30 $|$ 5 --- ATM} 60\% Notional @ Mid & 10.3 & & 80.3 & 9.6 & 1.07 & 0.10 & 1.07 & -11.3 & -0.38 & 10.3 & 0.63 & 0.63 & 0.64\\
+{\bf 30 $|$ 5 --- ATM} 60\% Notional @ Bid/Offer & 9.4 & {\bf \color{red}-0.9} & 73.2 & 9.6 & 0.97 & 0.09 & 0.97 & -11.7 & -0.36 & 9.3 & 0.63 & 0.64 & 0.64\\
+\bottomrule
+\bottomrule
+\end{tabular}
+}
+
+\end{frame}
+
+\begin{frame}{\normalsize SPX: Reduced Notional ATM (2W Calls)}
+
+\centering
+\scalebox{0.47}{
+\begin{tabular}{lrcrrrrrrrrrrr}
+\toprule
+\toprule
+Strategy & Retn & RetnDiff & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta-\\
+\midrule
+{\bf \color{blue} SPX} Since 1996 & 10.3 & & 224.7 & 19.0 & 0.54 & 0.05 & 0.47 & -30.4 & -0.06 & 8.9 & 1.00 & 1.00 & 1.00\\
+\midrule
+\color{blue}{\bf 10 $|$ 5 --- 1.5\%} @ Mid (Delta $\approx$ 0.30) & 11.1 & & 241.5 & 10.8 & 1.03 & 0.09 & 1.03 & -10.5 & -0.30 & 11.1 & 0.47 & 0.40 & 0.44\\
+\color{blue}{\bf 10 $|$ 5 --- 1.5\%} @ Bid/Offer (Delta $\approx$ 0.30) & 9.4 & {\bf \color{red} -1.7} & 203.1 & 10.8 & 0.87 & 0.08 & 0.85 & -12.4 & -0.27 & 9.2 & 0.46 & 0.40 & 0.44\\
+\midrule
+\addlinespace
+{\bf 10 $|$ 5 --- ATM} 20\% Notional @ Mid & 9.3 & & 203.0 & 13.6 & 0.69 & 0.06 & 0.64 & -22.3 & -0.14 & 8.8 & 0.68 & 0.62 & 0.62\\
+{\bf 10 $|$ 5 --- ATM} 20\% Notional @ Bid/Offer & 8.7 & {\bf \color{red}-0.6} & 188.8 & 13.5 & 0.64 & 0.06 & 0.60 & -23.9 & -0.11 & 8.1 & 0.67 & 0.62 & 0.61\\
+\addlinespace
+{\bf 10 $|$ 5 --- ATM} 30\% Notional @ Mid & 9.4 & & 205.9 & 12.9 & 0.73 & 0.07 & 0.70 & -20.1 & -0.17 & 9.0 & 0.64 & 0.59 & 0.59\\
+{\bf 10 $|$ 5 --- ATM} 30\% Notional @ Bid/Offer & 8.6 & {\bf \color{red}-0.8} & 186.8 & 12.8 & 0.67 & 0.06 & 0.63 & -22.1 & -0.14 & 8.0 & 0.64 & 0.59 & 0.58\\
+\addlinespace
+{\bf 10 $|$ 5 --- ATM} 40\% Notional @ Mid & 9.6 & & 208.9 & 12.3 & 0.78 & 0.07 & 0.75 & -17.9 & -0.19 & 9.2 & 0.60 & 0.55 & 0.56\\
+{\bf 10 $|$ 5 --- ATM} 40\% Notional @ Bid/Offer & 8.5 & {\bf \color{red}-1.1} & 184.9 & 12.2 & 0.69 & 0.06 & 0.66 & -20.3 & -0.16 & 8.0 & 0.60 & 0.55 & 0.55\\
+\addlinespace
+{\bf 10 $|$ 5 --- ATM} 50\% Notional @ Mid & 9.7 & & 211.8 & 11.7 & 0.83 & 0.07 & 0.81 & -16.0 & -0.22 & 9.5 & 0.56 & 0.52 & 0.53\\
+{\bf 10 $|$ 5 --- ATM} 50\% Notional @ Bid/Offer & 8.4 & {\bf \color{red}-1.3} & 182.9 & 11.6 & 0.72 & 0.06 & 0.69 & -18.6 & -0.18 & 8.0 & 0.56 & 0.51 & 0.52\\
+\addlinespace
+\color{blue}{\bf 10 $|$ 5 --- ATM} 60\% Notional @ Mid & 9.8 & & 214.7 & 11.1 & 0.89 & 0.08 & 0.87 & -14.0 & -0.24 & 9.7 & 0.52 & 0.48 & 0.50\\
+\color{blue}{\bf 10 $|$ 5 --- ATM} 60\% Notional @ Bid/Offer & 8.3 & {\bf \color{red}-1.5} & 180.9 & 11.1 & 0.75 & 0.07 & 0.72 & -16.8 & -0.20 & 8.0 & 0.52 & 0.48 & 0.49\\
+\addlinespace
+\midrule
+{\bf \color{blue} SPX} Since 2010 & 13.9 & & 108.6 & 14.9 & 0.94 & 0.08 & 0.92 & -15.5 & -0.37 & 13.6 & 1.00 & 1.00 & 1.00\\
+\midrule
+\color{blue}{\bf 10 $|$ 5 --- 1.5\%} @ Mid (Delta $\approx$ 0.20)& 11.6 & & 90.2 & 10.0 & 1.16 & 0.10 & 1.18 & -11.1 & -0.47 & 11.7 & 0.63 & 0.59 & 0.63\\
+\color{blue}{\bf 10 $|$ 5 --- 1.5\%} @ Bid/Offer (Delta $\approx$ 0.20) & 10.0 & {\bf \color{red} -1.6} & 77.4 & 10.0 & 1.00 & 0.09 & 1.00 & -11.7 & -0.44 & 9.9 & 0.63 & 0.59 & 0.63\\
+\midrule
+\addlinespace
+{\bf 10 $|$ 5 --- ATM} 20\% Notional @ Mid & 11.1 & & 87.0 & 11.6 & 0.96 & 0.09 & 0.95 & -12.8 & -0.31 & 11.0 & 0.77 & 0.75 & 0.75\\
+{\bf 10 $|$ 5 --- ATM} 20\% Notional @ Bid/Offer & 10.4 & {\bf \color{red}-0.7} & 81.6 & 11.5 & 0.90 & 0.08 & 0.89 & -12.9 & -0.30 & 10.3 & 0.77 & 0.75 & 0.74\\
+\addlinespace
+{\bf 10 $|$ 5 --- ATM} 30\% Notional @ Mid & 11.0 & & 85.8 & 11.0 & 1.00 & 0.09 & 0.99 & -12.0 & -0.34 & 10.9 & 0.74 & 0.72 & 0.72\\
+{\bf 10 $|$ 5 --- ATM} 30\% Notional @ Bid/Offer & 10.0 & {\bf \color{red}-1.0} & 78.3 & 11.0 & 0.91 & 0.08 & 0.89 & -12.2 & -0.33 & 9.9 & 0.73 & 0.72 & 0.72\\
+\addlinespace
+\color{blue}{\bf 10 $|$ 5 --- ATM} 40\% Notional @ Mid & 10.8 & & 84.7 & 10.5 & 1.03 & 0.09 & 1.03 & -11.6 & -0.38 & 10.8 & 0.70 & 0.68 & 0.69\\
+\color{blue}{\bf 10 $|$ 5 --- ATM} 40\% Notional @ Bid/Offer & 9.6 & {\bf \color{red}-1.2} & 75.0 & 10.5 & 0.91 & 0.08 & 0.90 & -12.0 & -0.36 & 9.5 & 0.70 & 0.68 & 0.69\\
+\addlinespace
+{\bf 10 $|$ 5 --- ATM} 50\% Notional @ Mid & 10.7 & & 83.6 & 10.0 & 1.07 & 0.09 & 1.07 & -11.3 & -0.41 & 10.7 & 0.66 & 0.65 & 0.67\\
+{\bf 10 $|$ 5 --- ATM} 50\% Notional @ Bid/Offer & 9.2 & {\bf \color{red}-1.5} & 71.7 & 10.0 & 0.91 & 0.08 & 0.90 & -11.8 & -0.39 & 9.1 & 0.66 & 0.65 & 0.67\\
+\addlinespace
+{\bf 10 $|$ 5 --- ATM} 60\% Notional @ Mid & 10.5 & & 82.4 & 9.6 & 1.10 & 0.10 & 1.11 & -11.1 & -0.45 & 10.6 & 0.63 & 0.61 & 0.64\\
+{\bf 10 $|$ 5 --- ATM} 60\% Notional @ Bid/Offer & 8.7 & {\bf \color{red}-1.8} & 68.4 & 9.6 & 0.91 & 0.08 & 0.90 & -11.7 & -0.43 & 8.6 & 0.63 & 0.61 & 0.64\\
+\bottomrule
+\bottomrule
+\end{tabular}
+}
+
+\end{frame}
+
+\begin{frame}{Summary: Hold Closer to Expiry / Rolling Early}
+\begin{itemize}
+\item Hold the short call position even closer to expiration
+\begin{itemize}
+\item Given that short-dated options are significantly more sensitive to market direction (than volatility), holding closer to expiration was not beneficial over the long-run.
+\item Keeping the short call position closer to expiration alters the delta profile such that the structure remains on average more short. 
+\item Despite the additional gains from short theta when holding closer to expiration, being shorter delta and short vega actually worked against the position in the few days prior to expiration. 
+\item Certainly, if the short call strike is OTM, letting the call option expire can save on transactions costs; however, this must be managed in the event that the index breaches the short call strike at expiration and the underlying must be delivered (for E-mini S\&P 500 Futures Options)
+\end{itemize}
+\item Rolling short call position early
+\begin{itemize}
+\item Rolling early to the initial tenor and initial moneyness (i.e. out and up) historically caused a drag to performance.
+\item Rolling early to the initial moneyness but keeping the current tenor (i.e. up) was very similar in performance. 
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{\normalsize SPX: 5 Day vs 2 Day Roll Effect on Performance (1M Calls) Since 1996}
+
+\centering
+\scalebox{0.435}{
+\begin{tabular}{lrcrrrrrrrrrrr}
+\toprule
+\toprule
+Strategy & Retn & RetnDiff & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta-\\
+\midrule
+{\bf \color{blue} SPX} Since 1996 & 10.3 & & 224.7 & 19.0 & 0.54 & 0.05 & 0.47 & -30.4 & -0.06 & 8.9 & 1.00 & 1.00 & 1.00\\
+\midrule
+{\bf 30 $|$ 5 --- 3.0\%} @ Mid & 10.8 & & 235.9 & 11.9 & 0.91 & 0.08 & 0.89 & -13.1 & -0.32 & 10.6 & 0.54 & 0.46 & 0.50\\
+{\bf 30 $|$ 5 --- 3.0\%} @ Bid/Offer & 9.7 & {\bf \color{red}-1.1} & 212.0 & 11.9 & 0.82 & 0.07 & 0.79 & -15.1 & -0.28 & 9.4 & 0.54 & 0.46 & 0.50\\
+\addlinespace
+{\bf 30 $|$ 2 --- 3.0\%} @ Mid & 10.5 & & 229.6 & 12.2 & 0.86 & 0.08 & 0.84 & -16.5 & -0.21 & 10.3 & 0.55 & 0.47 & 0.51\\
+{\bf 30 $|$ 2 --- 3.0\%} @ Bid/Offer & 9.5 & {\bf \color{red}-1.0} & 206.2 & 12.2 & 0.77 & 0.07 & 0.75 & -18.5 & -0.18 & 9.1 & 0.55 & 0.47 & 0.51\\
+\midrule
+{\bf 30 $|$ 5 --- 2.5\%} @ Mid & 10.8 & & 235.6 & 11.5 & 0.94 & 0.08 & 0.93 & -12.1 & -0.34 & 10.7 & 0.51 & 0.44 & 0.48\\
+{\bf 30 $|$ 5 --- 2.5\%} @ Bid/Offer & 9.6 & {\bf \color{red}-1.2} & 209.9 & 11.5 & 0.84 & 0.07 & 0.81 & -14.0 & -0.30 & 9.4 & 0.51 & 0.44 & 0.48\\
+\addlinespace
+{\bf 30 $|$ 2 --- 2.5\%} @ Mid & 10.4 & & 226.8 & 11.9 & 0.88 & 0.08 & 0.86 & -16.1 & -0.23 & 10.2 & 0.53 & 0.45 & 0.50\\
+{\bf 30 $|$ 2 --- 2.5\%} @ Bid/Offer & 9.2 & {\bf \color{red}-1.2} & 201.5 & 11.9 & 0.78 & 0.07 & 0.75 & -18.1 & -0.19 & 8.9 & 0.53 & 0.45 & 0.49\\
+\midrule
+\color{blue}{\bf 30 $|$ 5 --- 2.0\%} @ Mid & 10.5 & & 228.5 & 11.2 & 0.94 & 0.08 & 0.93 & -11.8 & -0.33 & 10.4 & 0.49 & 0.42 & 0.47\\
+\color{blue}{\bf 30 $|$ 5 --- 2.0\%} @ Bid/Offer & 9.2 & {\bf \color{red}-1.3} & 200.0 & 11.2 & 0.83 & 0.07 & 0.80 & -13.3 & -0.29 & 9.0 & 0.49 & 0.42 & 0.46\\
+\addlinespace
+\color{blue}{\bf 30 $|$ 2 --- 2.0\%} @ Mid & 10.5 & & 229.1 & 11.4 & 0.92 & 0.08 & 0.91 & -13.1 & -0.24 & 10.4 & 0.50 & 0.43 & 0.48\\
+\color{blue}{\bf 30 $|$ 2 --- 2.0\%} @ Bid/Offer & 9.2 & {\bf \color{red}-1.3} & 201.1 & 11.4 & 0.81 & 0.07 & 0.78 & -15.7 & -0.20 & 8.9 & 0.50 & 0.43 & 0.48\\
+\midrule
+{\bf 30 $|$ 5 --- 1.5\%} @ Mid & 10.7 & & 230.9 & 10.7 & 0.99 & 0.09 & 0.99 & -11.2 & -0.36 & 10.6 & 0.46 & 0.40 & 0.45\\
+{\bf 30 $|$ 5 --- 1.5\%} @ Bid/Offer & 9.2 & {\bf \color{red}-1.5} & 200.2 & 10.7 & 0.86 & 0.08 & 0.84 & -12.6 & -0.32 & 9.0 & 0.46 & 0.40 & 0.44\\
+\addlinespace
+{\bf 30 $|$ 2 --- 1.5\%} @ Mid & 10.3 & & 224.3 & 11.0 & 0.94 & 0.08 & 0.92 & -13.0 & -0.24 & 10.2 & 0.47 & 0.41 & 0.47\\
+{\bf 30 $|$ 2 --- 1.5\%} @ Bid/Offer & 8.9 & {\bf \color{red}-1.4} & 193.9 & 11.0 & 0.81 & 0.07 & 0.78 & -15.2 & -0.19 & 8.6 & 0.47 & 0.41 & 0.46\\
+\midrule
+{\bf 30 $|$ 5 --- 1.0\%} @ Mid & 10.5 & & 227.1 & 10.3 & 1.02 & 0.09 & 1.02 & -10.8 & -0.35 & 10.5 & 0.43 & 0.38 & 0.43\\
+{\bf 30 $|$ 5 --- 1.0\%} @ Bid/Offer & 8.9 & {\bf \color{red}-1.6} & 193.6 & 10.3 & 0.87 & 0.08 & 0.85 & -12.5 & -0.30 & 8.8 & 0.43 & 0.38 & 0.42\\
+\addlinespace
+{\bf 30 $|$ 2 --- 1.0\%} @ Mid & 10.1 & & 220.2 & 10.5 & 0.96 & 0.09 & 0.96 & -12.2 & -0.25 & 10.0 & 0.44 & 0.38 & 0.44\\
+{\bf 30 $|$ 2 --- 1.0\%} @ Bid/Offer & 8.6 & {\bf \color{red}-1.5} & 187.6 & 10.5 & 0.82 & 0.07 & 0.80 & -14.3 & -0.21 & 8.4 & 0.44 & 0.38 & 0.43\\
+\midrule
+{\bf 30 $|$ 5 --- 0.5\%} @ Mid & 10.5 & & 226.6 & 9.9 & 1.06 & 0.09 & 1.06 & -10.0 & -0.32 & 10.5 & 0.40 & 0.36 & 0.41\\
+{\bf 30 $|$ 5 --- 0.5\%} @ Bid/Offer & 8.8 & {\bf \color{red}-1.7} & 191.2 & 9.9 & 0.89 & 0.08 & 0.88 & -11.5 & -0.28 & 8.7 & 0.40 & 0.36 & 0.40\\
+\addlinespace
+{\bf 30 $|$ 2 --- 0.5\%} @ Mid & 10.0 & & 219.0 & 10.1 & 1.00 & 0.09 & 1.00 & -11.1 & -0.25 & 10.0 & 0.41 & 0.36 & 0.42\\
+{\bf 30 $|$ 2 --- 0.5\%} @ Bid/Offer & 8.4 & {\bf \color{red}-1.6} & 182.8 & 10.1 & 0.83 & 0.07 & 0.81 & -13.1 & -0.21 & 8.2 & 0.41 & 0.36 & 0.42\\
+\midrule
+{\bf 30 $|$ 5 --- 0.0\%} @ Mid & 9.8 & & 213.3 & 9.4 & 1.04 & 0.09 & 1.04 & -9.7 & -0.31 & 9.9 & 0.38 & 0.34 & 0.39\\
+{\bf 30 $|$ 5 --- 0.0\%} @ Bid/Offer & 8.1 & {\bf \color{red}-1.7} & 175.4 & 9.4 & 0.86 & 0.08 & 0.84 & -11.4 & -0.25 & 7.9 & 0.37 & 0.34 & 0.38\\
+\addlinespace
+{\bf 30 $|$ 2 --- 0.0\%} @ Mid & 9.8 & & 214.2 & 9.6 & 1.02 & 0.09 & 1.02 & -9.5 & -0.22 & 9.8 & 0.38 & 0.34 & 0.40\\
+{\bf 30 $|$ 2 --- 0.0\%} @ Bid/Offer & 8.1 & {\bf \color{red}-1.7} & 176.4 & 9.7 & 0.84 & 0.08 & 0.82 & -11.6 & -0.18 & 7.9 & 0.38 & 0.34 & 0.40\\
+\bottomrule
+\bottomrule
+\end{tabular}
+}
+
+\end{frame}
+
+\begin{frame}{\normalsize SPX: 5 Day vs 2 Day Roll Effect on Performance (1M Calls) Since 2010}
+
+\centering
+\scalebox{0.435}{
+\begin{tabular}{lrcrrrrrrrrrrr}
+\toprule
+\toprule
+Strategy & Retn & RetnDiff & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta-\\
+\midrule
+{\bf \color{blue} SPX} Since 2010 & 13.9 & & 108.6 & 14.9 & 0.94 & 0.08 & 0.92 & -15.5 & -0.37 & 13.6 & 1.00 & 1.00 & 1.00\\
+\midrule
+{\bf 30 $|$ 5 --- 3.0\%} @ Mid & 12.1 & & 94.8 & 10.8 & 1.12 & 0.10 & 1.13 & -11.7 & -0.38 & 12.2 & 0.70 & 0.68 & 0.69\\
+{\bf 30 $|$ 5 --- 3.0\%} @ Bid/Offer & 11.5 & {\bf \color{red} -0.6} & 89.5 & 10.8 & 1.06 & 0.09 & 1.06 & -12.1 & -0.36 & 11.5 & 0.70 & 0.68 & 0.69\\
+\addlinespace
+{\bf 30 $|$ 2 --- 3.0\%} @ Mid & 10.9 & & 85.2 & 10.9 & 1.00 & 0.09 & 0.99 & -11.7 & -0.42 & 10.8 & 0.71 & 0.68 & 0.71\\
+{\bf 30 $|$ 2 --- 3.0\%} @ Bid/Offer & 10.2 & {\bf \color{red} -0.7} & 79.6 & 10.9 & 0.93 & 0.08 & 0.92 & -11.9 & -0.41 & 10.1 & 0.71 & 0.68 & 0.71\\
+\midrule
+
+{\bf 30 $|$ 5 --- 2.5\%} @ Mid & 11.8 & & 92.3 & 10.4 & 1.13 & 0.10 & 1.14 & -11.8 & -0.40 & 11.9 & 0.67 & 0.65 & 0.67\\
+{\bf 30 $|$ 5 --- 2.5\%} @ Bid/Offer & 11.1 & {\bf \color{red} -0.7} & 86.4 & 10.5 & 1.06 & 0.09 & 1.06 & -12.1 & -0.39 & 11.1 & 0.67 & 0.65 & 0.67\\
+\addlinespace
+{\bf 30 $|$ 2 --- 2.5\%} @ Mid & 10.3 & & 80.7 & 10.6 & 0.97 & 0.09 & 0.97 & -11.3 & -0.44 & 10.3 & 0.68 & 0.66 & 0.70\\
+{\bf 30 $|$ 2 --- 2.5\%} @ Bid/Offer & 9.5 & {\bf \color{red} -0.8} & 74.3 & 10.6 & 0.90 & 0.08 & 0.88 & -11.6 & -0.43 & 9.3 & 0.68 & 0.66 & 0.70\\
+\midrule
+
+\color{blue}{\bf 30 $|$ 5 --- 2.0\%} @ Mid & 11.6 & & 90.0 & 10.1 & 1.15 & 0.10 & 1.16 & -11.6 & -0.41 & 11.7 & 0.64 & 0.62 & 0.65\\
+\color{blue}{\bf 30 $|$ 5 --- 2.0\%} @ Bid/Offer & 10.7 & {\bf \color{red} -0.9} & 83.2 & 10.1 & 1.06 & 0.09 & 1.07 & -12.0 & -0.40 & 10.7 & 0.64 & 0.62 & 0.65\\
+\addlinespace
+\color{blue}{\bf 30 $|$ 2 --- 2.0\%} @ Mid & 9.8 & & 76.8 & 10.2 & 0.96 & 0.08 & 0.96 & -11.0 & -0.47 & 9.8 & 0.65 & 0.63 & 0.68\\
+\color{blue}{\bf 30 $|$ 2 --- 2.0\%} @ Bid/Offer & 8.9 & {\bf \color{red} -0.9} &  69.7 & 10.2 & 0.87 & 0.08 & 0.86 & -11.4 & -0.46 & 8.8 & 0.65 & 0.63 & 0.68\\
+\midrule
+
+{\bf 30 $|$ 5 --- 1.5\%} @ Mid & 11.4 & & 88.4 & 9.6 & 1.18 & 0.11 & 1.20 & -11.6 & -0.43 & 11.5 & 0.61 & 0.60 & 0.63\\
+{\bf 30 $|$ 5 --- 1.5\%} @ Bid/Offer & 10.4 & {\bf \color{red} -1.0} & 80.6 & 9.6 & 1.08 & 0.10 & 1.08 & -12.0 & -0.41 & 10.4 & 0.61 & 0.60 & 0.63\\
+\addlinespace
+{\bf 30 $|$ 2 --- 1.5\%} @ Mid & 9.4 & &  73.5 & 9.8 & 0.96 & 0.08 & 0.95 & -11.0 & -0.50 & 9.3 & 0.62 & 0.60 & 0.66\\
+{\bf 30 $|$ 2 --- 1.5\%} @ Bid/Offer & 8.3 & {\bf \color{red} -1.1} &  65.1 & 9.8 & 0.85 & 0.07 & 0.83 & -11.6 & -0.48 & 8.2 & 0.62 & 0.61 & 0.66\\
+\midrule
+
+{\bf 30 $|$ 5 --- 1.0\%} @ Mid & 11.0 & & 85.4 & 9.1 & 1.20 & 0.11 & 1.22 & -11.5 & -0.44 & 11.1 & 0.57 & 0.57 & 0.60\\
+{\bf 30 $|$ 5 --- 1.0\%} @ Bid/Offer & 9.9 & {\bf \color{red} -1.1} & 76.7 & 9.1 & 1.08 & 0.10 & 1.08 & -11.9 & -0.41 & 9.9 & 0.57 & 0.57 & 0.60\\
+\addlinespace
+{\bf 30 $|$ 2 --- 1.0\%} @ Mid & 9.2 & &  71.8 & 9.3 & 0.99 & 0.09 & 0.98 & -10.7 & -0.54 & 9.1 & 0.58 & 0.57 & 0.63\\
+{\bf 30 $|$ 2 --- 1.0\%} @ Bid/Offer & 8.1 & {\bf \color{red} -1.1} &  62.9 & 9.3 & 0.87 & 0.08 & 0.85 & -11.3 & -0.51 & 7.9 & 0.58 & 0.57 & 0.63\\
+\midrule
+
+{\bf 30 $|$ 5 --- 0.5\%} @ Mid & 10.5 & & 81.7 & 8.6 & 1.22 & 0.11 & 1.24 & -11.2 & -0.44 & 10.7 & 0.53 & 0.53 & 0.57\\
+{\bf 30 $|$ 5 --- 0.5\%} @ Bid/Offer & 9.2 & {\bf \color{red} -1.3} & 71.9 & 8.6 & 1.07 & 0.10 & 1.08 & -11.7 & -0.41 & 9.3 & 0.53 & 0.54 & 0.57\\
+\addlinespace
+{\bf 30 $|$ 2 --- 0.5\%} @ Mid & 8.9 & &  69.7 & 8.8 & 1.02 & 0.09 & 1.02 & -10.7 & -0.57 & 8.9 & 0.54 & 0.54 & 0.60\\
+{\bf 30 $|$ 2 --- 0.5\%} @ Bid/Offer & 7.6 & {\bf \color{red} -1.3} &  59.4 & 8.8 & 0.86 & 0.08 & 0.85 & -11.3 & -0.55 & 7.5 & 0.54 & 0.54 & 0.60\\
+
+\midrule
+{\bf 30 $|$ 5 --- 0.0\%} @ Mid & 9.5 & & 74.0 & 8.0 & 1.19 & 0.11 & 1.20 & -11.2 & -0.46 & 9.6 & 0.49 & 0.51 & 0.54\\
+{\bf 30 $|$ 5 --- 0.0\%} @ Bid/Offer & 8.1 & {\bf \color{red} -1.4} & 62.9 & 8.1 & 1.00 & 0.09 & 1.00 & -11.7 & -0.43 & 8.1 & 0.49 & 0.51 & 0.54\\
+\addlinespace
+{\bf 30 $|$ 2 --- 0.0\%} @ Mid & 8.4 & &  65.4 & 8.2 & 1.02 & 0.09 & 1.02 & -10.6 & -0.64 & 8.4 & 0.50 & 0.50 & 0.57\\
+{\bf 30 $|$ 2 --- 0.0\%} @ Bid/Offer & 6.9 & {\bf \color{red} -1.5} &  54.2 & 8.3 & 0.84 & 0.07 & 0.82 & -11.4 & -0.62 & 6.8 & 0.50 & 0.51 & 0.57\\
+\bottomrule
+\bottomrule
+\end{tabular}
+}
+
+\end{frame}
+
+
+\begin{frame}{\normalsize SPX: 5 Day vs 2 Day Roll Effect on Performance (2W Calls) Since 1996}
+
+\centering
+\scalebox{0.435}{
+\begin{tabular}{lrcrrrrrrrrrrr}
+\toprule
+\toprule
+Strategy & Retn & RetnDiff & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta-\\
+\midrule
+{\bf \color{blue} SPX} Since 1996 & 10.3 & & 224.7 & 19.0 & 0.54 & 0.05 & 0.47 & -30.4 & -0.06 & 8.9 & 1.00 & 1.00 & 1.00\\
+\midrule
+{\bf 10 $|$ 5 --- 3.0\%} @ Mid & 11.4 & & 245.9 & 12.1 & 0.94 & 0.08 & 0.92 & -13.1 & -0.27 & 11.2 & 0.55 & 0.47 & 0.50\\
+{\bf 10 $|$ 5 --- 3.0\%} @ Bid/Offer & 10.1 & {\bf \color{red}-1.3} & 218.4 & 12.1 & 0.83 & 0.07 & 0.81 & -15.1 & -0.23 & 9.8 & 0.55 & 0.47 & 0.49\\
+\addlinespace
+{\bf 10 $|$ 2 --- 3.0\%} @ Mid & 11.1 & & 242.7 & 12.4 & 0.90 & 0.08 & 0.88 & -16.5 & -0.23 & 10.9 & 0.56 & 0.47 & 0.51\\
+{\bf 10 $|$ 2 --- 3.0\%} @ Bid/Offer & 9.9 & {\bf \color{red}-1.2} & 215.9 & 12.4 & 0.80 & 0.07 & 0.77 & -18.5 & -0.21 & 9.6 & 0.56 & 0.46 & 0.51\\
+\midrule
+
+{\bf 10 $|$ 5 --- 2.5\%} @ Mid & 11.4 & & 246.8 & 11.7 & 0.97 & 0.09 & 0.96 & -11.9 & -0.28 & 11.3 & 0.52 & 0.45 & 0.48\\
+{\bf 10 $|$ 5 --- 2.5\%} @ Bid/Offer & 10.0 & {\bf \color{red} -1.4} & 216.8 & 11.7 & 0.86 & 0.08 & 0.83 & -13.5 & -0.24 & 9.8 & 0.52 & 0.44 & 0.47\\
+\addlinespace
+{\bf 10 $|$ 2 --- 2.5\%} @ Mid & 11.1 & & 242.6 & 12.0 & 0.93 & 0.08 & 0.91 & -16.1 & -0.24 & 11.0 & 0.53 & 0.44 & 0.49\\
+{\bf 10 $|$ 2 --- 2.5\%} @ Bid/Offer & 9.8 & {\bf \color{red}-1.3} & 212.7 & 12.0 & 0.81 & 0.07 & 0.79 & -18.1 & -0.22 & 9.5 & 0.53 & 0.44 & 0.49\\
+\midrule
+
+{\bf 10 $|$ 5 --- 2.0\%} @ Mid & 11.1 & & 241.3 & 11.3 & 0.98 & 0.09 & 0.98 & -11.4 & -0.28 & 11.1 & 0.49 & 0.42 & 0.46\\
+{\bf 10 $|$ 5 --- 2.0\%} @ Bid/Offer & 9.5 & {\bf \color{red} -1.6} & 206.8 & 11.3 & 0.84 & 0.08 & 0.82 & -13.2 & -0.25 & 9.3 & 0.49 & 0.42 & 0.46\\
+\addlinespace
+{\bf 10 $|$ 2 --- 2.0\%} @ Mid & 11.3 & & 245.4 & 11.6 & 0.97 & 0.09 & 0.97 & -13.1 & -0.26 & 11.2 & 0.51 & 0.42 & 0.48\\
+{\bf 10 $|$ 2 --- 2.0\%} @ Bid/Offer & 9.7 & {\bf \color{red}-1.6} & 211.3 & 11.6 & 0.84 & 0.07 & 0.82 & -15.3 & -0.24 & 9.4 & 0.50 & 0.42 & 0.47\\
+\midrule
+
+\color{blue}{\bf 10 $|$ 5 --- 1.5\%} @ Mid & 11.1 & & 241.5 & 10.8 & 1.03 & 0.09 & 1.03 & -10.5 & -0.30 & 11.1 & 0.47 & 0.40 & 0.44\\
+\color{blue}{\bf 10 $|$ 5 --- 1.5\%} @ Bid/Offer & 9.4 & {\bf \color{red} -1.7} & 203.1 & 10.8 & 0.87 & 0.08 & 0.85 & -12.4 & -0.27 & 9.2 & 0.46 & 0.40 & 0.44\\
+\addlinespace
+\color{blue}{\bf 10 $|$ 2 --- 1.5\%} @ Mid & 10.9 & & 238.3 & 11.1 & 0.98 & 0.09 & 0.98 & -13.0 & -0.25 & 10.9 & 0.48 & 0.39 & 0.46\\
+\color{blue}{\bf 10 $|$ 2 --- 1.5\%} @ Bid/Offer & 9.1 & {\bf \color{red}-1.8} & 198.9 & 11.1 & 0.82 & 0.07 & 0.80 & -15.2 & -0.22 & 8.9 & 0.48 & 0.39 & 0.46\\
+\midrule
+
+{\bf 10 $|$ 5 --- 1.0\%} @ Mid & 11.1 & & 239.5 & 10.3 & 1.07 & 0.10 & 1.07 & -9.8 & -0.29 & 11.1 & 0.43 & 0.38 & 0.42\\
+{\bf 10 $|$ 5 --- 1.0\%} @ Bid/Offer & 9.1 & {\bf \color{red} -2.0} & 196.1 & 10.3 & 0.88 & 0.08 & 0.86 & -11.5 & -0.24 & 8.9 & 0.43 & 0.38 & 0.41\\
+\addlinespace
+{\bf 10 $|$ 2 --- 1.0\%} @ Mid & 10.7 & & 234.0 & 10.6 & 1.02 & 0.09 & 1.01 & -12.2 & -0.28 & 10.7 & 0.44 & 0.37 & 0.44\\
+{\bf 10 $|$ 2 --- 1.0\%} @ Bid/Offer & 8.7 & {\bf \color{red}-2.0} & 190.0 & 10.6 & 0.82 & 0.07 & 0.80 & -14.3 & -0.24 & 8.5 & 0.44 & 0.37 & 0.43\\
+\midrule
+
+{\bf 10 $|$ 5 --- 0.5\%} @ Mid & 10.8 & & 234.2 & 9.9 & 1.09 & 0.10 & 1.10 & -8.9 & -0.28 & 10.9 & 0.40 & 0.36 & 0.40\\
+{\bf 10 $|$ 5 --- 0.5\%} @ Bid/Offer & 8.6 & {\bf \color{red} -2.2} & 186.5 & 9.9 & 0.87 & 0.08 & 0.86 & -10.6 & -0.26 & 8.5 & 0.40 & 0.36 & 0.39\\
+\addlinespace
+{\bf 10 $|$ 2 --- 0.5\%} @ Mid & 10.5 & & 228.5 & 10.1 & 1.04 & 0.09 & 1.04 & -11.2 & -0.27 & 10.5 & 0.41 & 0.35 & 0.42\\
+{\bf 10 $|$ 2 --- 0.5\%} @ Bid/Offer & 8.2 & {\bf \color{red}-2.3} & 177.8 & 10.1 & 0.81 & 0.07 & 0.79 & -13.2 & -0.24 & 7.9 & 0.41 & 0.35 & 0.42\\
+\midrule
+
+{\bf 10 $|$ 5 --- 0.0\%} @ Mid & 10.4 & & 224.9 & 9.4 & 1.11 & 0.10 & 1.12 & -8.7 & -0.25 & 10.5 & 0.37 & 0.33 & 0.38\\
+{\bf 10 $|$ 5 --- 0.0\%} @ Bid/Offer & 7.9 & {\bf \color{red} -2.5} & 171.8 & 9.4 & 0.85 & 0.08 & 0.83 & -10.1 & -0.21 & 7.8 & 0.37 & 0.33 & 0.37\\
+\addlinespace
+{\bf 10 $|$ 2 --- 0.0\%} @ Mid & 10.1 & & 220.2 & 9.6 & 1.06 & 0.09 & 1.06 & -9.5 & -0.22 & 10.1 & 0.37 & 0.33 & 0.40\\
+{\bf 10 $|$ 2 --- 0.0\%} @ Bid/Offer & 7.4 & {\bf \color{red}-2.7} & 161.8 & 9.6 & 0.77 & 0.07 & 0.75 & -11.6 & -0.19 & 7.2 & 0.37 & 0.32 & 0.39\\
+\bottomrule
+\bottomrule
+\end{tabular}
+}
+
+\end{frame}
+
+\begin{frame}{\normalsize SPX: 5 Day vs 2 Day Roll Effect on Performance (2W Calls) Since 2010}
+
+\centering
+\scalebox{0.435}{
+\begin{tabular}{lrcrrrrrrrrrrr}
+\toprule
+\toprule
+Strategy & Retn & RetnDiff & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta-\\
+\midrule
+{\bf \color{blue} SPX} Since 2010 & 13.9 & & 108.6 & 14.9 & 0.94 & 0.08 & 0.92 & -15.5 & -0.37 & 13.6 & 1.00 & 1.00 & 1.00\\
+\midrule
+{\bf 10 $|$ 5 --- 3.0\%} @ Mid & 12.8 & & 99.6 & 11.3 & 1.14 & 0.10 & 1.15 & -11.4 & -0.35 & 12.9 & 0.73 & 0.69 & 0.69\\
+{\bf 10 $|$ 5 --- 3.0\%} @ Bid/Offer & 11.9 & {\bf \color{red} -0.9} & 92.4 & 11.3 & 1.06 & 0.09 & 1.06 & -11.8 & -0.34 & 11.9 & 0.73 & 0.69 & 0.69\\
+\addlinespace
+{\bf 10 $|$ 2 --- 3.0\%} @ Mid & 12.0  & & 94.0 & 11.3 & 1.06 & 0.09 & 1.06 & -11.7 & -0.47 & 12.1 & 0.74 & 0.67 & 0.72\\
+{\bf 10 $|$ 2 --- 3.0\%} @ Bid/Offer & 11.1  & {\bf \color{red} -0.9} & 86.6 & 11.3 & 0.98 & 0.09 & 0.97 & -11.9 & -0.46 & 11.0 & 0.73 & 0.67 & 0.71\\
+\midrule
+
+{\bf 10 $|$ 5 --- 2.5\%} @ Mid & 12.5 & & 97.2 & 10.9 & 1.14 & 0.10 & 1.16 & -11.5 & -0.38 & 12.6 & 0.70 & 0.66 & 0.68\\
+{\bf 10 $|$ 5 --- 2.5\%} @ Bid/Offer & 11.4 & {\bf \color{red} -1.1} & 88.9 & 10.9 & 1.05 & 0.09 & 1.05 & -12.0 & -0.37 & 11.4 & 0.70 & 0.66 & 0.68\\
+\addlinespace
+{\bf 10 $|$ 2 --- 2.5\%} @ Mid & 11.6 & & 90.7 & 11.0 & 1.05 & 0.09 & 1.06 & -11.3 & -0.53 & 11.6 & 0.71 & 0.64 & 0.70\\
+{\bf 10 $|$ 2 --- 2.5\%} @ Bid/Offer & 10.4 & {\bf \color{red} -1.2} & 81.6 & 11.0 & 0.95 & 0.08 & 0.94 & -11.6 & -0.52 & 10.3 & 0.71 & 0.64 & 0.70\\
+\midrule
+
+{\bf 10 $|$ 5 --- 2.0\%} @ Mid & 12.1 & & 93.9 & 10.5 & 1.15 & 0.10 & 1.16 & -11.2 & -0.42 & 12.2 & 0.67 & 0.63 & 0.66\\
+{\bf 10 $|$ 5 --- 2.0\%} @ Bid/Offer & 10.7 & {\bf \color{red} -1.4} & 83.6 & 10.5 & 1.02 & 0.09 & 1.02 & -11.7 & -0.40 & 10.7 & 0.67 & 0.63 & 0.66\\
+\addlinespace
+{\bf 10 $|$ 2 --- 2.0\%} @ Mid & 11.0 & &  85.7 & 10.6 & 1.04 & 0.09 & 1.04 & -11.1 & -0.59 & 11.0 & 0.67 & 0.59 & 0.69\\
+{\bf 10 $|$ 2 --- 2.0\%} @ Bid/Offer & 9.5 & {\bf \color{red} -1.5} &  74.5 & 10.6 & 0.90 & 0.08 & 0.89 & -11.5 & -0.57 & 9.4 & 0.67 & 0.59 & 0.68\\
+\midrule
+
+\color{blue}{\bf 10 $|$ 5 --- 1.5\%} @ Mid & 11.6 & & 90.2 & 10.0 & 1.16 & 0.10 & 1.18 & -11.1 & -0.47 & 11.7 & 0.63 & 0.59 & 0.63\\
+\color{blue}{\bf 10 $|$ 5 --- 1.5\%} @ Bid/Offer & 10.0 & {\bf \color{red} -1.6} & 77.4 & 10.0 & 1.00 & 0.09 & 1.00 & -11.7 & -0.44 & 9.9 & 0.63 & 0.59 & 0.63\\
+\addlinespace
+\color{blue}{\bf 10 $|$ 2 --- 1.5\%} @ Mid & 10.4 & &  81.1 & 10.1 & 1.03 & 0.09 & 1.03 & -11.0 & -0.65 & 10.4 & 0.63 & 0.55 & 0.67\\
+\color{blue}{\bf 10 $|$ 2 --- 1.5\%} @ Bid/Offer & 8.5 & {\bf \color{red} -1.9} &  66.8 & 10.1 & 0.85 & 0.07 & 0.83 & -11.4 & -0.62 & 8.4 & 0.63 & 0.55 & 0.66\\
+\midrule
+
+{\bf 10 $|$ 5 --- 1.0\%} @ Mid & 11.4 & & 88.6 & 9.4 & 1.22 & 0.11 & 1.23 & -11.1 & -0.52 & 11.6 & 0.59 & 0.55 & 0.61\\
+{\bf 10 $|$ 5 --- 1.0\%} @ Bid/Offer & 9.4 & {\bf \color{red} -2.0} & 73.0 & 9.4 & 1.00 & 0.09 & 0.99 & -11.8 & -0.48 & 9.3 & 0.59 & 0.56 & 0.61\\
+\addlinespace
+{\bf 10 $|$ 2 --- 1.0\%} @ Mid & 10.0 & &  77.9 & 9.4 & 1.06 & 0.09 & 1.06 & -10.7 & -0.74 & 10.0 & 0.58 & 0.50 & 0.64\\
+{\bf 10 $|$ 2 --- 1.0\%} @ Bid/Offer & 7.7 & {\bf \color{red} -2.3} &  60.3 & 9.5 & 0.81 & 0.07 & 0.80 & -11.2 & -0.70 & 7.5 & 0.58 & 0.50 & 0.63\\
+\midrule
+
+{\bf 10 $|$ 5 --- 0.5\%} @ Mid & 10.6 & & 82.6 & 8.7 & 1.23 & 0.11 & 1.25 & -10.9 & -0.59 & 10.8 & 0.54 & 0.51 & 0.58\\
+{\bf 10 $|$ 5 --- 0.5\%} @ Bid/Offer & 8.3 & {\bf \color{red} -2.3} & 64.2 & 8.7 & 0.95 & 0.08 & 0.94 & -11.6 & -0.55 & 8.2 & 0.54 & 0.51 & 0.58\\
+\addlinespace
+{\bf 10 $|$ 2 --- 0.5\%} @ Mid & 9.3 & &  72.4 & 8.7 & 1.06 & 0.09 & 1.06 & -10.5 & -0.80 & 9.3 & 0.53 & 0.46 & 0.60\\
+{\bf 10 $|$ 2 --- 0.5\%} @ Bid/Offer & 6.5 & {\bf \color{red} -2.8} &  51.0 & 8.8 & 0.74 & 0.06 & 0.72 & -11.1 & -0.76 & 6.3 & 0.53 & 0.46 & 0.60\\
+\midrule
+
+{\bf 10 $|$ 5 --- 0.0\%} @ Mid & 10.0 & & 77.5 & 7.9 & 1.25 & 0.11 & 1.27 & -10.8 & -0.64 & 10.1 & 0.48 & 0.47 & 0.54\\
+{\bf 10 $|$ 5 --- 0.0\%} @ Bid/Offer & 7.1 & {\bf \color{red} -2.9} & 54.9 & 8.0 & 0.88 & 0.08 & 0.87 & -11.7 & -0.59 & 7.0 & 0.48 & 0.47 & 0.54\\
+\addlinespace
+{\bf 10 $|$ 2 --- 0.0\%} @ Mid & 8.1 & &  63.2 & 8.0 & 1.01 & 0.09 & 1.01 & -10.5 & -0.93 & 8.1 & 0.46 & 0.41 & 0.57\\
+{\bf 10 $|$ 2 --- 0.0\%} @ Bid/Offer & 4.6 & {\bf \color{red} -3.5} &  35.6 & 8.0 & 0.57 & 0.05 & 0.54 & -11.3 & -0.86 & 4.3 & 0.46 & 0.41 & 0.56\\
+\bottomrule
+\bottomrule
+\end{tabular}
+}
+
+\end{frame}
+
+\begin{frame}{Rolling Short Call Early (Out \& Up) Since 1996}
+\includegraphics[scale=0.35]{roll_early1996_upout}
+\end{frame}
+
+\begin{frame}{Rolling Short Call Early  (Out \& Up) Since 2010}
+\includegraphics[scale=0.35]{roll_early2010_upout}
+\end{frame}
+
+\begin{frame}{Rolling Short Call Early (Up Only) Since 1996}
+\includegraphics[scale=0.35]{roll_early1996}
+\end{frame}
+
+\begin{frame}{Rolling Short Call Early (Up Only) Since 2010}
+\includegraphics[scale=0.35]{roll_early2010}
+\end{frame}
+
+\section{Alternatives to the Collar}
+\begin{frame}{Alternatives to the Collar}
+\begin{itemize}
+\item Previously, we evaluated alternative hedging structures (such as put-spreads \& put-spread-collars); we re-evaluate the performance of these structures both on the S\&P 500 Index as well as global indices.
+\vfill
+\item In order to make the structures comparable, we use the following option selections:
+\begin{itemize}
+\item {\footnotesize \underline {{\bf Put-Spread [PS]}} \\ Equity \\Long (6M to 9M, rolled at 1/4 tenor remaining) 20 Delta Put \\Short (1M, rolled 5D before expiry) 10 Delta Put}
+\item {\footnotesize \underline {{\bf Collar [CLL]}} \\ Equity \\Long (6M to 9M, rolled at 1/4 tenor remaining) 20 Delta Put \\Short (1M, rolled 5D before expiry) 2\% OTM Call}
+\item {\footnotesize \underline {{\bf Put-Spread-Collar [PSC]}} \\ Equity \\Long (6M to 9M, rolled at 1/4 tenor remaining) 20 Delta Put \\Short (1M, rolled 5D before expiry) 10 Delta Put \\Short (1M, rolled 5D before expiry) 2\% OTM Call}
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{SPX Since 2010: Performance Comparisons (9M put)}
+\includegraphics[scale=0.35]{LD_compare_structures_9m_2010_SPX}
+\end{frame}
+
+\begin{frame}{SPX Since 2010: Drawdown (Geometric) Comparisons}
+\includegraphics[scale=0.35]{LD_compare_structures_9m_2010_SPX_drawdowns}
+\end{frame}
+
+\begin{frame}{SPX Since 2010: Performance Summary}
+\centering
+\scalebox{0.475}{
+\begin{tabular}{lrrrrrrrrrrrr}
+\toprule
+Strategy & Retn & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta-\\
+\midrule
+{\bf \color{blue} SPX} & 13.9 & 108.9 & 14.8 & 0.94 & 0.08 & 0.92 & -15.5 & -0.37 & 13.6 & 1.00 & 1.00 & 1.00\\
+\midrule
+6M \\
+\midrule
+Put-Spread & 12.8 & 100.3 & 14.6 & 0.88 & 0.08 & 0.85 & -16.8 & -0.31 & 12.5 & 0.97 & 0.99 & 0.99\\
+Collar & 8.8 & 69.2 & 9.4 & 0.94 & 0.08 & 0.93 & -12.2 & -0.29 & 8.8 & 0.60 & 0.60 & 0.62\\
+Put-Spread-Collar (Full Short Call \& Full Short Put) & 12.2 & 95.7 & 12.3 & 0.99 & 0.09 & 0.99 & -16.5 & -0.40 & 12.1 & 0.77 & 0.80 & 0.85\\
+Put-Spread-Collar (1/2 Short Call \& Full Short Put) & 10.5 & 82.5 & 10.8 & 0.98 & 0.09 & 0.97 & -14.4 & -0.34 & 10.5 & 0.69 & 0.70 & 0.73\\
+Put-Spread-Collar (1/2 Short Call \& 1/2 Short Put) & 10.8 & 84.7 & 11.9 & 0.91 & 0.08 & 0.90 & -14.5 & -0.30 & 10.6 & 0.79 & 0.80 & 0.80\\
+\midrule
+9M \\
+\midrule
+\color{blue}{\bf Current Collar} & 10.7 & 83.2 & 10.1 & 1.06 & 0.09 & 1.07 & -12.0 & -0.40 & 10.7 & 0.64 & 0.62 & 0.65\\
+\midrule
+Put-Spread & 12.9 & 100.7 & 13.7 & 0.94 & 0.08 & 0.93 & -15.6 & -0.43 & 12.7 & 0.91 & 0.91 & 0.91\\
+Collar & 8.9 & 69.6 & 8.7 & 1.02 & 0.09 & 1.02 & -11.0 & -0.40 & 8.9 & 0.54 & 0.51 & 0.54\\
+Put-Spread-Collar (Full Short Call \& Full Short Put) & 12.3 & 96.1 & 11.5 & 1.07 & 0.09 & 1.07 & -15.3 & -0.61 & 12.3 & 0.71 & 0.71 & 0.77\\
+Put-Spread-Collar (1/2 Short Call \& Full Short Put) & 10.6 & 82.8 & 10.0 & 1.06 & 0.09 & 1.06 & -13.2 & -0.52 & 10.6 & 0.62 & 0.61 & 0.66\\
+Put-Spread-Collar (1/2 Short Call \& 1/2 Short Put) & 10.9 & 85.1 & 11.0 & 0.99 & 0.09 & 0.98 & -13.3 & -0.43 & 10.8 & 0.72 & 0.71 & 0.73\\
+\midrule
+12M \\
+\midrule
+Put-Spread & 13.4 & 104.8 & 13.9 & 0.97 & 0.09 & 0.95 & -15.2 & -0.43 & 13.2 & 0.92 & 0.91 & 0.93\\
+Collar & 9.4 & 73.7 & 8.9 & 1.06 & 0.09 & 1.06 & -10.4 & -0.41 & 9.4 & 0.55 & 0.52 & 0.55\\
+Put-Spread-Collar (Full Short Call \& Full Short Put) & 12.8 & 100.3 & 11.7 & 1.09 & 0.10 & 1.10 & -14.8 & -0.60 & 12.9 & 0.72 & 0.72 & 0.78\\
+Put-Spread-Collar (1/2 Short Call \& Full Short Put) & 11.1 & 87.0 & 10.2 & 1.09 & 0.10 & 1.09 & -12.6 & -0.51 & 11.2 & 0.64 & 0.62 & 0.67\\
+Put-Spread-Collar (1/2 Short Call \& 1/2 Short Put) & 11.4 & 89.3 & 11.2 & 1.02 & 0.09 & 1.01 & -12.7 & -0.43 & 11.4 & 0.73 & 0.72 & 0.74\\
+\midrule
+\bottomrule
+\end{tabular}
+
+}
+\begin{itemize}
+\item {\footnotesize Current Collar = Equity \& Long Put 11D 270 60 \& Short Call OTM 2.0\% 30 5}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{SX5E Since 2010: Performance Comparisons (9M put)}
+\includegraphics[scale=0.35]{LD_compare_structures_9m_2010_SX5E}
+\end{frame}
+
+\begin{frame}{SX5E Since 2010: Drawdown (Geometric) Comparisons}
+\includegraphics[scale=0.35]{LD_compare_structures_9m_2010_SX5E_drawdowns}
+\end{frame}
+
+\begin{frame}{SX5E Since 2010: Performance Summary}
+\centering
+\scalebox{0.475}{
+\begin{tabular}{lrrrrrrrrrrrr}
+\toprule
+Strategy & Retn & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta-\\
+\midrule
+{\bf \color{blue} SX5E} & 8.5 & 67.9 & 20.9 & 0.41 & 0.04 & 0.31 & -34.5 & -0.02 & 6.5 & 1.00 & 1.00 & 1.00\\
+\midrule
+6M \\
+\midrule
+Put-Spread & 7.2 & 57.6 & 18.7 & 0.39 & 0.03 & 0.30 & -27.7 & 0.42 & 5.6 & 0.86 & 0.84 & 0.83\\
+Collar & 4.3 & 34.3 & 10.8 & 0.40 & 0.04 & 0.35 & -17.1 & 0.00 & 3.8 & 0.41 & 0.36 & 0.39\\
+Put-Spread-Collar (Full Short Call \& Full Short Put) & 7.1 & 57.2 & 14.9 & 0.48 & 0.04 & 0.42 & -20.4 & 0.91 & 6.2 & 0.59 & 0.57 & 0.63\\
+Put-Spread-Collar (1/2 Short Call \& Full Short Put) & 5.7 & 45.7 & 12.7 & 0.45 & 0.04 & 0.40 & -18.4 & 0.45 & 5.0 & 0.50 & 0.46 & 0.51\\
+Put-Spread-Collar (1/2 Short Call \& 1/2 Short Put) & 5.7 & 45.9 & 14.4 & 0.40 & 0.04 & 0.34 & -22.0 & 0.30 & 4.8 & 0.64 & 0.60 & 0.61\\
+\midrule
+9M \\
+\midrule
+\color{blue}{\bf Reference Collar} & 6.2 & 48.7 & 13.2 & 0.47 & 0.04 & 0.41 & -19.2 & 0.01 & 5.4 & 0.58 & 0.55 & 0.60\\
+\midrule
+Put-Spread & 7.7 & 61.4 & 19.4 & 0.40 & 0.04 & 0.31 & -32.1 & 0.30 & 6.0 & 0.90 & 0.90 & 0.90\\
+Collar & 4.8 & 38.1 & 11.0 & 0.43 & 0.04 & 0.38 & -17.6 & -0.07 & 4.2 & 0.46 & 0.41 & 0.46\\
+Put-Spread-Collar (Full Short Call \& Full Short Put) & 7.6 & 61.0 & 15.4 & 0.50 & 0.04 & 0.43 & -24.0 & 0.75 & 6.7 & 0.64 & 0.62 & 0.70\\
+Put-Spread-Collar (1/2 Short Call \& Full Short Put) & 6.2 & 49.5 & 13.0 & 0.47 & 0.04 & 0.42 & -20.0 & 0.33 & 5.5 & 0.55 & 0.52 & 0.58\\
+Put-Spread-Collar (1/2 Short Call \& 1/2 Short Put) & 6.2 & 49.8 & 14.9 & 0.42 & 0.04 & 0.35 & -23.7 & 0.18 & 5.2 & 0.68 & 0.65 & 0.68\\
+\midrule
+12M \\
+\midrule
+Put-Spread & 7.0 & 55.9 & 18.6 & 0.38 & 0.03 & 0.29 & -31.0 & 0.44 & 5.4 & 0.86 & 0.85 & 0.85\\
+Collar & 4.1 & 32.5 & 10.3 & 0.40 & 0.03 & 0.35 & -15.4 & 0.01 & 3.6 & 0.42 & 0.37 & 0.41\\
+Put-Spread-Collar (Full Short Call \& Full Short Put) & 6.9 & 55.4 & 14.7 & 0.47 & 0.04 & 0.41 & -23.1 & 0.97 & 6.0 & 0.60 & 0.58 & 0.65\\
+Put-Spread-Collar (1/2 Short Call \& Full Short Put) & 5.5 & 43.9 & 12.3 & 0.44 & 0.04 & 0.39 & -19.1 & 0.50 & 4.8 & 0.51 & 0.47 & 0.53\\
+Put-Spread-Collar (1/2 Short Call \& 1/2 Short Put) & 5.5 & 44.2 & 14.1 & 0.39 & 0.03 & 0.33 & -22.6 & 0.33 & 4.6 & 0.64 & 0.61 & 0.63\\
+\midrule
+\bottomrule
+\end{tabular}
+
+}
+
+\begin{itemize}
+\item {\footnotesize Reference Collar = Equity \& Long Put 11D 270 60 \& Short Call OTM 2.0\% 30 5}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{NKY Since 2010: Performance Comparisons (9M put)}
+\includegraphics[scale=0.35]{LD_compare_structures_9m_2010_NKY}
+\end{frame}
+
+\begin{frame}{NKY Since 2010: Drawdown (Geometric) Comparisons}
+\includegraphics[scale=0.35]{LD_compare_structures_9m_2010_NKY_drawdowns}
+\end{frame}
+
+\begin{frame}{NKY Since 2010: Performance Summary}
+\centering
+\scalebox{0.475}{
+\begin{tabular}{lrrrrrrrrrrrr}
+\toprule
+Strategy & Retn & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta-\\
+\midrule
+{\bf \color{blue} NKY} & 14.4 & 110.2 & 21.7 & 0.67 & 0.06 & 0.59 & -24.0 & -0.42 & 12.8 & 1.00 & 1.00 & 1.00\\
+\midrule
+6M \\
+\midrule
+Put-Spread & 14.6 & 111.2 & 20.8 & 0.70 & 0.06 & 0.63 & -27.7 & -0.69 & 13.2 & 0.93 & 0.94 & 0.97\\
+Collar & 7.1 & 54.1 & 11.7 & 0.60 & 0.05 & 0.56 & -17.4 & -0.69 & 6.6 & 0.45 & 0.40 & 0.49\\
+Put-Spread-Collar (Full Short Call \& Full Short Put) & 11.3 & 86.1 & 16.5 & 0.68 & 0.06 & 0.63 & -23.4 & -1.27 & 10.4 & 0.65 & 0.63 & 0.78\\
+Put-Spread-Collar (1/2 Short Call \& Full Short Put) & 9.2 & 70.1 & 13.9 & 0.66 & 0.06 & 0.61 & -19.0 & -1.02 & 8.5 & 0.55 & 0.51 & 0.64\\
+Put-Spread-Collar (1/2 Short Call \& 1/2 Short Put) & 10.8 & 82.6 & 15.9 & 0.68 & 0.06 & 0.63 & -20.5 & -0.74 & 10.0 & 0.69 & 0.67 & 0.73\\
+\midrule
+9M \\
+\midrule
+\color{blue}{\bf Reference Collar} & 8.2 & 61.9 & 14.2 & 0.58 & 0.05 & 0.53 & -17.1 & -0.54 & 7.5 & 0.60 & 0.57 & 0.67\\
+\midrule
+Put-Spread & 14.4 & 110.2 & 21.9 & 0.66 & 0.06 & 0.58 & -21.5 & -0.32 & 12.8 & 0.99 & 1.02 & 1.02\\
+Collar & 7.0 & 53.8 & 12.5 & 0.56 & 0.05 & 0.52 & -17.7 & -0.41 & 6.5 & 0.51 & 0.47 & 0.55\\
+Put-Spread-Collar (Full Short Call \& Full Short Put) & 11.1 & 85.1 & 17.2 & 0.65 & 0.06 & 0.59 & -17.0 & -0.43 & 10.1 & 0.70 & 0.70 & 0.84\\
+Put-Spread-Collar (1/2 Short Call \& Full Short Put) & 9.1 & 69.4 & 14.7 & 0.62 & 0.05 & 0.57 & -14.8 & -0.39 & 8.3 & 0.61 & 0.58 & 0.69\\
+Put-Spread-Collar (1/2 Short Call \& 1/2 Short Put) & 10.7 & 82.0 & 16.9 & 0.63 & 0.06 & 0.58 & -17.4 & -0.34 & 9.7 & 0.75 & 0.74 & 0.78\\
+\midrule
+12M \\
+\midrule
+Put-Spread & 14.4 & 110.3 & 21.7 & 0.66 & 0.06 & 0.59 & -27.3 & -0.64 & 12.8 & 0.96 & 1.01 & 1.02\\
+Collar & 7.1 & 54.5 & 12.5 & 0.57 & 0.05 & 0.52 & -16.2 & -0.61 & 6.5 & 0.48 & 0.46 & 0.54\\
+Put-Spread-Collar (Full Short Call \& Full Short Put) & 11.2 & 85.2 & 17.4 & 0.64 & 0.06 & 0.58 & -22.9 & -1.04 & 10.1 & 0.68 & 0.69 & 0.83\\
+Put-Spread-Collar (1/2 Short Call \& Full Short Put) & 9.1 & 69.8 & 14.8 & 0.62 & 0.05 & 0.57 & -18.4 & -0.84 & 8.4 & 0.58 & 0.57 & 0.69\\
+Put-Spread-Collar (1/2 Short Call \& 1/2 Short Put) & 10.8 & 82.4 & 16.8 & 0.64 & 0.06 & 0.59 & -19.8 & -0.67 & 9.8 & 0.72 & 0.73 & 0.78\\
+\midrule
+\bottomrule
+\end{tabular}
+
+}
+
+\begin{itemize}
+\item {\footnotesize Reference Collar = Equity \& Long Put 11D 270 60 \& Short Call OTM 2.0\% 30 5}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{UKX Since 2010: Performance Comparisons (9M put)}
+\includegraphics[scale=0.35]{LD_compare_structures_9m_2010_UKX}
+\end{frame}
+
+\begin{frame}{UKX Since 2010: Drawdown (Geometric) Comparisons}
+\includegraphics[scale=0.35]{LD_compare_structures_9m_2010_UKX_drawdowns}
+\end{frame}
+
+\begin{frame}{UKX Since 2010: Performance Summary}
+\centering
+\scalebox{0.475}{
+\begin{tabular}{lrrrrrrrrrrrr}
+\toprule
+Strategy & Retn & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta-\\
+\midrule
+{\bf \color{blue} UKX} & 8.9 & 69.8 & 15.4 & 0.58 & 0.05 & 0.52 & -16.5 & -0.11 & 8.0 & 1.00 & 1.00 & 1.00\\
+\midrule
+6M \\
+\midrule
+Put-Spread & 8.1 & 63.4 & 13.9 & 0.58 & 0.05 & 0.53 & -16.2 & 0.01 & 7.3 & 0.88 & 0.87 & 0.87\\
+Collar & 3.1 & 24.7 & 9.1 & 0.34 & 0.03 & 0.30 & -12.1 & -0.10 & 2.8 & 0.55 & 0.51 & 0.53\\
+Put-Spread-Collar (Full Short Call \& Full Short Put) & 6.0 & 47.3 & 11.5 & 0.52 & 0.05 & 0.48 & -15.5 & 0.00 & 5.5 & 0.68 & 0.66 & 0.73\\
+Put-Spread-Collar (1/2 Short Call \& Full Short Put) & 4.6 & 36.0 & 10.3 & 0.45 & 0.04 & 0.40 & -13.2 & -0.05 & 4.1 & 0.61 & 0.58 & 0.63\\
+Put-Spread-Collar (1/2 Short Call \& 1/2 Short Put) & 5.6 & 44.0 & 11.3 & 0.49 & 0.04 & 0.45 & -13.9 & -0.03 & 5.1 & 0.71 & 0.69 & 0.70\\
+\midrule
+9M \\
+\midrule
+\color{blue}{\bf Reference Collar} & 5.9 & 45.7 & 10.4 & 0.57 & 0.05 & 0.53 & -12.2 & -0.21 & 5.5 & 0.63 & 0.59 & 0.65\\
+\midrule
+Put-Spread & 7.9 & 62.3 & 13.9 & 0.57 & 0.05 & 0.52 & -17.1 & -0.08 & 7.2 & 0.88 & 0.86 & 0.88\\
+Collar & 3.0 & 23.5 & 9.2 & 0.33 & 0.03 & 0.28 & -11.7 & -0.16 & 2.6 & 0.54 & 0.50 & 0.54\\
+Put-Spread-Collar (Full Short Call \& Full Short Put) & 5.9 & 46.2 & 11.6 & 0.51 & 0.04 & 0.46 & -16.0 & -0.14 & 5.3 & 0.68 & 0.65 & 0.73\\
+Put-Spread-Collar (1/2 Short Call \& Full Short Put) & 4.4 & 34.9 & 10.3 & 0.43 & 0.04 & 0.38 & -13.6 & -0.15 & 4.0 & 0.61 & 0.57 & 0.64\\
+Put-Spread-Collar (1/2 Short Call \& 1/2 Short Put) & 5.4 & 42.9 & 11.4 & 0.48 & 0.04 & 0.43 & -14.0 & -0.11 & 4.9 & 0.71 & 0.68 & 0.71\\
+\midrule
+12M \\
+\midrule
+Put-Spread & 8.1 & 64.0 & 13.9 & 0.59 & 0.05 & 0.53 & -17.0 & -0.07 & 7.4 & 0.88 & 0.88 & 0.88\\
+Collar & 3.2 & 25.2 & 9.2 & 0.35 & 0.03 & 0.31 & -11.5 & -0.14 & 2.8 & 0.55 & 0.51 & 0.54\\
+Put-Spread-Collar (Full Short Call \& Full Short Put) & 6.1 & 47.9 & 11.6 & 0.52 & 0.05 & 0.48 & -16.3 & -0.12 & 5.6 & 0.68 & 0.66 & 0.74\\
+Put-Spread-Collar (1/2 Short Call \& Full Short Put) & 4.6 & 36.6 & 10.3 & 0.45 & 0.04 & 0.41 & -13.9 & -0.13 & 4.2 & 0.62 & 0.59 & 0.64\\
+Put-Spread-Collar (1/2 Short Call \& 1/2 Short Put) & 5.7 & 44.6 & 11.4 & 0.50 & 0.04 & 0.45 & -14.3 & -0.10 & 5.1 & 0.72 & 0.69 & 0.71\\
+
+\midrule
+\bottomrule
+\end{tabular}
+
+}
+
+\begin{itemize}
+\item {\footnotesize Reference Collar = Equity \& Long Put 11D 270 60 \& Short Call OTM 2.0\% 30 5}
+\end{itemize}
+
+\end{frame}
+
+\section{Appendix}
+
+\begin{frame}{\normalsize Summary Performance of Hedging Structures (Hold to 5D) Since 1996}
+\centering
+\scalebox{0.425}{
+\begin{tabular}{lrrrrrrrrrrrr}
+\toprule
+Strategy & Retn & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta-\\
+\midrule
+{\bf \color{blue} SPX} Since 1996 & 10.3 & 225.0 & 19.0 & 0.54 & 0.05 & 0.47 & -30.4 & -0.06 & 8.9 & 1.00 & 1.00 & 1.00\\
+\midrule
+1M \\
+\midrule
+Equity \& Put & 2.8 & 61.0 & 13.2 & 0.21 & 0.02 & 0.15 & -49.6 & -0.04 & 1.9 & 0.64 & 0.60 & 0.56\\
+Equity \& Put Spread & 5.8 & 125.6 & 15.3 & 0.38 & 0.03 & 0.31 & -36.8 & -0.06 & 4.7 & 0.79 & 0.78 & 0.76\\
+Equity \& Collar & 3.2 & 70.6 & 8.5 & 0.38 & 0.03 & 0.35 & -23.2 & -0.25 & 2.9 & 0.38 & 0.33 & 0.36\\
+Equity \& Put Spread Collar & 6.2 & 135.2 & 10.8 & 0.57 & 0.05 & 0.53 & -19.8 & -0.23 & 5.8 & 0.53 & 0.51 & 0.55\\
+\midrule
+2M \\
+\midrule
+Equity \& Put & 5.3 & 114.6 & 13.0 & 0.40 & 0.04 & 0.35 & -29.4 & -0.11 & 4.5 & 0.61 & 0.55 & 0.52\\
+Equity \& Put Spread & 8.8 & 191.8 & 15.1 & 0.58 & 0.05 & 0.53 & -23.9 & -0.10 & 7.9 & 0.76 & 0.72 & 0.71\\
+Equity \& Collar & 5.7 & 124.2 & 9.1 & 0.63 & 0.06 & 0.60 & -12.9 & -0.44 & 5.4 & 0.35 & 0.27 & 0.32\\
+Equity \& Put Spread Collar & 9.2 & 201.4 & 11.3 & 0.81 & 0.07 & 0.79 & -15.8 & -0.22 & 9.0 & 0.50 & 0.45 & 0.51\\
+\midrule
+3M \\
+\midrule
+Equity \& Put & 5.7 & 124.5 & 12.8 & 0.44 & 0.04 & 0.39 & -27.6 & -0.03 & 5.0 & 0.60 & 0.53 & 0.49\\
+Equity \& Put Spread & 8.8 & 192.8 & 15.1 & 0.59 & 0.05 & 0.53 & -23.5 & -0.05 & 8.0 & 0.75 & 0.70 & 0.68\\
+Equity \& Collar & 6.1 & 134.1 & 9.2 & 0.67 & 0.06 & 0.64 & -12.1 & -0.38 & 5.9 & 0.34 & 0.25 & 0.29\\
+Equity \& Put Spread Collar & 9.3 & 202.4 & 11.7 & 0.80 & 0.07 & 0.77 & -15.4 & -0.21 & 9.0 & 0.48 & 0.43 & 0.48\\
+\midrule
+6M \\
+\midrule
+Equity \& Put & 6.0 & 131.7 & 12.6 & 0.48 & 0.04 & 0.43 & -33.4 & -0.07 & 5.4 & 0.58 & 0.49 & 0.47\\
+Equity \& Put Spread & 9.1 & 198.5 & 15.0 & 0.61 & 0.05 & 0.55 & -27.8 & -0.13 & 8.3 & 0.73 & 0.67 & 0.66\\
+Equity \& Collar & 6.5 & 141.3 & 9.5 & 0.68 & 0.06 & 0.66 & -15.3 & -0.25 & 6.2 & 0.32 & 0.22 & 0.27\\
+Equity \& Put Spread Collar & 9.5 & 208.1 & 11.9 & 0.80 & 0.07 & 0.78 & -15.0 & -0.25 & 9.2 & 0.47 & 0.39 & 0.46\\
+\midrule
+9M \\
+\midrule
+Equity \& Put & 7.1 & 155.8 & 12.7 & 0.56 & 0.05 & 0.51 & -22.4 & -0.18 & 6.5 & 0.60 & 0.52 & 0.51\\
+Equity \& Put Spread & 10.1 & 221.3 & 15.3 & 0.66 & 0.06 & 0.61 & -19.9 & -0.06 & 9.4 & 0.75 & 0.70 & 0.70\\
+Equity \& Collar & 7.6 & 165.4 & 9.5 & 0.80 & 0.07 & 0.78 & -12.1 & -0.58 & 7.4 & 0.34 & 0.25 & 0.31\\
+Equity \& Put Spread Collar & 10.6 & 230.8 & 12.2 & 0.86 & 0.08 & 0.84 & -15.7 & -0.17 & 10.3 & 0.49 & 0.42 & 0.50\\
+\midrule
+12M \\
+\midrule
+Equity \& Put & 8.2 & 177.9 & 13.0 & 0.63 & 0.06 & 0.58 & -24.3 & -0.09 & 7.6 & 0.60 & 0.51 & 0.48\\
+Equity \& Put Spread & 11.2 & 243.8 & 15.4 & 0.72 & 0.07 & 0.68 & -20.1 & -0.16 & 10.5 & 0.74 & 0.69 & 0.67\\
+Equity \& Collar & 8.6 & 187.5 & 10.0 & 0.86 & 0.08 & 0.85 & -8.8 & -0.23 & 8.4 & 0.33 & 0.24 & 0.28\\
+Equity \& Put Spread Collar & 11.6 & 253.4 & 12.4 & 0.93 & 0.08 & 0.92 & -10.4 & -0.30 & 11.4 & 0.48 & 0.41 & 0.47\\
+\bottomrule
+\end{tabular}
+}
+\end{frame}
+
+\begin{frame}{\normalsize Summary Performance of Hedging Structures (Hold to 5D) Since 2010}
+\centering
+\scalebox{0.425}{
+\begin{tabular}{lrrrrrrrrrrrr}
+\toprule
+Strategy & Retn & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta-\\
+\midrule
+{\bf \color{blue} SPX} Since 2010 & 13.9 & 108.9 & 14.8 & 0.94 & 0.08 & 0.92 & -15.5 & -0.37 & 13.6 & 1.00 & 1.00 & 1.00\\
+\midrule
+1M \\
+\midrule
+Equity \& Put & 5.6 & 43.7 & 10.6 & 0.52 & 0.05 & 0.48 & -16.8 & -0.06 & 5.1 & 0.67 & 0.65 & 0.57\\
+Equity \& Put Spread & 9.0 & 70.3 & 12.6 & 0.71 & 0.06 & 0.67 & -14.8 & -0.12 & 8.5 & 0.84 & 0.85 & 0.80\\
+Equity \& Collar & 5.0 & 39.1 & 7.7 & 0.65 & 0.06 & 0.63 & -11.2 & -0.07 & 4.8 & 0.47 & 0.45 & 0.43\\
+Equity \& Put Spread Collar & 8.4 & 65.7 & 10.0 & 0.83 & 0.07 & 0.82 & -12.1 & -0.10 & 8.2 & 0.64 & 0.65 & 0.66\\
+\midrule
+2M \\
+\midrule
+Equity \& Put & 6.7 & 52.5 & 10.4 & 0.65 & 0.06 & 0.61 & -16.7 & -0.09 & 6.4 & 0.65 & 0.6 & 0.55\\
+Equity \& Put Spread & 10.3 & 80.7 & 12.3 & 0.84 & 0.07 & 0.81 & -15.4 & -0.37 & 10.0 & 0.81 & 0.8 & 0.79\\
+Equity \& Collar & 6.1 & 47.9 & 7.5 & 0.82 & 0.07 & 0.80 & -11.6 & -0.19 & 6.0 & 0.45 & 0.4 & 0.41\\
+Equity \& Put Spread Collar & 9.7 & 76.2 & 9.8 & 0.99 & 0.09 & 0.99 & -14.9 & -0.62 & 9.7 & 0.61 & 0.6 & 0.64\\
+\midrule
+3M \\
+\midrule
+Equity \& Put & 7.4 & 58.1 & 10.8 & 0.69 & 0.06 & 0.66 & -16.2 & -0.11 & 7.1 & 0.69 & 0.65 & 0.61\\
+Equity \& Put Spread & 10.8 & 84.7 & 13.0 & 0.83 & 0.07 & 0.81 & -15.8 & -0.34 & 10.5 & 0.86 & 0.85 & 0.84\\
+Equity \& Collar & 6.8 & 53.6 & 8.1 & 0.85 & 0.08 & 0.83 & -11.0 & -0.20 & 6.7 & 0.49 & 0.45 & 0.47\\
+Equity \& Put Spread Collar & 10.2 & 80.1 & 10.6 & 0.96 & 0.09 & 0.96 & -15.5 & -0.53 & 10.1 & 0.66 & 0.65 & 0.70\\
+\midrule
+6M \\
+\midrule
+Equity \& Put & 8.2 & 64.6 & 11.1 & 0.74 & 0.07 & 0.71 & -14.6 & -0.19 & 7.9 & 0.73 & 0.69 & 0.66\\
+Equity \& Put Spread & 11.6 & 91.1 & 13.5 & 0.86 & 0.08 & 0.84 & -15.7 & -0.37 & 11.3 & 0.89 & 0.89 & 0.89\\
+Equity \& Collar & 7.7 & 60.0 & 8.6 & 0.89 & 0.08 & 0.88 & -11.1 & -0.30 & 7.6 & 0.53 & 0.50 & 0.52\\
+Equity \& Put Spread Collar & 11.1 & 86.6 & 11.3 & 0.98 & 0.09 & 0.97 & -15.5 & -0.52 & 11.0 & 0.70 & 0.69 & 0.75\\
+\midrule
+9M \\
+\midrule
+Equity \& Put & 9.1 & 71.3 & 10.9 & 0.84 & 0.08 & 0.82 & -12.8 & -0.27 & 8.9 & 0.71 & 0.67 & 0.65\\
+Equity \& Put Spread & 12.5 & 97.9 & 13.3 & 0.94 & 0.08 & 0.92 & -15.7 & -0.46 & 12.3 & 0.88 & 0.87 & 0.89\\
+Equity \& Collar & 8.5 & 66.8 & 8.4 & 1.01 & 0.09 & 1.01 & -11.1 & -0.46 & 8.5 & 0.52 & 0.48 & 0.51\\
+Equity \& Put Spread Collar & 11.9 & 93.3 & 11.2 & 1.07 & 0.09 & 1.07 & -15.5 & -0.65 & 11.9 & 0.68 & 0.67 & 0.74\\
+\midrule
+12M \\
+\midrule
+Equity \& Put & 9.5 & 74.8 & 11.6 & 0.83 & 0.07 & 0.80 & -12.9 & -0.21 & 9.3 & 0.77 & 0.74 & 0.71\\
+Equity \& Put Spread & 12.9 & 101.4 & 14.1 & 0.92 & 0.08 & 0.90 & -16.1 & -0.42 & 12.7 & 0.93 & 0.94 & 0.95\\
+Equity \& Collar & 9.0 & 70.2 & 9.1 & 0.99 & 0.09 & 0.99 & -11.5 & -0.33 & 8.9 & 0.57 & 0.55 & 0.57\\
+Equity \& Put Spread Collar & 12.4 & 96.8 & 11.9 & 1.04 & 0.09 & 1.04 & -15.7 & -0.59 & 12.3 & 0.73 & 0.74 & 0.81\\
+\bottomrule
+\end{tabular}
+}
+\end{frame}
+
+\begin{frame}{Hedging Structures (1M Put Hold to 5D) Since 1996}
+\includegraphics[scale=0.35]{compare_structures_1m_1996}
+\end{frame}
+\begin{frame}{Hedging Structures (1M Put Hold to 5D) Since 2010}
+\includegraphics[scale=0.35]{compare_structures_1m_2010}
+\end{frame}
+
+\begin{frame}{Hedging Structures (2M Put Hold to 5D) Since 1996}
+\includegraphics[scale=0.35]{compare_structures_2m_1996}
+\end{frame}
+\begin{frame}{Hedging Structures (2M Put Hold to 5D) Since 2010}
+\includegraphics[scale=0.35]{compare_structures_2m_2010}
+\end{frame}
+
+\begin{frame}{Hedging Structures (3M Put Hold to 5D) Since 1996}
+\includegraphics[scale=0.35]{compare_structures_3m_1996}
+\end{frame}
+\begin{frame}{Hedging Structures (3M Put Hold to 5D) Since 2010}
+\includegraphics[scale=0.35]{compare_structures_3m_2010}
+\end{frame}
+
+\begin{frame}{Hedging Structures (6M Put Hold to 5D) Since 1996}
+\includegraphics[scale=0.35]{compare_structures_6m_1996}
+\end{frame}
+\begin{frame}{Hedging Structures (6M Put Hold to 5D) Since 2010}
+\includegraphics[scale=0.35]{compare_structures_6m_2010}
+\end{frame}
+
+\begin{frame}{Hedging Structures (9M Put Hold to 5D) Since 1996}
+\includegraphics[scale=0.35]{compare_structures_9m_1996}
+\end{frame}
+\begin{frame}{Hedging Structures (9M Put Hold to 5D) Since 2010}
+\includegraphics[scale=0.35]{compare_structures_9m_2010}
+\end{frame}
+
+\begin{frame}{Hedging Structures (12M Put Hold to 5D) Since 1996}
+\includegraphics[scale=0.35]{compare_structures_12m_1996}
+\end{frame}
+\begin{frame}{Hedging Structures (12M Put Hold to 5D) Since 2010}
+\includegraphics[scale=0.35]{compare_structures_12m_2010}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{\normalsize Summary Performance of Hedging Structures (Roll Early) Since 1996}
+\centering
+\scalebox{0.425}{
+\begin{tabular}{lrrrrrrrrrrrr}
+\toprule
+Strategy & Retn & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta-\\
+\midrule
+{\bf \color{blue} SPX} Since 1996 & 10.3 & 225.0 & 19.0 & 0.54 & 0.05 & 0.47 & -30.4 & -0.06 & 8.9 & 1.00 & 1.00 & 1.00\\
+\midrule
+1M \\
+\midrule
+Equity \& Put & 2.8 & 61.0 & 13.2 & 0.21 & 0.02 & 0.15 & -49.6 & -0.04 & 1.9 & 0.64 & 0.60 & 0.56\\
+Equity \& Put Spread & 5.8 & 125.6 & 15.3 & 0.38 & 0.03 & 0.31 & -36.8 & -0.06 & 4.7 & 0.79 & 0.78 & 0.76\\
+Equity \& Collar & 3.2 & 70.6 & 8.5 & 0.38 & 0.03 & 0.35 & -23.2 & -0.25 & 2.9 & 0.38 & 0.33 & 0.36\\
+Equity \& Put Spread Collar & 6.2 & 135.2 & 10.8 & 0.57 & 0.05 & 0.53 & -19.8 & -0.23 & 5.8 & 0.53 & 0.51 & 0.55\\
+\midrule
+2M \\
+\midrule
+Equity \& Put & 3.7 & 81.3 & 12.8 & 0.29 & 0.03 & 0.23 & -40.4 & 0.02 & 3.0 & 0.61 & 0.55 & 0.52\\
+Equity \& Put Spread & 7.6 & 165.6 & 15.0 & 0.50 & 0.05 & 0.44 & -31.0 & -0.06 & 6.7 & 0.76 & 0.72 & 0.70\\
+Equity \& Collar & 4.2 & 90.9 & 9.0 & 0.46 & 0.04 & 0.42 & -18.8 & -0.35 & 3.8 & 0.35 & 0.27 & 0.32\\
+Equity \& Put Spread Collar & 8.0 & 175.2 & 11.5 & 0.70 & 0.06 & 0.67 & -18.9 & -0.29 & 7.6 & 0.49 & 0.45 & 0.50\\
+\midrule
+3M \\
+\midrule
+Equity \& Put & 4.7 & 102.6 & 12.9 & 0.36 & 0.03 & 0.31 & -41.4 & 0.04 & 3.9 & 0.62 & 0.56 & 0.53\\
+Equity \& Put Spread & 7.8 & 171.0 & 15.2 & 0.52 & 0.05 & 0.45 & -30.1 & -0.03 & 6.9 & 0.77 & 0.74 & 0.72\\
+Equity \& Collar & 5.1 & 112.2 & 9.0 & 0.57 & 0.05 & 0.54 & -17.3 & -0.18 & 4.8 & 0.36 & 0.29 & 0.33\\
+Equity \& Put Spread Collar & 8.3 & 180.6 & 11.6 & 0.72 & 0.06 & 0.68 & -16.7 & -0.17 & 7.9 & 0.51 & 0.47 & 0.52\\
+\midrule
+6M \\
+\midrule
+Equity \& Put & 6.9 & 150.6 & 12.4 & 0.56 & 0.05 & 0.51 & -28.0 & 0.05 & 6.3 & 0.57 & 0.50 & 0.45\\
+Equity \& Put Spread & 9.8 & 214.9 & 14.7 & 0.67 & 0.06 & 0.62 & -24.1 & -0.03 & 9.2 & 0.72 & 0.68 & 0.64\\
+Equity \& Collar & 7.3 & 160.2 & 9.1 & 0.80 & 0.07 & 0.78 & -9.8 & -0.19 & 7.2 & 0.31 & 0.22 & 0.25\\
+Equity \& Put Spread Collar & 10.3 & 224.5 & 11.6 & 0.89 & 0.08 & 0.87 & -12.7 & -0.18 & 10.1 & 0.46 & 0.40 & 0.44\\
+\midrule
+9M \\
+\midrule
+Equity \& Put & 7.6 & 164.9 & 12.4 & 0.61 & 0.06 & 0.57 & -21.5 & -0.02 & 7.0 & 0.59 & 0.53 & 0.49\\
+Equity \& Put Spread & 10.5 & 229.5 & 14.9 & 0.71 & 0.06 & 0.66 & -20.8 & 0.01 & 9.9 & 0.74 & 0.71 & 0.68\\
+Equity \& Collar & 8.0 & 174.5 & 9.1 & 0.88 & 0.08 & 0.87 & -9.9 & -0.21 & 7.9 & 0.33 & 0.26 & 0.28\\
+Equity \& Put Spread Collar & 11.0 & 239.1 & 11.8 & 0.93 & 0.08 & 0.92 & -13.8 & -0.05 & 10.8 & 0.48 & 0.44 & 0.47\\
+\midrule
+12M \\
+\midrule
+Equity \& Put & 7.5 & 163.8 & 12.3 & 0.61 & 0.06 & 0.57 & -19.9 & -0.02 & 7.0 & 0.59 & 0.53 & 0.50\\
+Equity \& Put Spread & 10.5 & 228.4 & 15.0 & 0.70 & 0.06 & 0.65 & -19.0 & 0.21 & 9.8 & 0.74 & 0.71 & 0.69\\
+Equity \& Collar & 7.9 & 173.4 & 8.8 & 0.90 & 0.08 & 0.89 & -11.4 & -0.31 & 7.9 & 0.33 & 0.26 & 0.29\\
+Equity \& Put Spread Collar & 10.9 & 238.0 & 11.8 & 0.93 & 0.08 & 0.92 & -15.2 & 0.30 & 10.8 & 0.48 & 0.43 & 0.48\\
+\bottomrule
+\end{tabular}
+}
+\end{frame}
+
+\begin{frame}{\normalsize Summary Performance of Hedging Structures (Roll Early) Since 2010}
+\centering
+\scalebox{0.425}{
+\begin{tabular}{lrrrrrrrrrrrr}
+\toprule
+Strategy & Retn & TotRetn & Risk & IR & Sortino & IRGeo & DD & Skew & RetnGeo & Beta & Beta+ & Beta-\\
+\midrule
+{\bf \color{blue} SPX} Since 2010 & 13.9 & 108.9 & 14.8 & 0.94 & 0.08 & 0.92 & -15.5 & -0.37 & 13.6 & 1.00 & 1.00 & 1.00\\
+\midrule
+1M \\
+\midrule
+Equity \& Put & 5.6 & 43.7 & 10.6 & 0.52 & 0.05 & 0.48 & -16.8 & -0.06 & 5.1 & 0.67 & 0.65 & 0.57\\
+Equity \& Put Spread & 9.0 & 70.3 & 12.6 & 0.71 & 0.06 & 0.67 & -14.8 & -0.12 & 8.5 & 0.84 & 0.85 & 0.80\\
+Equity \& Collar & 5.0 & 39.1 & 7.7 & 0.65 & 0.06 & 0.63 & -11.2 & -0.07 & 4.8 & 0.47 & 0.45 & 0.43\\
+Equity \& Put Spread Collar & 8.4 & 65.7 & 10.0 & 0.83 & 0.07 & 0.82 & -12.1 & -0.10 & 8.2 & 0.64 & 0.65 & 0.66\\
+\midrule
+2M \\
+\midrule
+Equity \& Put & 6.6 & 51.5 & 10.6 & 0.62 & 0.06 & 0.58 & -15.4 & -0.15 & 6.2 & 0.69 & 0.67 & 0.62\\
+Equity \& Put Spread & 11.4 & 89.4 & 12.8 & 0.89 & 0.08 & 0.87 & -13.0 & -0.32 & 11.2 & 0.84 & 0.87 & 0.82\\
+Equity \& Collar & 6.0 & 46.9 & 7.9 & 0.76 & 0.07 & 0.74 & -12.7 & -0.35 & 5.8 & 0.49 & 0.48 & 0.48\\
+Equity \& Put Spread Collar & 10.8 & 84.9 & 10.4 & 1.04 & 0.09 & 1.04 & -12.6 & -0.51 & 10.8 & 0.64 & 0.67 & 0.68\\
+\midrule
+3M \\
+\midrule
+Equity \& Put & 8.1 & 63.1 & 10.6 & 0.76 & 0.07 & 0.73 & -14.3 & -0.07 & 7.8 & 0.69 & 0.68 & 0.60\\
+Equity \& Put Spread & 11.4 & 89.7 & 12.9 & 0.89 & 0.08 & 0.87 & -14.7 & -0.20 & 11.2 & 0.85 & 0.87 & 0.84\\
+Equity \& Collar & 7.5 & 58.5 & 8.0 & 0.94 & 0.08 & 0.93 & -10.3 & -0.11 & 7.4 & 0.49 & 0.48 & 0.46\\
+Equity \& Put Spread Collar & 10.9 & 85.1 & 10.6 & 1.02 & 0.09 & 1.02 & -14.2 & -0.27 & 10.8 & 0.66 & 0.67 & 0.70\\
+\midrule
+6M \\
+\midrule
+Equity \& Put & 8.5 & 66.6 & 11.3 & 0.75 & 0.07 & 0.72 & -14.4 & -0.16 & 8.2 & 0.75 & 0.74 & 0.69\\
+Equity \& Put Spread & 11.9 & 93.1 & 13.8 & 0.86 & 0.08 & 0.84 & -15.6 & -0.20 & 11.6 & 0.92 & 0.94 & 0.93\\
+Equity \& Collar & 7.9 & 62.0 & 8.6 & 0.92 & 0.08 & 0.91 & -10.9 & -0.19 & 7.8 & 0.55 & 0.55 & 0.55\\
+Equity \& Put Spread Collar & 11.3 & 88.6 & 11.5 & 0.98 & 0.09 & 0.98 & -15.2 & -0.19 & 11.2 & 0.72 & 0.74 & 0.79\\
+\midrule
+9M \\
+\midrule
+Equity \& Put & 8.5 & 66.8 & 10.6 & 0.80 & 0.07 & 0.78 & -12.4 & -0.24 & 8.3 & 0.70 & 0.67 & 0.64\\
+Equity \& Put Spread & 11.9 & 93.4 & 13.1 & 0.91 & 0.08 & 0.89 & -15.9 & -0.46 & 11.7 & 0.87 & 0.87 & 0.87\\
+Equity \& Collar & 7.9 & 62.3 & 8.1 & 0.98 & 0.09 & 0.98 & -11.2 & -0.44 & 7.9 & 0.50 & 0.47 & 0.50\\
+Equity \& Put Spread Collar & 11.3 & 88.8 & 10.9 & 1.04 & 0.09 & 1.04 & -15.5 & -0.68 & 11.3 & 0.67 & 0.67 & 0.73\\
+\midrule
+12M \\
+\midrule
+Equity \& Put & 9.1 & 71.3 & 10.7 & 0.85 & 0.08 & 0.83 & -12.0 & -0.25 & 8.9 & 0.70 & 0.67 & 0.64\\
+Equity \& Put Spread & 12.5 & 97.8 & 13.2 & 0.95 & 0.08 & 0.94 & -15.0 & -0.44 & 12.3 & 0.87 & 0.86 & 0.87\\
+Equity \& Collar & 8.5 & 66.7 & 8.2 & 1.04 & 0.09 & 1.04 & -10.2 & -0.42 & 8.5 & 0.50 & 0.47 & 0.50\\
+Equity \& Put Spread Collar & 11.9 & 93.3 & 11.0 & 1.08 & 0.10 & 1.08 & -14.7 & -0.63 & 12.0 & 0.67 & 0.67 & 0.73\\
+\bottomrule
+\end{tabular}
+}
+\end{frame}
+
+\begin{frame}{Hedging Structures (1M Put Hold to 5D) Since 1996}
+\includegraphics[scale=0.35]{LD_compare_structures_1m_1996}
+\end{frame}
+\begin{frame}{Hedging Structures (1M Put Hold to 5D) Since 2010}
+\includegraphics[scale=0.35]{LD_compare_structures_1m_2010}
+\end{frame}
+
+\begin{frame}{Hedging Structures (2M Put Hold to 15D) Since 1996}
+\includegraphics[scale=0.35]{LD_compare_structures_2m_1996}
+\end{frame}
+\begin{frame}{Hedging Structures (2M Put Hold to 15D) Since 2010}
+\includegraphics[scale=0.35]{LD_compare_structures_2m_2010}
+\end{frame}
+
+\begin{frame}{Hedging Structures (3M Put Hold to 20D) Since 1996}
+\includegraphics[scale=0.35]{LD_compare_structures_3m_1996}
+\end{frame}
+\begin{frame}{Hedging Structures (3M Put Hold to 20D) Since 2010}
+\includegraphics[scale=0.35]{LD_compare_structures_3m_2010}
+\end{frame}
+
+\begin{frame}{Hedging Structures (6M Put Hold to 40D) Since 1996}
+\includegraphics[scale=0.35]{LD_compare_structures_6m_1996}
+\end{frame}
+\begin{frame}{Hedging Structures (6M Put Hold to 40D) Since 2010}
+\includegraphics[scale=0.35]{LD_compare_structures_6m_2010}
+\end{frame}
+
+\begin{frame}{Hedging Structures (9M Put Hold to 60D) Since 1996}
+\includegraphics[scale=0.35]{LD_compare_structures_9m_1996}
+\end{frame}
+\begin{frame}{Hedging Structures (9M Put Hold to 60D) Since 2010}
+\includegraphics[scale=0.35]{LD_compare_structures_9m_2010}
+\end{frame}
+
+\begin{frame}{Hedging Structures (12M Put Hold to 80D) Since 1996}
+\includegraphics[scale=0.35]{LD_compare_structures_12m_1996}
+\end{frame}
+\begin{frame}{Hedging Structures (12M Put Hold to 80D) Since 2010}
+\includegraphics[scale=0.35]{LD_compare_structures_12m_2010}
+\end{frame}
+
+
+\end{document}
